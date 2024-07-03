@@ -77,7 +77,7 @@ export default {
 
                     if (response.status === 200) {
                         localStorage.setItem('auth_token', response.data.access_token);
-                        this.$router.push('/dashboard');
+                        this.$router.push('/home');
                         this.showSnackbar('Login successful!', 'success');
                     }
                 }
