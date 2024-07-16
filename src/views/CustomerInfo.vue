@@ -1,28 +1,25 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
     <v-container>
-        <v-row justify="center" class="mb-4 mt-3">
-            <v-btn @click="home">Home</v-btn>
-            <v-btn @click="logout">Logout</v-btn>
-        </v-row>
-
-        <v-data-table :headers="headers" :items="customer_info" :loading="loading" density="compact" class="elevation-1">
+        <h1>Customers Information</h1>
+        <v-data-table :headers="headers" :items="customer_info" :loading="loading" density="compact"
+            class="elevation-1">
             <template v-slot:loading>
                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
             </template>
             <template v-slot:top>
                 <v-toolbar flat>
-                    <v-toolbar-title>Customer Information</v-toolbar-title>
+                    <v-toolbar-title>List of Customers Information</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <div class="text-right">
-                        <v-btn :disabled="loading" prepend-icon="mdi-refresh" class="me-3" text="Refresh" variant="outlined"
-                            @click="onClick"></v-btn>
+                        <v-btn :disabled="loading" prepend-icon="mdi-refresh" class="me-3" text="Refresh"
+                            variant="outlined" @click="onClick"></v-btn>
                     </div>
                 </v-toolbar>
             </template>
             <template v-slot:item.action="{ item }">
-                <v-btn icon @click="viewItem(item)">
-                    <v-icon>mdi-eye</v-icon>
+                <v-btn size="x-small" icon @click="viewItem(item)" class="bg-blue">
+                    <v-icon size="small">mdi-eye</v-icon>
                 </v-btn>
             </template>
         </v-data-table>
@@ -45,7 +42,7 @@ export default {
                 { title: 'Mobile No.', value: 'Mobile1', sortable: true },
                 { title: 'Address', value: 'FullAddress', sortable: true },
                 { title: 'Email', value: 'Email1', sortable: true },
-                { title: 'Actions',  value: 'action', sortable: false }
+                { title: 'Actions', value: 'action', sortable: false }
             ],
         };
     },
@@ -69,26 +66,6 @@ export default {
                 console.error('Error fetching customer_info:', error);
             } finally {
                 this.loading = false;
-            }
-        },
-        async home() {
-            try {
-                this.$router.push('/home');
-            } catch (error) {
-                console.error('Error accessing home:', error);
-            }
-        },
-        async logout() {
-            try {
-                await apiClient.post('/logout', null, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                localStorage.removeItem('auth_token');
-                this.$router.push('/');
-            } catch (error) {
-                console.error('Logout error:', error);
             }
         },
         onClick() {
