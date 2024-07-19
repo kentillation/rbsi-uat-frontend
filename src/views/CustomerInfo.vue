@@ -25,10 +25,7 @@
                                 </v-card-text>
 
                                 <v-card-actions class="justify-end">
-                                    <v-btn
-                                    text="Close"
-                                    @click="isActive.value = false"
-                                    ></v-btn>
+                                    <v-btn text @click="isActive.value = false">Close</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </template>
@@ -68,6 +65,7 @@ export default {
                 { title: 'Actions', value: 'action', sortable: false }
             ],
             dialog: false,
+            selectedCustomer: null
         };
     },
     mounted() {
@@ -99,7 +97,7 @@ export default {
             }, 2000)
         },
         viewItem(item) {
-            this.dialog = true;
+            this.selectedCustomer = item;
             console.log('View item:', item);
         }
     }
