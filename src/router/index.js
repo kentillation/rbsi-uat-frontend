@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import NewContact from '../views/NewContact.vue';
+import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
 import CustomerInfo from '../views/CustomerInfo.vue';
@@ -7,6 +9,9 @@ const routes = [
     { path: '/', name: 'Login', component: Login },
     { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: true } },
     { path: '/customer-info', name: 'CustomerInfo', component: CustomerInfo, meta: { requiresAuth: true } },
+    { path: '/new-contact', name: 'NewContact', component: NewContact },
+    { path: '/register', name: 'Register', component: Register },
+
 ];
 
 const router = createRouter({
