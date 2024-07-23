@@ -37,12 +37,12 @@ export default {
             loading: true,
             customer_info: [],
             headers: [
-                { title: 'CID', value: 'CID', sortable: false },
-                { title: 'Customer Name', value: 'FullName', sortable: true },
-                { title: 'Birth date', value: 'BirthDate', sortable: true },
-                { title: 'Mobile No.', value: 'Mobile1', sortable: true },
-                { title: 'Address', value: 'FullAddress', sortable: true },
-                { title: 'Email', value: 'Email1', sortable: true },
+                { title: 'Last Name', value: 'name3', sortable: false },
+                { title: 'First Name', value: 'name2', sortable: false },
+                { title: 'Middle Name', value: 'name1', sortable: false },
+                { title: 'Customer Name', value: 'fullName', sortable: true },
+                { title: 'Created At', value: 'created_at', sortable: true },
+                { title: 'Updated At', value: 'updated_at', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
             dialog: false,
@@ -62,8 +62,8 @@ export default {
                 });
                 this.customer_info = response.data.map(customer => ({
                     ...customer,
-                    FullName: `${customer.Name2} ${customer.Name3} ${customer.Name1}`.trim(),
-                    FullAddress: `${customer.Line1}, ${customer.Line2} ${customer.Line3}`.trim()
+                    fullName: `${customer.name2} ${customer.name3} ${customer.name1}`.trim(),
+                    // FullAddress: `${customer.Line1}, ${customer.Line2} ${customer.Line3}`.trim()
                 }));
             } catch (error) {
                 console.error('Error fetching customer_info:', error);
