@@ -9,7 +9,7 @@
                     <v-card-text>
                         <v-form @submit.prevent="login" ref="form">
                             <div class="text-subtitle-1 text-medium-emphasis">Email</div>
-                            <v-text-field v-model="email" :rules="[emailRule]" autocomplete="username" required
+                            <v-text-field v-model="email" :rules="[emailRule]" autocomplete="email" required
                                 density="compact" placeholder="Email address" prepend-inner-icon="mdi-email-outline"
                                 variant="outlined"></v-text-field>
                             <div class="text-subtitle-1 text-medium-emphasis mt-2">Password</div>
@@ -66,7 +66,7 @@ export default {
             this.validating = true;
             try {
                 if (this.$refs.form.validate()) {
-                    const response = await apiClient.post('/login', {
+                    const response = await apiClient.post('/admin-login', {
                         email: this.email,
                         password: this.password,
                     });

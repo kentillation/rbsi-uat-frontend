@@ -20,8 +20,7 @@
         <v-divider></v-divider>
         <v-list density="compact" nav>
           <v-list-item prepend-icon="mdi-home" @click="home">Home</v-list-item>
-          <v-list-item prepend-icon="mdi-account-multiple" @click="customerinfo">Customers List</v-list-item>
-          <v-list-item prepend-icon="mdi-plus-thick" @click="newcontact">New Contact</v-list-item>
+          <v-list-item prepend-icon="mdi-account-multiple" @click="customerinfo">Customers</v-list-item>
           <v-list-item prepend-icon="mdi-logout" @click="logout">Signout</v-list-item>
         </v-list>
       </v-navigation-drawer>
@@ -63,13 +62,6 @@ export default {
     async customerinfo() {
       try {
         this.$router.push('/customer-info');
-      } catch (error) {
-        console.error('Error in accessing customer info:', error);
-      }
-    },
-    async newcontact() {
-      try {
-        this.$router.push('/new-contact');
       } catch (error) {
         console.error('Error in accessing customer info:', error);
       }

@@ -9,7 +9,7 @@ const routes = [
     { path: '/', name: 'Login', component: Login },
     { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: true } },
     { path: '/customer-info', name: 'CustomerInfo', component: CustomerInfo, meta: { requiresAuth: true } },
-    { path: '/new-contact', name: 'NewContact', component: NewContact },
+    { path: '/new-contact', name: 'NewContact', component: NewContact, meta: { requiresAuth: true } },
     { path: '/register', name: 'Register', component: Register },
 
 ];
