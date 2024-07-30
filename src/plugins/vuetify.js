@@ -8,11 +8,11 @@ import { createVuetify } from 'vuetify'
 const vuetify = createVuetify({
   theme: {
     defaultTheme: 'dark',
-    themes: {
-      dark: {
-        dark: true,
-      },
-    },
+    // themes: {
+    //   dark: {
+    //     dark: true,
+    //   },
+    // },
   },
 });
 

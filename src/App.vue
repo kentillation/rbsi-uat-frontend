@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-main>
       <v-app-bar prominent>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
