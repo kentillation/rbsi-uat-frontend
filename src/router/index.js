@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import NewContact from '../views/NewContact.vue';
+import NewClient from '../views/NewClient.vue';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
@@ -9,7 +9,7 @@ const routes = [
     { path: '/', name: 'Login', component: Login },
     { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: true } },
     { path: '/customer-info', name: 'CustomerInfo', component: CustomerInfo, meta: { requiresAuth: true } },
-    { path: '/new-contact', name: 'NewContact', component: NewContact, meta: { requiresAuth: true } },
+    { path: '/new-contact', name: 'NewClient', component: NewClient, meta: { requiresAuth: true } },
     { path: '/register', name: 'Register', component: Register },
 
 ];

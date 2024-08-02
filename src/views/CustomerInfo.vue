@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <h1>Customers Information</h1>
-        <v-data-table :headers="headers" :items="customer_info" :loading="loading" density="compact"
+        <v-data-table :headers="headers" :items="client_info" :loading="loading" density="compact"
             class="elevation-1">
             <template v-slot:loading>
                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -10,7 +10,7 @@
             <template v-slot:top>
                 <v-toolbar flat>
                     <v-toolbar-title>List of Customers Information</v-toolbar-title>
-                    <v-btn prepend-icon="mdi-plus" text class="bg-teal-darken-3" @click="toNewContact">Open New Contact</v-btn>
+                    <v-btn prepend-icon="mdi-plus" text class="bg-teal-darken-3" @click="toNewClient">Open New Contact</v-btn>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <div class="text-right">
                         <v-btn :disabled="loading" prepend-icon="mdi-refresh" class="me-3 ps-7" variant="outlined"
@@ -35,11 +35,11 @@ export default {
     data() {
         return {
             loading: true,
-            customer_info: [],
+            client_info: [],
             headers: [
-                { title: 'Last Name', value: 'name3', sortable: false },
-                { title: 'First Name', value: 'name2', sortable: false },
-                { title: 'Middle Name', value: 'name1', sortable: false },
+                { title: 'Last Name', value: 'last_name', sortable: false },
+                { title: 'First Name', value: 'first_name', sortable: false },
+                { title: 'Middle Name', value: 'middle_name', sortable: false },
                 { title: 'Customer Name', value: 'fullName', sortable: true },
                 { title: 'Created At', value: 'created_at', sortable: true },
                 { title: 'Updated At', value: 'updated_at', sortable: true },
@@ -60,19 +60,19 @@ export default {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                     }
                 });
-                this.customer_info = response.data.map(customer => ({
+                this.client_info = response.data.map(customer => ({
                     ...customer,
-                    fullName: `${customer.name2} ${customer.name3} ${customer.name1}`.trim(),
+                    fullName: `${customer.last_name}, ${customer.first_name} ${customer.middle_name}`.trim(),
                     // FullAddress: `${customer.Line1}, ${customer.Line2} ${customer.Line3}`.trim()
                 }));
             } catch (error) {
-                console.error('Error fetching customer_info:', error);
+                console.error('Error fetching client_info:', error);
             } finally {
                 this.loading = false;
             }
         },
-        toNewContact() {
-            this.$router.push({ name: 'NewContact' });
+        toNewClient() {
+            this.$router.push({ name: 'NewClient' });
         },
         onRefresh() {
             this.loading = true
@@ -87,3 +87,9 @@ export default {
     }
 };
 </script>
+
+<style>
+tbody .v-data-table__td {
+    color: #006e53;
+}
+</style>

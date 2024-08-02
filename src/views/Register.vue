@@ -9,15 +9,15 @@
           <v-card-text>
             <v-form @submit.prevent="register" ref="form">
               <div class="text-subtitle-1 text-medium-emphasis">Last Name</div>
-              <v-text-field v-model="name1" :rules="[name1Rule]" required density="compact"
+              <v-text-field v-model="first_name" :rules="[first_nameRule]" required density="compact"
                 placeholder="Enter your last name" prepend-inner-icon="mdi-account-outline"
                 variant="outlined"></v-text-field>
               <div class="text-subtitle-1 text-medium-emphasis mt-2">First Name</div>
-              <v-text-field v-model="name2" :rules="[name2Rule]" required density="compact"
+              <v-text-field v-model="midlle_name" :rules="[midlle_nameRule]" required density="compact"
                 placeholder="Enter your first name" prepend-inner-icon="mdi-account-outline"
                 variant="outlined"></v-text-field>
               <div class="text-subtitle-1 text-medium-emphasis mt-2">Middle Name</div>
-              <v-text-field v-model="name3" :rules="[name3Rule]" required density="compact"
+              <v-text-field v-model="last_name" :rules="[last_nameRule]" required density="compact"
                 placeholder="Enter your middle name" prepend-inner-icon="mdi-account-outline"
                 variant="outlined"></v-text-field>
               <v-btn :disabled="!isFormValid || validating" color="white" type="submit" block
@@ -45,12 +45,12 @@ export default {
   name: 'Register',
   data() {
     return {
-      name1: '',
-      name2: '',
-      name3: '',
-      name1Rule: (v) => !!v || 'First name is required',
-      name2Rule: (v) => !!v || 'Middle name is required',
-      name3Rule: (v) => !!v || 'Last name is required',
+      first_name: '',
+      midlle_name: '',
+      last_name: '',
+      first_nameRule: (v) => !!v || 'First name is required',
+      midlle_nameRule: (v) => !!v || 'Middle name is required',
+      last_nameRule: (v) => !!v || 'Last name is required',
       validating: false,
       snackbar: {
         visible: false,
@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     isFormValid() {
-      return this.name1 !== '' && this.name2 !== '' && this.name3 !== '';
+      return this.first_name !== '' && this.midlle_name !== '' && this.last_name !== '';
     }
   },
   methods: {
@@ -70,9 +70,9 @@ export default {
       try {
         if (this.$refs.form.validate()) {
           const response = await apiClient.post('/register', {
-            name1: this.name1,
-            name2: this.name2,
-            name3: this.name3
+            first_name: this.first_name,
+            midlle_name: this.midlle_name,
+            last_name: this.last_name
           });
 
           if (response.status === 200) {
