@@ -7,7 +7,7 @@
                 <v-sheet elevation="3" rounded="lg">
                     <v-card>
                         <v-card-text>
-                            <v-card border="opacity-50 sm" class="mb-5">
+                            <v-card border="opacity-50 sm" class="mb-10">
                                 <v-container>
                                     <h3 class="mb-4">Basic Information</h3>
                                     <v-row justify="center">
@@ -21,8 +21,8 @@
                                                 :items="titleItems" item-title="title" item-value="id" return-object></v-autocomplete>
                                         </v-col>
                                         <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                            <v-autocomplete v-model="customer_status" :rules="[customerstatusRule]"
-                                                label="Customer Status" :items="customerstatusItems" item-title="customer_status" item-value="id" return-object></v-autocomplete>
+                                            <v-autocomplete v-model="client_status" :rules="[clientstatusRule]"
+                                                label="Client Status" :items="clientstatusItems" item-title="client_status" item-value="id" return-object></v-autocomplete>
                                         </v-col>
                                         <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                             <v-text-field v-model="first_name" :rules="[firstnameRule]" label="First Name"
@@ -64,15 +64,15 @@
                                                         </v-col>
                                                         <v-col cols="12">
                                                             <v-autocomplete v-model="gender" :rules="[genderRule]"
-                                                                label="Gender" :items="genderItems"></v-autocomplete>
+                                                                label="Gender" :items="genderItems" item-title="gender" item-value="id" return-object></v-autocomplete>
                                                         </v-col>
                                                         <v-col cols="12">
                                                             <v-autocomplete v-model="civil_status"
                                                                 :rules="[civilstatusRule]" label="Civil status"
-                                                                :items="civilstatusItems"></v-autocomplete>
+                                                                :items="civilstatusItems" item-title="civil_status" item-value="id" return-object></v-autocomplete>
                                                         </v-col>
                                                         <v-col cols="12">
-                                                            <v-text-field disabled>Birthdate: {{
+                                                            <v-text-field v-model="birthdate" disabled>Birthdate: {{
                                                                 formattedBirthdate }}</v-text-field>
                                                             <v-date-picker :min="minDate" :max="maxDate"
                                                                 v-model="birthdate"></v-date-picker>
@@ -155,7 +155,7 @@
                                 <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                     <v-card border="opacity-50 sm" class="mb-5">
                                         <v-container>
-                                            <h3 class="mb-4">Customer Classification Codes</h3>
+                                            <h3 class="mb-4">Client Classification Codes</h3>
                                             <v-row>
                                                 <v-col cols="12">
                                                     <v-autocomplete v-model="un_defined" :rules="[undefinedRule]"
@@ -177,11 +177,11 @@
                                                 </v-col>
                                                 <v-col cols="12">
                                                     <v-text-field v-model="cus_lang_pref"
-                                                        label="Customer Language Preferences"></v-text-field>
+                                                        label="Client Language Preferences"></v-text-field>
                                                 </v-col>
                                                 <v-col cols="12">
                                                     <v-autocomplete v-model="cus_tax_code" :rules="[custaxcodeRule]"
-                                                        label="Customer Tax Code" :items="custaxcodeItems"></v-autocomplete>
+                                                        label="Client Tax Code" :items="custaxcodeItems"></v-autocomplete>
                                                 </v-col>
                                             </v-row>
                                         </v-container>
@@ -219,9 +219,9 @@ export default {
             title: '',
             titleItems: [],
             titleRule: (v) => !!v || 'Title is required',
-            customer_status: '',
-            customerstatusItems: [],
-            customerstatusRule: (v) => !!v || 'Customer status is required',
+            client_status: '',
+            clientstatusItems: [],
+            clientstatusRule: (v) => !!v || 'Client status is required',
             first_name: '',
             middle_name: '',
             last_name: '',
@@ -235,10 +235,10 @@ export default {
             tin: '',
             gender: '',
             genderRule: (v) => !!v || 'Gender is required',
-            genderItems: ['000 - Male', '001 - Female'],
-            civilstatusRule: (v) => !!v || 'Civil status is required',
+            genderItems: [],
             civil_status: '',
-            civilstatusItems: ['D00 - Divorced', 'M00 - Married', 'S00 - Single', 'W00 - Widowed'],
+            civilstatusItems: [],
+            civilstatusRule: (v) => !!v || 'Civil status is required',
             mobile1: '',
             mobile1Rule: (v) => !!v || 'Mobile 1 is required',
             mobile2: '',
@@ -268,7 +268,7 @@ export default {
             timezone: 'Asia/Manila',
             cus_lang_pref: 'English - UK',
             cus_tax_code: '',
-            custaxcodeRule: (v) => !!v || 'Customer Tax Code is required',
+            custaxcodeRule: (v) => !!v || 'Client Tax Code is required',
             custaxcodeItems: ['001 - Tax Withheld', '002 - Tax Free'],
             un_defined: '',
             undefinedRule: (v) => !!v || 'Undefined code is required',
@@ -354,7 +354,7 @@ export default {
                 this.display_name !== '' &&
                 this.initial !== '' &&
                 this.title !== '' &&
-                this.customer_status !== '' &&
+                this.client_status !== '' &&
                 this.gender !== '' &&
                 this.civil_status !== '' &&
                 this.mobile1 !== '' &&
@@ -410,12 +410,34 @@ export default {
             }
         },
         // Added
-        async fetchCustomerStatusItems() {
+        async fetchClientStatusItems() {
             try {
-                const response = await apiClient.get('/customer_status');
-                this.customerstatusItems = response.data;
+                const response = await apiClient.get('/client_status');
+                this.clientstatusItems = response.data;
             } catch (error) {
-                this.snackbar.message = 'Failed to fetch customer status';
+                this.snackbar.message = 'Failed to fetch client status';
+                this.snackbar.color = 'error';
+                this.snackbar.visible = true;
+            }
+        },
+        // Added
+        async fetchGenderItems() {
+            try {
+                const response = await apiClient.get('/genders');
+                this.genderItems = response.data;
+            } catch (error) {
+                this.snackbar.message = 'Failed to fetch gender';
+                this.snackbar.color = 'error';
+                this.snackbar.visible = true;
+            }
+        },
+        // Added
+        async fetchCivil_StatusItems() {
+            try {
+                const response = await apiClient.get('/civil_status');
+                this.civilstatusItems = response.data;
+            } catch (error) {
+                this.snackbar.message = 'Failed to fetch civil status';
                 this.snackbar.color = 'error';
                 this.snackbar.visible = true;
             }
@@ -432,7 +454,7 @@ export default {
                         display_name: this.display_name,
                         initial: this.initial,
                         title: this.title,
-                        customer_status: this.customer_status,
+                        client_status: this.client_status,
                         gender: this.gender,
                         civil_status: this.civil_status,
                         mobile1: this.mobile1,
@@ -501,7 +523,9 @@ export default {
     mounted() {
         this.fetchTypesItems();
         this.fetchTitlesItems();
-        this.fetchCustomerStatusItems();
+        this.fetchClientStatusItems();
+        this.fetchGenderItems();
+        this.fetchCivil_StatusItems();
     }
 };
 </script>
