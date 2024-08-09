@@ -37,10 +37,11 @@ export default {
             loading: true,
             client_info: [],
             headers: [
+                { title: 'CID', value: 'cid', sortable: false },
                 { title: 'Last Name', value: 'last_name', sortable: false },
                 { title: 'First Name', value: 'first_name', sortable: false },
                 { title: 'Middle Name', value: 'middle_name', sortable: false },
-                { title: 'Client Name', value: 'fullName', sortable: true },
+                { title: 'Display Name', value: 'display_name', sortable: true },
                 { title: 'Created At', value: 'created_at', sortable: true },
                 { title: 'Updated At', value: 'updated_at', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }
@@ -60,9 +61,10 @@ export default {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                     }
                 });
+                //Reserve
                 this.client_info = response.data.map(client => ({
                     ...client,
-                    fullName: `${client.last_name}, ${client.first_name} ${client.middle_name}`.trim(),
+                    // fullName: `${client.last_name}, ${client.first_name} ${client.middle_name}`.trim(),
                     // FullAddress: `${client.Line1}, ${client.Line2} ${client.Line3}`.trim()
                 }));
             } catch (error) {
@@ -78,6 +80,7 @@ export default {
             this.loading = true
             setTimeout(() => {
                 this.loading = false
+                this.fetchClientInfo()
             }, 2000)
         },
         viewItem(item) {

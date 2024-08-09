@@ -12,6 +12,18 @@
                                     <h3 class="mb-4">Basic Information</h3>
                                     <v-row justify="center">
                                         <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                            <v-text-field v-model="first_name" :rules="[firstnameRule]"
+                                                label="First Name" clearable></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                            <v-text-field v-model="middle_name" :rules="[middlenameRule]"
+                                                label="Middle Name" clearable></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                            <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name"
+                                                clearable></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                             <v-autocomplete v-model="type" :rules="[typeRule]" label="Type"
                                                 :items="typeItems" item-title="type" item-value="id">
                                             </v-autocomplete>
@@ -24,18 +36,6 @@
                                             <v-autocomplete v-model="client_status" :rules="[clientstatusRule]"
                                                 label="Client Status" :items="clientstatusItems"
                                                 item-title="client_status" item-value="id"></v-autocomplete>
-                                        </v-col>
-                                        <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                            <v-text-field v-model="first_name" :rules="[firstnameRule]"
-                                                label="First Name" clearable></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                            <v-text-field v-model="middle_name" :rules="[middlenameRule]"
-                                                label="Middle Name" clearable></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                            <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name"
-                                                clearable></v-text-field>
                                         </v-col>
                                         <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                             <v-text-field v-model="initial" label="Initial"></v-text-field>
@@ -217,6 +217,7 @@
 
 <script>
 import apiClient from '../axios';
+import { debounce } from 'lodash';
 
 export default {
     name: 'NewContact',
@@ -240,7 +241,7 @@ export default {
             initial: '',
             display_name: '',
             displaynameRule: (v) => !!v || 'Display name is required',
-            staff_or_not: 0,
+            staff_or_not: false,
             tin: '',
             gender: '',
             genderItems: [],
@@ -298,7 +299,22 @@ export default {
             }
         };
     },
+    watch: {
+        first_name: 'debouncedCheckIdentity',
+        middle_name: 'debouncedCheckIdentity',
+        last_name: 'debouncedCheckIdentity',
+        displayName(newVal) {
+            this.display_name = newVal;
+        }
+    },
     computed: {
+        displayName() {
+            const firstName = this.first_name || '';
+            const middleName = this.middle_name ? `${this.middle_name.charAt(0)}.` : '';
+            const lastName = this.last_name || '';
+
+            return `${lastName}, ${firstName} ${middleName}`.trim();
+        },
         formattedBirthdate() {
             if (!this.birthdate) return '';
             const date = new Date(this.birthdate);
@@ -486,14 +502,38 @@ export default {
                 this.snackbar.visible = true;
             }
         },
+        debouncedCheckIdentity: debounce(function () {
+            this.checkIdentity();
+        }, 100),
+        async checkIdentity() {
+            try {
+                if (!this.first_name || !this.middle_name || !this.last_name) return;
+                const response = await apiClient.get('/check_identity', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                    },
+                    params: {
+                        first_name: this.first_name,
+                        middle_name: this.middle_name,
+                        last_name: this.last_name
+                    }
+                });
+                if (response.data.exists) {
+                    this.showSnackbar('Identity already exists.', 'warning');
+                }
+                else {
+                    this.showSnackbar('Ready to proceed.', 'success');
+                }
+            } catch (error) {
+                this.showSnackbar('Error checking identity. Please try again!', 'error');
+            }
+        },
         async new_client_form() {
             this.validating = true;
             try {
                 if (this.$refs.form.validate()) {
-                    // Create a new FormData object
+                    const staffValue = this.staff_or_not ? 1 : 0;
                     const formData = new FormData();
-
-                    // Append all form data to the FormData object
                     formData.append('type', this.type);
                     formData.append('title', this.title);
                     formData.append('client_status', this.client_status);
@@ -502,7 +542,7 @@ export default {
                     formData.append('last_name', this.last_name);
                     formData.append('initial', this.initial);
                     formData.append('display_name', this.display_name);
-                    formData.append('staff_or_not', this.staff_or_not);
+                    formData.append('staff_or_not', staffValue);
                     formData.append('tin', this.tin);
                     formData.append('gender', this.gender);
                     formData.append('civil_status', this.civil_status);
@@ -522,21 +562,20 @@ export default {
                     formData.append('undef', this.undef);
                     formData.append('entity', this.entity);
                     formData.append('employment', this.employment);
-                    formData.append('image_file', this.image_file); // Append the file
+                    formData.append('image_file', this.image_file);
                     formData.append('cus_lang_pref', this.cus_lang_pref);
                     formData.append('tax_code', this.tax_code);
 
-                    // Send the FormData object as the request payload
                     const response = await apiClient.post('/new_client_info', formData, {
                         headers: {
-                            'Content-Type': 'multipart/form-data', // Ensure the correct content type is set
+                            'Content-Type': 'multipart/form-data',
                             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                         }
                     });
 
                     if (response.status === 200) {
-                        this.showSnackbar('Account has been saved successfully.', 'success');
-                        this.$router.push('/client_info');
+                        this.showSnackbar('New client has been saved successfully.', 'success');
+                        this.resetForm();
                     }
                 }
             } catch (error) {
@@ -547,9 +586,6 @@ export default {
                     switch (error.response.status) {
                         case 422:
                             message = 'Invalid input.';
-                            break;
-                        case 409:
-                            message = 'Account already exists.';
                             break;
                         case 500:
                             message = 'Internal server error. Please try again later.';
@@ -567,9 +603,38 @@ export default {
             } finally {
                 this.validating = false;
             }
-        }
-
-        ,
+        },
+        resetForm() {
+            this.first_name = '';
+            this.middle_name = '';
+            this.last_name = '';
+            this.initial = '';
+            this.display_name = '';
+            this.staff_or_not = 0;
+            this.tin = '';
+            this.gender = '';
+            this.civil_status = '';
+            this.birthdate = null;
+            this.mobile1 = '';
+            this.mobile2 = '';
+            this.email = '';
+            this.nationality = '';
+            this.address_line1 = '';
+            this.address_line2 = '';
+            this.address_line3 = '';
+            this.address_line4 = '';
+            this.postal_code = '';
+            this.address_type = '';
+            this.telephone = '';
+            this.fax = '';
+            this.undef = '';
+            this.entity = '';
+            this.employment = '';
+            this.image_file = '';
+            this.cus_lang_pref = 'English - UK';
+            this.tax_code = '';
+            this.$refs.form.resetValidation();
+        },
         showSnackbar(message, color) {
             this.snackbar.message = message;
             this.snackbar.color = color;
