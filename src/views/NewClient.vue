@@ -259,7 +259,7 @@ export default {
             mobile2: '',
             email: '',
             emailRule: (v) => !!v || 'Email is required',
-            nationality: '',
+            nationality: 'Filipino',
             nationalityRule: (v) => !!v || 'Nationality is required',
             address_line1: '',
             addressline1Rule: (v) => !!v || 'Address Line 1 is required',
@@ -575,7 +575,7 @@ export default {
 
                     if (response.status === 200) {
                         this.showSnackbar('New client has been saved successfully.', 'success');
-                        this.resetForm();
+                        // this.resetForm();
                     }
                 }
             } catch (error) {
@@ -618,7 +618,7 @@ export default {
             this.mobile1 = '';
             this.mobile2 = '';
             this.email = '';
-            this.nationality = '';
+            this.nationality = 'Filipino';
             this.address_line1 = '';
             this.address_line2 = '';
             this.address_line3 = '';
