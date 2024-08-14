@@ -2,16 +2,17 @@
 <template>
     <v-container>
         <h1>Clients Information</h1>
-        <v-data-table :headers="headers" :items="client_info" :loading="loading" density="compact"
-            class="elevation-1">
+        <v-data-table :headers="headers" :items="client_info" :loading="loading" density="compact" class="elevation-1">
             <template v-slot:loading>
                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
             </template>
             <template v-slot:top>
                 <v-toolbar flat>
-                    <v-toolbar-title>List of Clients Information</v-toolbar-title>
-                    <v-btn prepend-icon="mdi-plus" text class="bg-teal-darken-3" @click="toNewClient">Open New Contact</v-btn>
+                    <v-toolbar-title>List of Clients Info</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-3 me-4" @click="toNewClient" text>
+                        New<span class="to-hide">&nbsp;Contact</span>
+                    </v-btn>
                     <div class="text-right">
                         <v-btn :disabled="loading" prepend-icon="mdi-refresh" class="me-3 ps-7" variant="outlined"
                             @click="onRefresh"></v-btn>
@@ -24,6 +25,59 @@
                 </v-btn>
             </template>
         </v-data-table>
+
+        <!-- Dialog for viewing client details -->
+        <v-dialog v-model="dialog" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Client Details</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-container>
+                        <v-row>
+                            <v-col cols="12">
+                                <p><span class="text-grey-lighten-1">CID: </span>{{ selectedClient?.cid }}</p>
+                                <p><span class="text-grey-lighten-1">First Name: </span>{{ selectedClient?.first_name }}</p>
+                                <p><span class="text-grey-lighten-1">Middle Name: </span>{{ selectedClient?.middle_name }}</p>
+                                <p><span class="text-grey-lighten-1">Last Name: </span>{{ selectedClient?.last_name }}</p>
+                                <p><span class="text-grey-lighten-1">Type: </span>{{ getTitle(selectedClient?.type, typeItems, 'type') }} </p>
+                                <p><span class="text-grey-lighten-1">Title: </span>{{ getTitle(selectedClient?.title, titleItems, 'title') }}</p>
+                                <p><span class="text-grey-lighten-1">Client Status: </span>{{ getTitle(selectedClient?.client_status, clientstatusItems) }}</p>
+                                <p><span class="text-grey-lighten-1">Initial: </span>{{ selectedClient?.initial }}</p>
+                                <p><span class="text-grey-lighten-1">Display Name: </span>{{ selectedClient?.display_name }}</p>
+                                <p><span class="text-grey-lighten-1">Staff or Not: </span>{{ selectedClient?.staff_or_not }}</p>
+                                <p><span class="text-grey-lighten-1">TIN: </span>{{ selectedClient?.tin }}</p>
+                                <p><span class="text-grey-lighten-1">Gender: </span>{{ getTitle(selectedClient?.gender, genderItems, 'gender') }}</p>
+                                <p><span class="text-grey-lighten-1">Civil Status: </span>{{ getTitle(selectedClient?.civil_status, civilstatusItems, 'civil_status') }}</p>
+                                <p><span class="text-grey-lighten-1">Birthdate: </span>{{ selectedClient?.birthdate }}</p>
+                                <p><span class="text-grey-lighten-1">Mobile 1: </span>{{ selectedClient?.mobile1 }}</p>
+                                <p><span class="text-grey-lighten-1">Mobile 2: </span>{{ selectedClient?.mobile2 }}</p>
+                                <p><span class="text-grey-lighten-1">Email: </span>{{ selectedClient?.email }}</p>
+                                <p><span class="text-grey-lighten-1">Nationality: </span>{{ selectedClient?.nationality }}</p>
+                                <p><span class="text-grey-lighten-1">Address Line 1: </span>{{ selectedClient?.address_line1 }}</p>
+                                <p><span class="text-grey-lighten-1">Address Line 2: </span>{{ selectedClient?.address_line2 }}</p>
+                                <p><span class="text-grey-lighten-1">Address Line 3: </span>{{ selectedClient?.address_line3 }}</p>
+                                <p><span class="text-grey-lighten-1">Address Line 4: </span>{{ selectedClient?.address_line4 }}</p>
+                                <p><span class="text-grey-lighten-1">Postal Code: </span>{{ selectedClient?.postal_code }}</p>
+                                <p><span class="text-grey-lighten-1">Address Type: </span>{{ getTitle(selectedClient?.address_type, addresstypeItems, 'address_type') }}</p>
+                                <p><span class="text-grey-lighten-1">Telephone: </span>{{ selectedClient?.telephone }}</p>
+                                <p><span class="text-grey-lighten-1">Fax: </span>{{ selectedClient?.fax }}</p>
+                                <p><span class="text-grey-lighten-1">Undefined Field: </span>{{ getTitle(selectedClient?.undef, undefItems, 'undef') }}</p>
+                                <p><span class="text-grey-lighten-1">Entity: </span>{{ getTitle(selectedClient?.entity, entityItems) }}</p>
+                                <p><span class="text-grey-lighten-1">Employment: </span>{{ getTitle(selectedClient?.employment, employmentItems, 'employment') }}</p>
+                                <p><span class="text-grey-lighten-1">Image File: </span>{{ selectedClient?.image_file }}</p>
+                                <p><span class="text-grey-lighten-1">Customer Language Preference: </span>{{ selectedClient?.cus_lang_pref }}</p>
+                                <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code, taxcodeItems, 'tax_code') }}</p>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn class="bg-red" text @click="dialog = false">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -47,11 +101,29 @@ export default {
                 { title: 'Actions', value: 'action', sortable: false }
             ],
             dialog: false,
-            selectedClient: null
+            selectedClient: null,
+            pollingInterval: 1000, // Polling every second
+            pollingTimer: null,
+            typeItems: [],
+            titleItems: [],
+            clientstatusItems: [],
+            genderItems: [],
+            civilstatusItems: [],
+            addresstypeItems: [],
+            undefItems: [],
+            entityItems: [],
+            employmentItems: [],
+            taxcodeItems: []
         };
     },
     mounted() {
         this.fetchClientInfo();
+        this.startPolling();
+    },
+    beforeUnmount() {
+        if (this.pollingTimer) {
+            clearInterval(this.pollingTimer);
+        }
     },
     methods: {
         async fetchClientInfo() {
@@ -64,6 +136,8 @@ export default {
                 //Reserve
                 this.client_info = response.data.map(client => ({
                     ...client,
+                    created_at: this.formatDate(client.created_at),
+                    updated_at: this.formatDate(client.updated_at)
                     // fullName: `${client.last_name}, ${client.first_name} ${client.middle_name}`.trim(),
                     // FullAddress: `${client.Line1}, ${client.Line2} ${client.Line3}`.trim()
                 }));
@@ -72,6 +146,10 @@ export default {
             } finally {
                 this.loading = false;
             }
+        },
+        formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
         },
         toNewClient() {
             this.$router.push({ name: 'NewClient' });
@@ -85,8 +163,17 @@ export default {
         },
         viewItem(item) {
             this.selectedClient = item;
-            console.log('View item:', item);
-        }
+            this.dialog = true;
+        },
+        startPolling() {
+            this.pollingTimer = setInterval(() => {
+                this.fetchClientInfo();
+            }, this.pollingInterval);
+        },
+        getTitle(id, items, itemKey) {
+            const item = items.find(i => i.id === id);
+            return item ? item[itemKey] : 'Unknown';
+        },
     }
 };
 </script>
@@ -94,5 +181,11 @@ export default {
 <style>
 tbody .v-data-table__td {
     color: #006e53;
+}
+
+@media (max-width: 530px) {
+    .to-hide {
+        display: none;
+    }
 }
 </style>

@@ -3,7 +3,7 @@
     <v-main>
       <v-app-bar prominent>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-toolbar-title>Rural Bank of Sagay, Inc.</v-toolbar-title>
+        <v-toolbar-title><span class="to-hide-head">Rural Bank of Sagay, Inc.</span><span class="to-show-head">RBSI</span></v-toolbar-title>
         <v-spacer></v-spacer>
         <template v-if="$vuetify.display.mdAndUp">
           <v-btn icon="mdi-magnify" variant="text"></v-btn>
@@ -82,3 +82,17 @@ export default {
   }
 };
 </script>
+
+<style>
+.to-show-head {
+  display: none;
+}
+@media (max-width: 450px) {
+    .to-hide-head {
+        display: none;
+    }
+    .to-show-head {
+      display: flex;
+    }
+}
+</style>

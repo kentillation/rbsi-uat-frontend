@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <h1>New Client</h1>
-        <v-form @submit.prevent="new_client_form" ref="form">
+        <v-form @submit.prevent="showConfirmDialog" ref="form">
             <v-container>
                 <v-sheet elevation="3" rounded="lg">
                     <v-card>
@@ -200,18 +200,68 @@
                         </v-card-text>
                     </v-card>
                 </v-sheet>
-            </v-container>
-            <v-container>
-                <div class="text-right">
-                    <v-btn :disabled="!isFormValid || validating" color="white" type="submit" block
+                <div class="mt-4 w-100 d-flex justify-end">
+                    <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" color="white"
                         class="bg-orange-darken-4 mb-8" size="large" variant="tonal" :loading="validating" height="40"
-                        text="Validate" width="135" rounded>
-                        Proceed
+                        width="135" rounded>
+                        Submit
                     </v-btn>
                 </div>
             </v-container>
         </v-form>
         <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>{{ snackbar.message }}</v-snackbar>
+
+        <v-dialog v-model="dialog" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Confirm Submission</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-container>
+                        <v-row>
+                            <v-col cols="12">
+                                <p><span class="text-grey-lighten-1">First Name: </span><strong>{{ first_name }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems, 'type') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Title: </span><strong>{{ getTitle(title, titleItems, 'title') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{ getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' : 'No' }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">TIN: </span><strong>{{ tin }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender, genderItems, 'gender') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Civil Status: </span><strong>{{ getTitle(civil_status, civilstatusItems, 'civil_status') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Mobile 2: </span><strong>{{ mobile2 }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Email: </span><strong>{{ email }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Nationality: </span><strong>{{ nationality }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Address Line 1: </span><strong>{{ address_line1 }}</strong></p>
+                                <p><span class="text-grey-lighten-1">Address Line 2: </span><strong>{{ address_line2 }}</strong></p>
+                                <p><span class="text-grey-lighten-1">Address Line 3: </span><strong>{{ address_line3 }}</strong></p>
+                                <p><span class="text-grey-lighten-1">Address Line 4: </span><strong>{{ address_line4 }}</strong></p>
+                                <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Address Type: </span><strong>{{ getTitle(address_type, addresstypeItems, 'address_type') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Telephone: </span><strong>{{ telephone }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Undefined: </span><strong>{{ getTitle(undef, undefItems, 'undef') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity, entityItems, 'entity') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment, employmentItems, 'employment') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Client Language Preferences: </span><strong>{{ cus_lang_pref }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ? 'Selected' : 'None' }}</strong> </p>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1" text @click="submitForm">Confirm</v-btn>
+                    <v-btn color="red darken-1" text @click="dialog = false">Cancel</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -291,6 +341,7 @@ export default {
             tax_code: '',
             taxcodeItems: [],
             taxcodeRule: (v) => !!v || 'Client Tax Code is required',
+            dialog: false,
             validating: false,
             snackbar: {
                 visible: false,
@@ -519,7 +570,7 @@ export default {
                     }
                 });
                 if (response.data.exists) {
-                    this.showSnackbar('Identity already exists.', 'warning');
+                    this.showSnackbar('Name already exists.', 'warning');
                 }
                 else {
                     this.showSnackbar('Ready to proceed.', 'success');
@@ -528,7 +579,16 @@ export default {
                 this.showSnackbar('Error checking identity. Please try again!', 'error');
             }
         },
-        async new_client_form() {
+        showConfirmDialog() {
+            if (this.isFormValid) {
+                this.dialog = true;
+            }
+        },
+        getTitle(value, items, titleKey) {
+            const item = items.find(item => item.id === value);
+            return item ? item[titleKey] : 'Unknown';
+        },
+        async submitForm() {
             this.validating = true;
             try {
                 if (this.$refs.form.validate()) {
@@ -577,6 +637,8 @@ export default {
                         this.showSnackbar('New client has been saved successfully.', 'success');
                         // this.resetForm();
                     }
+
+                    this.dialog = false;
                 }
             } catch (error) {
                 let message = 'An unknown error occurred.';
@@ -589,6 +651,9 @@ export default {
                             break;
                         case 500:
                             message = 'Internal server error. Please try again later.';
+                            break;
+                        case 409:
+                            message = 'Client already exist.';
                             break;
                         default:
                             message = `Error: ${error.response.status}`;
