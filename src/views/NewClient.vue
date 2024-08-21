@@ -351,9 +351,9 @@ export default {
         };
     },
     watch: {
-        first_name: 'debouncedCheckIdentity',
-        middle_name: 'debouncedCheckIdentity',
-        last_name: 'debouncedCheckIdentity',
+        first_name: 'debouncedCheck',
+        middle_name: 'debouncedCheck',
+        last_name: 'debouncedCheck',
         displayName(newVal) {
             this.display_name = newVal;
         }
@@ -553,13 +553,13 @@ export default {
                 this.snackbar.visible = true;
             }
         },
-        debouncedCheckIdentity: debounce(function () {
-            this.checkIdentity();
+        debouncedCheck: debounce(function () {
+            this.checkWatchList();
         }, 100),
-        async checkIdentity() {
+        async checkWatchList() {
             try {
                 if (!this.first_name || !this.middle_name || !this.last_name) return;
-                const response = await apiClient.get('/check_identity', {
+                const response = await apiClient.get('/watchlist', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                     },
@@ -570,7 +570,8 @@ export default {
                     }
                 });
                 if (response.data.exists) {
-                    this.showSnackbar('Name already exists.', 'warning');
+                    this.showSnackbar('Name is on the blacklist.', 'error');
+                    //Insert email notification
                 }
                 else {
                     this.showSnackbar('Ready to proceed.', 'success');
@@ -651,9 +652,6 @@ export default {
                             break;
                         case 500:
                             message = 'Internal server error. Please try again later.';
-                            break;
-                        case 409:
-                            message = 'Client already exist.';
                             break;
                         default:
                             message = `Error: ${error.response.status}`;
