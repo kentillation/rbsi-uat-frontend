@@ -1,13 +1,17 @@
-const { defineConfig } = require('@vue/cli-service')
 const webpack = require('webpack');
-module.exports = defineConfig({
-  transpileDependencies: true,
+
+module.exports = {
+  transpileDependencies: [
+    // Add dependencies here that need to be transpiled by Babel
+    'vuetify'
+  ],
 
   pluginOptions: {
     vuetify: {
-			// https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
-		}
+      // Additional Vuetify-specific configurations can go here
+    }
   },
+
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
@@ -16,4 +20,4 @@ module.exports = defineConfig({
       })
     ]
   }
-})
+}

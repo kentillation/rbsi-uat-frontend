@@ -1,14 +1,30 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
     <v-container>
-        <h1>New Client</h1>
+        <h1>New Contact</h1>
         <v-form @submit.prevent="showConfirmDialog" ref="form">
             <v-sheet elevation="3" rounded="lg">
                 <v-card>
                     <v-card-text>
                         <v-card border="opacity-50 sm" class="mb-10">
                             <v-container>
-                                <h3 class="mb-4">Basic Information</h3>
+                                <div class="d-flex align-items-center justify-space-between">
+                                    <h3 class="mb-4">Basic Information</h3>
+                                    <v-btn class="bg-teal-darken-3 mb-3" :disabled="isIdentityCheckDisabled" @click="openConfirmDialog" prepend-icon="mdi-magnify"><span class="to-hide">Check&nbsp;</span>Identity</v-btn>
+                                </div>
+                                <v-dialog v-model="confirm_dialog" max-width="400px">
+                                    <v-card>
+                                        <v-card-title class="headline">Confirmation</v-card-title>
+                                        <v-card-text>
+                                            Every checking of identity has a subscription from its API Provider. Make it sure to fill in the exact name before you click Confirm button.
+                                        </v-card-text>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn class="bg-red-darken-4 mb-4" text @click="cancelCheck">Check the name again</v-btn>
+                                            <v-btn class="bg-teal-darken-3 me-4 mb-4" text @click="confirmCheck">Confirm</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
                                 <v-row justify="center">
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-text-field v-model="first_name" :rules="[firstnameRule]" label="First Name"
@@ -41,7 +57,7 @@
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-text-field v-model="display_name" :rules="[displaynameRule]"
-                                            label="Display Name"></v-text-field>
+                                            label="Display Name" disabled></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-checkbox v-model="staff_or_not" label="Staff"></v-checkbox>
@@ -224,19 +240,19 @@
                                 <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong>
                                 </p>
                                 <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems,
-                                        'type') }}</strong> </p>
+                                    'type') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Title: </span><strong>{{ getTitle(title,
-                                        titleItems, 'title') }}</strong> </p>
+                                    titleItems, 'title') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{
                                     getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name
                                         }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' :
-                                        'No' }}</strong> </p>
+                                    'No' }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">TIN: </span><strong>{{ tin }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender,
-                                        genderItems, 'gender') }}</strong> </p>
+                                    genderItems, 'gender') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Civil Status: </span><strong>{{
                                     getTitle(civil_status, civilstatusItems, 'civil_status') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate
@@ -264,25 +280,25 @@
                                 </p>
                                 <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Undefined: </span><strong>{{ getTitle(undef,
-                                        undefItems, 'undef') }}</strong> </p>
+                                    undefItems, 'undef') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity,
-                                        entityItems, 'entity') }}</strong> </p>
+                                    entityItems, 'entity') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment,
-                                        employmentItems, 'employment') }}</strong> </p>
+                                    employmentItems, 'employment') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Client Language Preferences: </span><strong>{{
-                                        cus_lang_pref }}</strong> </p>
+                                    cus_lang_pref }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{
                                     getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong> </p>
                                 <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ?
-                                        'Selected' : 'None' }}</strong> </p>
+                                    'Selected' : 'None' }}</strong> </p>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="green darken-1" text @click="submitForm">Confirm</v-btn>
-                    <v-btn color="red darken-1" text @click="dialog = false">Cancel</v-btn>
+                    <v-btn class="bg-teal-darken-3" text @click="submitForm">Confirm</v-btn>
+                    <v-btn class="bg-red-darken-4" text @click="dialog = false">Cancel</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -366,6 +382,7 @@ export default {
             taxcodeItems: [],
             taxcodeRule: (v) => !!v || 'Client Tax Code is required',
             dialog: false,
+            confirm_dialog: false,
             validating: false,
             snackbar: {
                 visible: false,
@@ -374,20 +391,26 @@ export default {
             }
         };
     },
+    created() {
+        // Initialize debounced method
+        this.debouncedIdentityChecking = debounce(this.debouncedIdentityChecking, 300);
+    },
     watch: {
-        first_name: 'debouncedCheck',
-        middle_name: 'debouncedCheck',
-        last_name: 'debouncedCheck',
+        first_name: 'checkIdentityWebhooks',
+        middle_name: 'checkIdentityWebhooks',
+        last_name: 'checkIdentityWebhooks',
         displayName(newVal) {
             this.display_name = newVal;
         }
     },
     computed: {
+        isIdentityCheckDisabled() {
+            return !this.first_name || !this.middle_name || !this.last_name;
+        },
         displayName() {
             const firstName = this.first_name || '';
             const middleName = this.middle_name ? `${this.middle_name.charAt(0)}.` : '';
             const lastName = this.last_name || '';
-
             return `${lastName}, ${firstName} ${middleName}`.trim();
         },
         formattedBirthdate() {
@@ -401,245 +424,121 @@ export default {
             }).format(date);
         },
         isFormValid() {
-            return this.type !== '' &&
-                this.title !== '' &&
-                this.client_status !== '' &&
-                this.first_name !== '' &&
-                this.middle_name !== '' &&
-                this.last_name !== '' &&
-                this.display_name !== '' &&
-                this.staff_or_not !== '' &&
-                this.tin !== '' &&
-                this.gender !== '' &&
-                this.civil_status !== '' &&
-                this.birthdate !== '' &&
-                this.mobile1 !== '' &&
-                this.email !== '' &&
-                this.nationality !== '' &&
-                this.address_line1 !== '' &&
-                this.address_line2 !== '' &&
-                this.address_line3 !== '' &&
-                this.address_line4 !== '' &&
-                this.postal_code !== '' &&
-                this.address_type !== '' &&
-                this.undef !== '' &&
-                this.entity !== '' &&
-                this.employment !== '' &&
-                this.image_file !== '' &&
-                this.cus_lang_pref !== '' &&
-                this.tax_code !== '';
+            return [
+                this.type, this.title, this.client_status, this.first_name, this.middle_name,
+                this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
+                this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
+                this.address_line2, this.address_line3, this.address_line4, this.postal_code,
+                this.address_type, this.undef, this.entity, this.employment, this.image_file,
+                this.cus_lang_pref, this.tax_code
+            ].every(field => !!field);
         }
     },
     methods: {
+        checkIdentityWebhooks() {
+            this.debouncedIdentityChecking();
+        },
+        openConfirmDialog() {
+            this.confirm_dialog = true;
+        },
+        cancelCheck() {
+            this.confirm_dialog = false;
+        },
+        confirmCheck() {
+            this.confirm_dialog = false;
+            this.checkWatchlist();
+        },
         formatToDateString(date) {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         },
-        async fetchTypesItems() {
+        async fetchItems(endpoint, targetArray, errorMessage) {
             try {
-                const response = await apiClient.get('/types', {
+                const response = await apiClient.get(endpoint, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                     }
                 });
-                this.typeItems = response.data;
+                this[targetArray] = response.data;
             } catch (error) {
-                this.snackbar.message = 'Failed to fetch types';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
+                this.showSnackbar(errorMessage, 'error');
             }
+        },
+        async fetchTypesItems() {
+            this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
         },
         async fetchTitlesItems() {
-            try {
-                const response = await apiClient.get('/titles', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.titleItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch titles';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
         },
         async fetchClientStatusItems() {
-            try {
-                const response = await apiClient.get('/client_status', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.clientstatusItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch client status';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/client_status', 'clientstatusItems', 'Failed to fetch client status');
         },
         async fetchGenderItems() {
-            try {
-                const response = await apiClient.get('/genders', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.genderItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch gender';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
         },
         async fetchCivil_StatusItems() {
-            try {
-                const response = await apiClient.get('/civil_status', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.civilstatusItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch civil status';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
         },
         async fetchAddressTypeItems() {
-            try {
-                const response = await apiClient.get('/address_type', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.addresstypeItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch civil status';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
         },
         async fetchUndefItems() {
-            try {
-                const response = await apiClient.get('/undef', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.undefItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch undefined codes';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/undef', 'undefItems', 'Failed to fetch undefined codes');
         },
         async fetchEntityItems() {
-            try {
-                const response = await apiClient.get('/entity', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.entityItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch undefined codes';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
         },
         async fetchEmploymentItems() {
-            try {
-                const response = await apiClient.get('/employment', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.employmentItems = response.data;
-            } catch (error) {
-                this.snackbar.message = 'Failed to fetch undefined codes';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
-            }
+            this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
         },
         async fetchTaxCodeItems() {
+            this.fetchItems('/tax_code', 'taxcodeItems', 'Failed to fetch tax codes');
+        },
+        async checkWatchlist() {
+            if (this.isIdentityCheckDisabled) return;
             try {
-                const response = await apiClient.get('/tax_code', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
+                const response = await apiClient.get('/watchlist', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+                params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
                 });
-                this.taxcodeItems = response.data;
+
+                if (response.data.exists) {
+                    this.showSnackbar('Name is on the watchlist.', 'error');
+                } else {
+                    this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
+                }
             } catch (error) {
-                this.snackbar.message = 'Failed to fetch undefined codes';
-                this.snackbar.color = 'error';
-                this.snackbar.visible = true;
+                this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
             }
         },
-        debouncedCheck: debounce(function () {
-            this.identityChecking();
-        }, 100),
-        async identityChecking() {
+        async debouncedIdentityChecking() {
             if (!this.first_name || !this.middle_name || !this.last_name) return;
-
             try {
+                const [response1, response2] = await Promise.all([
+                apiClient.get('/check_mbwin_client_info', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+                    params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+                }),
+                apiClient.get('/check_new_db_client_info', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+                    params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+                })
+                ]);
 
-                const response1 = await apiClient.get('/watchlist', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    },
-                    params: {
-                        first_name: this.first_name,
-                        middle_name: this.middle_name,
-                        last_name: this.last_name
-                    }
-                });
-
-                const response2 = await apiClient.get('/check_mbwin_client_info', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    },
-                    params: {
-                        first_name: this.first_name,
-                        middle_name: this.middle_name,
-                        last_name: this.last_name
-                    }
-                });
-
-                const response3 = await apiClient.get('/check_new_db_client_info', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    },
-                    params: {
-                        first_name: this.first_name,
-                        middle_name: this.middle_name,
-                        last_name: this.last_name
-                    }
-                });
-
-                if (response1.data.exists) {
-                    this.showSnackbar('Name is on the watchlist.', 'error');
-                }
-                if (response2.data.exists) {
-                    this.showSnackbar('Name already exist in MBWin database.', 'error');
-                }
-                if (response3.data.exists) {
-                    this.showSnackbar('Name already exist in new database.', 'error');
-                }
-
+                if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
+                if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
             } catch (error) {
                 this.showSnackbar('Error checking identity. Refresh the page!', 'error');
             }
         },
-        showConfirmDialog() {
-            if (this.isFormValid) {
-                this.dialog = true;
-            }
-        },
-        getTitle(value, items, titleKey) {
+        getTitle(value, items, key) {
             const item = items.find(item => item.id === value);
-            return item ? item[titleKey] : 'Unknown';
+            return item ? item[key] : 'N/A';
+        },
+        showConfirmDialog() {
+            if (this.isFormValid) this.dialog = true;
         },
         async submitForm() {
             this.validating = true;
@@ -647,37 +546,26 @@ export default {
                 if (this.$refs.form.validate()) {
                     const staffValue = this.staff_or_not ? 1 : 0;
                     const formData = new FormData();
-                    formData.append('type', this.type);
-                    formData.append('title', this.title);
-                    formData.append('client_status', this.client_status);
-                    formData.append('first_name', this.first_name);
-                    formData.append('middle_name', this.middle_name);
-                    formData.append('last_name', this.last_name);
-                    formData.append('initial', this.initial);
-                    formData.append('display_name', this.display_name);
+                    const fields = [
+                        'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
+                        'initial', 'display_name', 'tin', 'gender', 'civil_status', 'birthdate',
+                        'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
+                        'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
+                        'fax', 'undef', 'entity', 'employment', 'image_file', 'cus_lang_pref', 'tax_code'
+                    ];
+
+                    // Convert birthdate to yyyy-MM-dd format if it's valid
+                    const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
+                    formData.append('birthdate', formattedBirthdate);
+
+                    // Append other fields
+                    fields.forEach(field => {
+                        if (field !== 'birthdate') { // Skip 'birthdate' because it's handled separately
+                            formData.append(field, this[field]);
+                        }
+                    });
+
                     formData.append('staff_or_not', staffValue);
-                    formData.append('tin', this.tin);
-                    formData.append('gender', this.gender);
-                    formData.append('civil_status', this.civil_status);
-                    formData.append('birthdate', this.birthdate);
-                    formData.append('mobile1', this.mobile1);
-                    formData.append('mobile2', this.mobile2);
-                    formData.append('email', this.email);
-                    formData.append('nationality', this.nationality);
-                    formData.append('address_line1', this.address_line1);
-                    formData.append('address_line2', this.address_line2);
-                    formData.append('address_line3', this.address_line3);
-                    formData.append('address_line4', this.address_line4);
-                    formData.append('postal_code', this.postal_code);
-                    formData.append('address_type', this.address_type);
-                    formData.append('telephone', this.telephone);
-                    formData.append('fax', this.fax);
-                    formData.append('undef', this.undef);
-                    formData.append('entity', this.entity);
-                    formData.append('employment', this.employment);
-                    formData.append('image_file', this.image_file);
-                    formData.append('cus_lang_pref', this.cus_lang_pref);
-                    formData.append('tax_code', this.tax_code);
 
                     const response = await apiClient.post('/new_client_info', formData, {
                         headers: {
@@ -688,70 +576,40 @@ export default {
 
                     if (response.status === 200) {
                         this.showSnackbar('New client has been saved successfully.', 'success');
-                        // this.resetForm();
+                        this.dialog = false;
                     }
-
-                    this.dialog = false;
                 }
             } catch (error) {
-                let message = 'An unknown error occurred.';
-                let color = 'error';
-
-                if (error.response) {
-                    switch (error.response.status) {
-                        case 422:
-                            message = 'Invalid input.';
-                            break;
-                        case 429:
-                            message = 'Too many API request. Refresh the page!';
-                            break;
-                        case 500:
-                            message = 'Internal server error. Please try again later.';
-                            break;
-                        default:
-                            message = `Error: ${error.response.status}`;
-                    }
-                } else if (error.request) {
-                    message = 'No response from server.';
-                } else {
-                    message = 'Request error. Please try again!';
-                }
-
-                this.showSnackbar(message, color);
+                this.handleFormError(error);
             } finally {
                 this.validating = false;
             }
         },
-        resetForm() {
-            this.first_name = '';
-            this.middle_name = '';
-            this.last_name = '';
-            this.initial = '';
-            this.display_name = '';
-            this.staff_or_not = 0;
-            this.tin = '';
-            this.gender = '';
-            this.civil_status = '';
-            this.birthdate = null;
-            this.mobile1 = '';
-            this.mobile2 = '';
-            this.email = '';
-            this.nationality = 'Filipino';
-            this.address_line1 = '';
-            this.address_line2 = '';
-            this.address_line3 = '';
-            this.address_line4 = '';
-            this.postal_code = '';
-            this.address_type = '';
-            this.telephone = '';
-            this.fax = '';
-            this.undef = '';
-            this.entity = '';
-            this.employment = '';
-            this.image_file = '';
-            this.cus_lang_pref = 'English - UK';
-            this.tax_code = '';
-            this.$refs.form.resetValidation();
+        handleFormError(error) {
+            let message = 'An unknown error occurred.';
+            if (error.response) {
+                switch (error.response.status) {
+                    case 422:
+                        message = 'Invalid input.';
+                        break;
+                    case 429:
+                        message = 'Too many API requests. Refresh the page!';
+                        break;
+                    case 409:
+                        message = 'Contact already exist!';
+                        break;
+                    case 500:
+                        message = 'Internal server error. Please try again later.';
+                        break;
+                    default:
+                        message = `Error: ${error.response.status}`;
+                }
+            } else if (error.request) {
+                message = 'No response from server.';
+            } else {
+                message = 'Request error. Please try again!';
+            }
+            this.showSnackbar(message, 'error');
         },
         showSnackbar(message, color) {
             this.snackbar.message = message;
@@ -772,6 +630,7 @@ export default {
         this.fetchTaxCodeItems();
     }
 };
+
 </script>
 
 <style>

@@ -78,7 +78,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="bg-teal-darken-3" text>Edit</v-btn>
+          <v-btn class="bg-teal-darken-3" @click="toEditClientInfo" text>Edit</v-btn>
           <v-btn class="bg-red-darken-4" text @click="dialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
@@ -127,6 +127,17 @@ export default {
     toNewContact() {
       this.$router.push({ name: 'NewContact' });
     },
+    toEditClientInfo() {
+      if (this.selectedClient) {
+        this.$router.push({
+          name: 'EditClientInfo',
+          params: {
+            cid: this.selectedClient.cid,
+            last_name: this.selectedClient.last_name,
+          },
+        });
+      }
+    },
     async searchClients() {
       if (!this.searchValid) return;
 
@@ -173,8 +184,9 @@ export default {
       this.snackbar.visible = true;
     },
     formatDate(date) {
-      return new Date(date).toLocaleDateString();
-    }
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Intl.DateTimeFormat('en-US', options).format(new Date(date));
+    },
   },
   mounted() {
     this.fetchItems('/types', 'typeItems');

@@ -11,13 +11,13 @@
                             <div class="text-subtitle-1 text-medium-emphasis">Email</div>
                             <v-text-field v-model="email" :rules="[emailRule]" autocomplete="email" required
                                 density="compact" placeholder="Email address" prepend-inner-icon="mdi-email-outline"
-                                variant="outlined"></v-text-field>
+                                variant="outlined" clearable></v-text-field>
                             <div class="text-subtitle-1 text-medium-emphasis mt-2">Password</div>
                             <v-text-field v-model="password" :rules="[passwordRule]" autocomplete="current-password"
                                 required :type="visible ? 'text' : 'password'"
                                 :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" density="compact"
                                 placeholder="Enter your password" prepend-inner-icon="mdi-lock-outline"
-                                variant="outlined" @click:append-inner="visible = !visible"></v-text-field>
+                                variant="outlined" @click:append-inner="visible = !visible" clearable></v-text-field>
                             <v-btn :disabled="!isFormValid || validating" color="white" type="submit" block
                                 class="bg-orange-darken-4 mb-8 mt-5" size="large" variant="tonal" :loading="validating"
                                 height="40" text="Validate" width="135" rounded>
