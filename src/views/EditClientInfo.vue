@@ -165,7 +165,7 @@
                       </v-col>
                       <v-col cols="12">
                         <v-file-input accept="image/*" v-model="image_file" :rules="[imagefileRule]" label="Image file"
-                          a ppend-inner-icon="mdi-camera" prepend-icon="" chips show-size>
+                          append-inner-icon="mdi-camera" prepend-icon="" chips show-size>
                         </v-file-input>
                       </v-col>
                       <v-col cols="12">
@@ -184,13 +184,15 @@
         </v-card>
       </v-sheet>
       <div class="mt-4 w-100 d-flex justify-end">
-        <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" color="white"
-          class="bg-orange-darken-4 mb-8" size="large" variant="tonal" :loading="validating" height="40" width="135"
-          rounded>
+        <v-btn :disabled="loading" @click="onRefresh" prepend-icon="mdi-refresh" class="bg-red-darken-4" size="large" variant="tonal" height="40" width="135" rounded>Reset</v-btn>
+        <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" prepend-icon="mdi-check"
+          class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" :loading="validating" height="40" width="135" rounded>
           Submit
         </v-btn>
       </div>
     </v-form>
+
+    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>{{ snackbar.message }}</v-snackbar>
 
     <!-- Confirmation Dialog -->
     <v-dialog v-model="dialog" max-width="600px">
@@ -252,8 +254,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="bg-teal-darken-3" text @click="submitForm">Confirm</v-btn>
           <v-btn class="bg-red-darken-4" text @click="dialog = false">Cancel</v-btn>
+          <v-btn class="bg-teal-darken-3" text @click="submitForm">Confirm</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -337,19 +339,15 @@ export default {
       employmentRule: (v) => !!v || 'Employment code is required',
       imagefileRule: (v) => !!v || 'Image file is required',
       taxcodeRule: (v) => !!v || 'Client Tax Code is required',
-
       snackbar: {
         visible: false,
         message: '',
-        color: 'success',
-      },
+        color: ''
+      }
     };
   },
   created() {
-    const { cid, last_name } = this.$route.params;
-    if (cid && last_name) {
-      this.fetchClientData(cid, last_name);
-    }
+    this.fetchCID_LastName();
   },
   methods: {
     formatToDateString(date) {
@@ -377,6 +375,15 @@ export default {
       } finally {
         this.validating = false;
       }
+    },
+    fetchCID_LastName() {
+      const { cid, last_name } = this.$route.params;
+      if (cid && last_name) {
+        this.fetchClientData(cid, last_name);
+      }
+    },
+    onRefresh() {
+      this.fetchCID_LastName();
     },
     async fetchItems(endpoint, targetArray, errorMessage) {
       try {
@@ -420,22 +427,50 @@ export default {
     async fetchTaxCodeItems() {
       this.fetchItems('/tax_code', 'taxcodeItems', 'Failed to fetch tax codes');
     },
+    async checkIdentity() {
+      if (!this.first_name || !this.middle_name || !this.last_name) return;
+      try {
+        const [response1, response2] = await Promise.all([
+          apiClient.get('/check_mbwin_client_info', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+          }),
+          apiClient.get('/check_new_db_client_info', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+          })
+        ]);
+
+        if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
+        if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
+      } catch (error) {
+        this.showSnackbar('Error checking identity. Refresh the page!', 'error');
+      }
+    },
     showConfirmDialog() {
-      // if (this.$refs.form.validate()) {
-      //   this.dialog = true;
-      // }
       if (this.isFormValid) this.dialog = true;
     },
     async submitForm() {
       this.dialog = false;
       this.validating = true;
 
+      try {
+        await this.checkIdentity();
+        if (this.snackbar.color === 'error') {
+          this.validating = false;
+          return;
+        }
+      } catch (error) {
+        this.showSnackbar('Error during identity check. Please try again.', 'error');
+        this.validating = false;
+        return;
+      }
+
       const formData = new FormData();
       for (const key in this.$data) {
         if (
           Object.prototype.hasOwnProperty.call(this, key) &&
           key !== 'dialog' &&
-          key !== 'snackbar' &&
           key !== 'validating'
         ) {
           formData.append(key, this[key]);
@@ -444,20 +479,15 @@ export default {
       if (this.image_file) formData.append('image_file', this.image_file);
 
       try {
-        await apiClient.post('/update_client_info', formData, {
+        await apiClient.post(`/update_client_info/${this.cid}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
           },
         });
-        // Success condition for snackbar
-        this.snackbar.message = 'Client information updated successfully';
-        this.snackbar.color = 'success';
-        this.snackbar.visible = true;
+        this.showSnackbar('Client information updated successfully', 'success');
       } catch (error) {
-        // Error condition for snackbar
-        this.snackbar.message = 'Error updating client information';
-        this.snackbar.color = 'error';
-        this.snackbar.visible = true;
+        this.showSnackbar('Error updating client information.', 'error');
       } finally {
         this.validating = false;
       }

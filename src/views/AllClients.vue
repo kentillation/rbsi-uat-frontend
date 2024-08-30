@@ -169,7 +169,7 @@ export default {
             ],
             dialog: false,
             selectedClient: null,
-            pollingInterval: 15000, // Polling every second
+            pollingInterval: 5000, // Polling every second
             pollingTimer: null,
             typeItems: [],
             titleItems: [],
