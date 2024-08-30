@@ -69,7 +69,7 @@
                 <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code, taxcodeItems, 'tax_code') }}</p>
                 <p><span class="text-grey-lighten-1">Image File: </span></p>
                 <p>
-                  <img :src="`http://127.0.0.1:8000/api/client_image/${selectedClient?.image_file}`" width="280" alt="Client Image" />
+                  <img :src="imageSrc" width="280" alt="Client Image" />
                 </p>
               </v-col>
             </v-row>
@@ -123,7 +123,39 @@ export default {
       return this.search_item.trim() !== '';
     }
   },
+  created() {
+    if (this.selectedClient?.image_file) {
+      this.fetchClientImage(this.selectedClient.image_file);
+    }
+  },
+  watch: {
+    'selectedClient.image_file': {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.fetchClientImage(newValue);
+        }
+      },
+    },
+  },
   methods: {
+    async fetchClientImage(imageFileName) {
+      try {
+        const response = await apiClient.get(`/client_image/${imageFileName}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+          responseType: 'blob', // Important for handling binary data
+        });
+        
+        // Create a blob URL from the response
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        this.imageSrc = URL.createObjectURL(blob);
+      } catch (error) {
+        console.error('Error fetching client image:', error);
+        this.imageSrc = ''; // Handle errors by clearing the image
+      }
+    },
     toNewContact() {
       this.$router.push({ name: 'NewContact' });
     },
