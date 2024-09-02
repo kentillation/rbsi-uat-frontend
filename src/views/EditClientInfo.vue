@@ -164,7 +164,7 @@
                           :items="employmentItems" item-title="employment" item-value="id"></v-autocomplete>
                       </v-col>
                       <v-col cols="12">
-                        <v-file-input v-model="image_file" :rules="[imagefileRule]" accept="image/*" label="Image file"
+                        <v-file-input accept="image/*" v-model="image_file" :rules="[imagefileRule]" label="Image file"
                           append-inner-icon="mdi-camera" prepend-icon="" chips show-size>
                         </v-file-input>
                         <p v-if="imageSrc">
@@ -190,11 +190,9 @@
         </v-card>
       </v-sheet>
       <div class="mt-4 w-100 d-flex justify-end">
-        <v-btn :disabled="loading" @click="onRefresh" prepend-icon="mdi-refresh" class="bg-red-darken-4" size="large"
-          variant="tonal" height="40" width="135" rounded>Reset</v-btn>
+        <v-btn :disabled="loading" @click="onRefresh" prepend-icon="mdi-refresh" class="bg-red-darken-4" size="large" variant="tonal" height="40" width="135" rounded>Reset</v-btn>
         <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" prepend-icon="mdi-check"
-          class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" :loading="validating" height="40" width="135"
-          rounded>
+          class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" :loading="validating" height="40" width="135" rounded>
           Submit
         </v-btn>
       </div>
@@ -254,7 +252,8 @@
                     }}</strong></p>
                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{ getTitle(tax_code, taxcodeItems,
                   'tax_code') }}</strong></p>
-                <p><span class="text-grey-lighten-1">Image File: </span></p>
+                <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ? `${image_file}` : `${image_url}`
+                    }}</strong></p>
                 <p>
                   <img :src="imageSrc" width="195" alt="Client Image" />
                 </p>
@@ -262,10 +261,10 @@
             </v-row>
           </v-container>
         </v-card-text>
-        <v-card-actions class="mx-4 my-4">
+        <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" size="large" prepend-icon="mdi-close-circle" variant="tonal" @click="dialog = false" rounded>Cancel</v-btn>
-          <v-btn class="bg-teal-darken-3 px-3" size="large" prepend-icon="mdi-cloud-download" variant="tonal" @click="saveForm" rounded>Save</v-btn>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Cancel</v-btn>
+          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="submitForm" rounded>Confirm</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -360,23 +359,12 @@ export default {
   created() {
     this.fetchCID_LastName();
   },
-  watch: {
-    displayName(newVal) {
-      this.display_name = newVal;
-    }
-  },
   computed: {
-    displayName() {
-      const firstName = this.first_name || '';
-      const middleName = this.middle_name ? `${this.middle_name.charAt(0)}.` : '';
-      const lastName = this.last_name || '';
-      return `${lastName}, ${firstName} ${middleName}`.trim();
-    },
     imageSrc() {
       if (this.image_file && this.image_file instanceof File) {
         return URL.createObjectURL(this.image_file);
       }
-      else if (this.image_url) {
+      if (this.image_url) {
         return this.image_url;
       }
       return '';
@@ -419,7 +407,7 @@ export default {
         });
         const client = response.data;
         Object.assign(this, client);
-        this.image_url = client.image_file || '';
+        this.image_url = client.image_url || '';
       } catch (error) {
         this.snackbar.message = error.response && error.response.status === 404
           ? 'Client not found'
@@ -504,12 +492,12 @@ export default {
     showConfirmDialog() {
       if (this.isFormValid) this.dialog = true;
     },
-    async saveForm() {
+    async submitForm() {
       this.dialog = false;
       this.validating = true;
 
       try {
-        // await this.checkIdentity();
+        await this.checkIdentity();
         if (this.snackbar.color === 'error') {
           this.validating = false;
           return;
