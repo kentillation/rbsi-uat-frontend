@@ -12,14 +12,14 @@
                   <!-- Form Fields -->
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                     <v-text-field v-model="first_name" :rules="[firstnameRule]" label="First Name"
-                      outlined></v-text-field>
+                      outlined clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                     <v-text-field v-model="middle_name" :rules="[middlenameRule]" label="Middle Name"
-                      outlined></v-text-field>
+                      outlined clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name" outlined></v-text-field>
+                    <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name" outlined clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                     <v-autocomplete v-model="type" :rules="[typeRule]" label="Type" :items="typeItems" item-title="type"
@@ -34,14 +34,14 @@
                       :items="clientstatusItems" item-title="client_status" item-value="id"></v-autocomplete>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-text-field v-model="initial" label="Initial" outlined></v-text-field>
+                    <v-text-field v-model="initial" label="Initial" outlined clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                     <v-text-field v-model="display_name" :rules="[displaynameRule]" label="Display Name"
                       disabled></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-checkbox v-model="staff_or_not" label="Staff" color="primary"></v-checkbox>
+                    <v-checkbox v-model="isStaff" label="Staff" color="primary"></v-checkbox>
                   </v-col>
                 </v-row>
               </v-container>
@@ -71,7 +71,6 @@
                               <v-text-field type="date" v-model="birthdate" width="80"
                                 class="custom-date-input"></v-text-field>
                               <v-text-field disabled width="700">Birthdate: {{ formattedBirthdate }}</v-text-field>
-                              <!-- <v-date-picker :min="minDate" :max="maxDate" v-model="birthdate"></v-date-picker> -->
                             </div>
                           </v-col>
                         </v-row>
@@ -89,17 +88,17 @@
                         <v-row>
                           <v-col cols="12">
                             <v-text-field v-model="mobile1" :rules="[mobile1Rule]" label="Mobile 1"
-                              outlined></v-text-field>
+                              outlined clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
-                            <v-text-field v-model="mobile2" label="Mobile 2" outlined></v-text-field>
+                            <v-text-field v-model="mobile2" label="Mobile 2" outlined clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
-                            <v-text-field v-model="email" :rules="[emailRule]" label="Email" outlined></v-text-field>
+                            <v-text-field v-model="email" :rules="[emailRule]" label="Email" outlined clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
                             <v-text-field v-model="nationality" :rules="[nationalityRule]" label="Nationality"
-                              outlined></v-text-field>
+                              outlined clearable></v-text-field>
                           </v-col>
                         </v-row>
                       </v-col>
@@ -163,7 +162,7 @@
                         <v-autocomplete v-model="employment" :rules="[employmentRule]" label="Employment"
                           :items="employmentItems" item-title="employment" item-value="id"></v-autocomplete>
                       </v-col>
-                      <v-col cols="12">
+                      <!-- <v-col cols="12">
                         <v-file-input accept="image/*" v-model="image_file" :rules="[imagefileRule]" label="Image file"
                           append-inner-icon="mdi-camera" prepend-icon="" chips show-size>
                         </v-file-input>
@@ -173,9 +172,9 @@
                         <p v-else>
                           No image available
                         </p>
-                      </v-col>
+                      </v-col> -->
                       <v-col cols="12">
-                        <v-text-field v-model="cus_lang_pref" label="Client Language Preferences"></v-text-field>
+                        <v-text-field v-model="cus_lang_pref" label="Client Language Preferences" clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
                         <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]" label="Client Tax Code"
@@ -190,9 +189,9 @@
         </v-card>
       </v-sheet>
       <div class="mt-4 w-100 d-flex justify-end">
-        <v-btn :disabled="loading" @click="onRefresh" prepend-icon="mdi-refresh" class="bg-red-darken-4" size="large" variant="tonal" height="40" width="135" rounded>Reset</v-btn>
+        <v-btn @click="onRefresh" prepend-icon="mdi-refresh" class="bg-red-darken-4" size="large" variant="tonal" height="40" width="135" rounded>Reset</v-btn>
         <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" prepend-icon="mdi-check"
-          class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" :loading="validating" height="40" width="135" rounded>
+          class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" height="40" width="135" rounded>
           Submit
         </v-btn>
       </div>
@@ -201,7 +200,7 @@
     <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>{{ snackbar.message }}</v-snackbar>
 
     <!-- Confirmation Dialog -->
-    <v-dialog v-model="dialog" max-width="600px">
+    <v-dialog v-model="dialog" max-width="1000px">
       <v-card>
         <v-card-title>
           <span class="headline">Confirm Submission</span>
@@ -209,59 +208,106 @@
         <v-card-text>
           <v-container>
             <v-row>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">First Name: <br /></span><strong>{{ first_name }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Middle Name: <br /></span><strong>{{ middle_name }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Last Name: <br /></span><strong>{{ last_name }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Display Name: <br /></span><strong>{{ display_name }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Title: <br /></span><strong>{{ getTitle(title, titleItems, 'title') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Initial: <br /></span><strong>{{ initial }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Type: <br /></span><strong>{{ getTitle(type, typeItems, 'type') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Staff: <br /></span><strong>{{ staffLabel }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">TIN: <br /></span><strong>{{ tin }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Gender: <br /></span><strong>{{ getTitle(gender, genderItems, 'gender') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Civil Status: <br /></span><strong>{{ getTitle(civil_status, civilstatusItems, 'civil_status') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Birthdate: <br /></span><strong>{{ formattedBirthdate }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Mobile 1: <br /></span><strong>{{ mobile1 }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Mobile 2: <br /></span><strong>{{ mobile2 }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Email: <br /></span><strong>{{ email }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Nationality: <br /></span><strong>{{ nationality }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 1: <br /></span><strong>{{ address_line1 }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 2: <br /></span><strong>{{ address_line2 }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 3: <br /></span><strong>{{ address_line1 }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 4: <br /></span><strong>{{ address_line4 }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Postal Code: <br /></span><strong>{{ postal_code }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Type: <br /></span><strong>{{ getTitle(address_type, addresstypeItems, 'address_type') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Telephone: <br /></span><strong>{{ telephone }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Fax: <br /></span><strong>{{ fax }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Undefined: <br /></span><strong>{{ getTitle(undef, undefItems, 'undef') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Entity: <br /></span><strong>{{ getTitle(entity, entityItems, 'entity') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Employment: <br /></span><strong>{{getTitle(employment, employmentItems, 'employment') }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Client Language Preferences: <br /></span><strong>{{ cus_lang_pref }}</strong></p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Client Tax Code: <br /></span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong></p>
+              </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="12">
-                <p><span class="text-grey-lighten-1">First Name: </span><strong>{{ first_name }}</strong></p>
-                <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name }}</strong></p>
-                <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong></p>
-                <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems, 'type')
-                    }}</strong></p>
-                <p><span class="text-grey-lighten-1">Title: </span><strong>{{ getTitle(title, titleItems, 'title')
-                    }}</strong></p>
-                <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{ getTitle(client_status,
-                  clientstatusItems, 'client_status') }}</strong></p>
-                <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong></p>
-                <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name }}</strong></p>
-                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' : 'No' }}</strong>
-                </p>
-                <p><span class="text-grey-lighten-1">TIN: </span><strong>{{ tin }}</strong></p>
-                <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender, genderItems, 'gender')
-                    }}</strong></p>
-                <p><span class="text-grey-lighten-1">Civil Status: </span><strong>{{ getTitle(civil_status,
-                  civilstatusItems, 'civil_status') }}</strong></p>
-                <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate }}</strong></p>
-                <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong></p>
-                <p><span class="text-grey-lighten-1">Mobile 2: </span><strong>{{ mobile2 }}</strong></p>
-                <p><span class="text-grey-lighten-1">Email: </span><strong>{{ email }}</strong></p>
-                <p><span class="text-grey-lighten-1">Nationality: </span><strong>{{ nationality }}</strong></p>
-                <p><span class="text-grey-lighten-1">Address Line 1: </span><strong>{{ address_line1 }}</strong></p>
-                <p><span class="text-grey-lighten-1">Address Line 2: </span><strong>{{ address_line2 }}</strong></p>
-                <p><span class="text-grey-lighten-1">Address Line 3: </span><strong>{{ address_line3 }}</strong></p>
-                <p><span class="text-grey-lighten-1">Address Line 4: </span><strong>{{ address_line4 }}</strong></p>
-                <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code }}</strong></p>
-                <p><span class="text-grey-lighten-1">Address Type: </span><strong>{{ getTitle(address_type,
-                  addresstypeItems, 'address_type') }}</strong></p>
-                <p><span class="text-grey-lighten-1">Telephone: </span><strong>{{ telephone }}</strong></p>
-                <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong></p>
-                <p><span class="text-grey-lighten-1">Undefined: </span><strong>{{ getTitle(undef, undefItems, 'undef')
-                    }}</strong></p>
-                <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity, entityItems, 'entity')
-                    }}</strong></p>
-                <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment, employmentItems,
-                  'employment') }}</strong></p>
-                <p><span class="text-grey-lighten-1">Client Language Preferences: </span><strong>{{ cus_lang_pref
-                    }}</strong></p>
-                <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{ getTitle(tax_code, taxcodeItems,
-                  'tax_code') }}</strong></p>
-                <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ? `${image_file}` : `${image_url}`
+                <!-- <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ? `${image_file}` : `${image_url}`
                     }}</strong></p>
                 <p>
                   <img :src="imageSrc" width="195" alt="Client Image" />
-                </p>
+                </p> -->
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Cancel</v-btn>
           <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="submitForm" rounded>Confirm</v-btn>
@@ -287,14 +333,11 @@ export default {
       client_status: null,
       initial: '',
       display_name: '',
-      staff_or_not: false,
+      staff_or_not: 2,
       tin: '',
       gender: null,
       civil_status: null,
       birthdate: null,
-      // pickerVisible: false,
-      // minDate: '1930-01-01',
-      // maxDate: this.formatToDateString(new Date()),
       timezone: 'Asia/Manila',
       mobile1: '',
       mobile2: '',
@@ -311,8 +354,8 @@ export default {
       undef: null,
       entity: null,
       employment: null,
-      image_file: null,
-      image_url: '',
+      // image_file: null,
+      // image_url: '',
       cus_lang_pref: 'English - US',
       tax_code: null,
       validating: false,
@@ -347,7 +390,7 @@ export default {
       undefRule: (v) => !!v || 'Undefined code is required',
       entityRule: (v) => !!v || 'Entity code is required',
       employmentRule: (v) => !!v || 'Employment code is required',
-      imagefileRule: (v) => !!v || 'Image file is required',
+      // imagefileRule: (v) => !!v || 'Image file is required',
       taxcodeRule: (v) => !!v || 'Client Tax Code is required',
       snackbar: {
         visible: false,
@@ -360,14 +403,25 @@ export default {
     this.fetchCID_LastName();
   },
   computed: {
-    imageSrc() {
-      if (this.image_file && this.image_file instanceof File) {
-        return URL.createObjectURL(this.image_file);
-      }
-      if (this.image_url) {
-        return this.image_url;
-      }
-      return '';
+    // imageSrc() {
+    //   if (this.image_file && this.image_file instanceof File) {
+    //     return URL.createObjectURL(this.image_file);
+    //   }
+    //   if (this.image_url) {
+    //     return this.image_url;
+    //   }
+    //   return '';
+    // },
+    isStaff: {
+      get() {
+        return this.staff_or_not === 1;
+      },
+      set(value) {
+        this.staff_or_not = value ? 1 : 2;
+      },
+    },
+    staffLabel() {
+      return this.staff_or_not === 1 ? 'Yes' : 'No';
     },
     formattedBirthdate() {
       if (!this.birthdate) return '';
@@ -407,7 +461,8 @@ export default {
         });
         const client = response.data;
         Object.assign(this, client);
-        this.image_url = client.image_url || '';
+        // this.image_url = client.image_url || '';
+        this.staff_or_not = client.staff_or_not;
       } catch (error) {
         this.snackbar.message = error.response && error.response.status === 404
           ? 'Client not found'
@@ -470,16 +525,32 @@ export default {
       this.fetchItems('/tax_code', 'taxcodeItems', 'Failed to fetch tax codes');
     },
     async checkIdentity() {
-      if (!this.first_name || !this.middle_name || !this.last_name) return;
+      if (!this.first_name || !this.middle_name || !this.last_name || !this.gender || !this.birthdate || !this.image_file || !this.staff_or_not) return;
       try {
         const [response1, response2] = await Promise.all([
           apiClient.get('/check_mbwin_client_info', {
             headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+            params: { 
+              first_name: this.first_name, 
+              middle_name: this.middle_name, 
+              last_name: this.last_name,
+              gender: this.gender,
+              birthdate: this.birthdate,
+              image_file: this.image_file,
+              staff_or_not: this.staff_or_not
+            }
           }),
           apiClient.get('/check_new_db_client_info', {
             headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+            params: { 
+              first_name: this.first_name, 
+              middle_name: this.middle_name, 
+              last_name: this.last_name,
+              gender: this.gender,
+              birthdate: this.birthdate,
+              image_file: this.image_file,
+              staff_or_not: this.staff_or_not
+            }
           })
         ]);
 
@@ -513,13 +584,13 @@ export default {
         if (
           Object.prototype.hasOwnProperty.call(this, key) &&
           key !== 'dialog' &&
-          key !== 'validating' &&
-          key !== 'image_url'
+          key !== 'validating' 
+          // && key !== 'image_url'
         ) {
           formData.append(key, this[key]);
         }
       }
-      if (this.image_file) formData.append('image_file', this.image_file);
+      // if (this.image_file) formData.append('image_file', this.image_file);
 
       try {
         await apiClient.post(`/update_client_info/${this.cid}`, formData, {

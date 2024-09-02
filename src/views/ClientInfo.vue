@@ -45,7 +45,7 @@
                 <p><span class="text-grey-lighten-1">Client Status: </span>{{ getTitle(selectedClient?.client_status, clientstatusItems, 'client_status') }}</p>
                 <p><span class="text-grey-lighten-1">Initial: </span>{{ selectedClient?.initial }}</p>
                 <p><span class="text-grey-lighten-1">Display Name: </span>{{ selectedClient?.display_name }}</p>
-                <p><span class="text-grey-lighten-1">Staff or Not: </span>{{ selectedClient?.staff_or_not ? 'Yes' : 'No' }}</p>
+                <p><span class="text-grey-lighten-1">Staff: </span>{{ staffLabel }}</p>
                 <p><span class="text-grey-lighten-1">TIN: </span>{{ selectedClient?.tin }}</p>
                 <p><span class="text-grey-lighten-1">Gender: </span>{{ getTitle(selectedClient?.gender, genderItems, 'gender') }}</p>
                 <p><span class="text-grey-lighten-1">Civil Status: </span>{{ getTitle(selectedClient?.civil_status, civilstatusItems, 'civil_status') }}</p>
@@ -78,8 +78,8 @@
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3"  size="large" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Close</v-btn>
-          <v-btn class="bg-teal-darken-3 px-3" size="large" prepend-icon="mdi-pencil" @click="toEditClientInfo" rounded>Edit</v-btn>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Close</v-btn>
+          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil" @click="toEditClientInfo" rounded>Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -121,7 +121,10 @@ export default {
   computed: {
     searchValid() {
       return this.search_item.trim() !== '';
-    }
+    },
+    staffLabel() {
+      return this.selectedClient?.staff_or_not === 1 ? 'Yes' : 'No';
+    },
   },
   created() {
     if (this.selectedClient?.image_file) {
