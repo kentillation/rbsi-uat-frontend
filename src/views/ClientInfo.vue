@@ -67,19 +67,19 @@
                 <p><span class="text-grey-lighten-1">Employment: </span>{{ getTitle(selectedClient?.employment, employmentItems, 'employment') }}</p>
                 <p><span class="text-grey-lighten-1">Customer Language Preference: </span>{{ selectedClient?.cus_lang_pref }}</p>
                 <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code, taxcodeItems, 'tax_code') }}</p>
-                <p><span class="text-grey-lighten-1">Image File: {{ selectedClient?.image_file }}</span></p>
+                <p><span class="text-grey-lighten-1">Image File: </span>{{ selectedClient?.image_file }}</p>
                 <p>
-                  <img :src="imageSrc" width="280" alt="Client Image" />
+                  <img :src="imageSrc" width="280" style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" />
                 </p>
               </v-col>
             </v-row>
           </v-container>
           <!--Insert table for the same last_name -->
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-teal-darken-3" @click="toEditClientInfo" text>Edit</v-btn>
-          <v-btn class="bg-red-darken-4" text @click="dialog = false">Close</v-btn>
+          <v-btn class="bg-red-darken-4 px-3"  size="large" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Close</v-btn>
+          <v-btn class="bg-teal-darken-3 px-3" size="large" prepend-icon="mdi-pencil" @click="toEditClientInfo" rounded>Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
