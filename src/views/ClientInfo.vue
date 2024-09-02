@@ -67,7 +67,7 @@
                 <p><span class="text-grey-lighten-1">Employment: </span>{{ getTitle(selectedClient?.employment, employmentItems, 'employment') }}</p>
                 <p><span class="text-grey-lighten-1">Customer Language Preference: </span>{{ selectedClient?.cus_lang_pref }}</p>
                 <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code, taxcodeItems, 'tax_code') }}</p>
-                <p><span class="text-grey-lighten-1">Image File: </span></p>
+                <p><span class="text-grey-lighten-1">Image File: {{ selectedClient?.image_file }}</span></p>
                 <p>
                   <img :src="imageSrc" width="280" alt="Client Image" />
                 </p>

@@ -167,6 +167,12 @@
                         <v-file-input accept="image/*" v-model="image_file" :rules="[imagefileRule]" label="Image file"
                           append-inner-icon="mdi-camera" prepend-icon="" chips show-size>
                         </v-file-input>
+                        <p v-if="imageSrc">
+                          <img :src="imageSrc" width="195" alt="Client Image" />
+                        </p>
+                        <p v-else>
+                          No image available
+                        </p>
                       </v-col>
                       <v-col cols="12">
                         <v-text-field v-model="cus_lang_pref" label="Client Language Preferences"></v-text-field>
@@ -246,8 +252,11 @@
                     }}</strong></p>
                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{ getTitle(tax_code, taxcodeItems,
                   'tax_code') }}</strong></p>
-                <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ? 'Selected' : 'None'
+                <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ? `${image_file}` : `${image_url}`
                     }}</strong></p>
+                <p>
+                  <img :src="imageSrc" width="195" alt="Client Image" />
+                </p>
               </v-col>
             </v-row>
           </v-container>
@@ -303,6 +312,7 @@ export default {
       entity: null,
       employment: null,
       image_file: null,
+      image_url: '',
       cus_lang_pref: 'English - US',
       tax_code: null,
       validating: false,
@@ -349,6 +359,37 @@ export default {
   created() {
     this.fetchCID_LastName();
   },
+  computed: {
+    imageSrc() {
+      if (this.image_file && this.image_file instanceof File) {
+        return URL.createObjectURL(this.image_file);
+      }
+      if (this.image_url && this.image_url instanceof File) {
+        return URL.createObjectURL(this.image_url);
+      }
+      return '';
+    },
+    formattedBirthdate() {
+      if (!this.birthdate) return '';
+      const date = new Date(this.birthdate);
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: this.timezone,
+      }).format(date);
+    },
+    isFormValid() {
+      return [
+        this.type, this.title, this.client_status, this.first_name, this.middle_name,
+        this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
+        this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
+        this.address_line2, this.address_line3, this.address_line4, this.postal_code,
+        this.address_type, this.undef, this.entity, this.employment, this.image_file,
+        this.cus_lang_pref, this.tax_code
+      ].every(field => !!field);
+    }
+  },
   methods: {
     formatToDateString(date) {
       const year = date.getFullYear();
@@ -366,6 +407,7 @@ export default {
         });
         const client = response.data;
         Object.assign(this, client);
+        this.image_url = client.image_url || '';
       } catch (error) {
         this.snackbar.message = error.response && error.response.status === 404
           ? 'Client not found'
@@ -471,7 +513,8 @@ export default {
         if (
           Object.prototype.hasOwnProperty.call(this, key) &&
           key !== 'dialog' &&
-          key !== 'validating'
+          key !== 'validating' &&
+          key !== 'image_url'
         ) {
           formData.append(key, this[key]);
         }
@@ -500,28 +543,6 @@ export default {
     getTitle(value, items, key) {
       const item = items.find(item => item.id === value);
       return item ? item[key] : 'N/A';
-    }
-  },
-  computed: {
-    formattedBirthdate() {
-      if (!this.birthdate) return '';
-      const date = new Date(this.birthdate);
-      return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        timeZone: this.timezone,
-      }).format(date);
-    },
-    isFormValid() {
-      return [
-        this.type, this.title, this.client_status, this.first_name, this.middle_name,
-        this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
-        this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
-        this.address_line2, this.address_line3, this.address_line4, this.postal_code,
-        this.address_type, this.undef, this.entity, this.employment, this.image_file,
-        this.cus_lang_pref, this.tax_code
-      ].every(field => !!field);
     }
   },
   mounted() {
