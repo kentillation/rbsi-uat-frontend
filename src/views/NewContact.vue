@@ -215,8 +215,8 @@
                 </v-card>
             </v-sheet>
             <div class="mt-4 w-100 d-flex justify-end">
-                <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" class="bg-orange-darken-4 mb-8" size="large" 
-                variant="tonal" :loading="validating" height="40" width="135" append-icon="mdi-arrow-right" rounded>Next</v-btn>
+                <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" :loading="validating" prepend-icon="mdi-check"
+                class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" height="40" width="135" rounded>Submit</v-btn>
             </div>
         </v-form>
         <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>{{ snackbar.message }}</v-snackbar>

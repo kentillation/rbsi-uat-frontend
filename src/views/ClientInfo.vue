@@ -19,7 +19,7 @@
     </v-sheet>
 
     <!-- Dialog for viewing client details -->
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px">
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">Client Details</span>
@@ -27,9 +27,15 @@
         <v-card-text>
           <v-container>
             <div class="text-center">
-              <h3><span class="text-grey-lighten-1">CID: </span>{{ selectedClient?.cid }}</h3>
-              <!-- <p><span class="text-grey-lighten-1">Image File: </span>{{ selectedClient?.image_file }}</p> -->
-              <p class="my-5"><img :src="imageSrc" width="280" style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" /></p>
+              <v-container class="skeleton-loader">
+                <p>
+                  <v-skeleton-loader v-if="skeletonLoader" type="image" width="240"
+                    style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
+                  <img v-if="imageCard" :src="imageSrc" width="240" style="border: 1px solid #ccc ;border-radius: 10px;"
+                    alt="Client Image" />
+                </p>
+              </v-container>
+              <h3 class="mb-7"><span class="text-grey-lighten-1">CID: </span>{{ selectedClient?.cid }}</h3>
             </div>
             <v-row>
               <v-col cols="12" lg="4" md="4" sm="4">
@@ -164,6 +170,8 @@ export default {
       validating: false,
       selectedClient: null,
       dialog: false,
+      skeletonLoader: false,
+      imageCard: false,
       snackbar: {
         visible: false,
         message: '',
@@ -251,6 +259,13 @@ export default {
         if (response.data && response.data.length > 0) {
           this.selectedClient = response.data[0];
           this.dialog = true;
+
+          this.skeletonLoader = true
+            this.imageCard = false
+            setTimeout(() => {
+                this.skeletonLoader = false
+                this.imageCard = true
+            }, 1000)
         } else {
           this.showSnackbar('No client found with the provided CID or last name', 'error');
         }
