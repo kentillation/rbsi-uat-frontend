@@ -1,76 +1,138 @@
 <template>
   <v-container>
     <h1>Client Info</h1>
-    <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%" rounded>
+    <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
+      rounded>
       <div class="d-flex justify-end w-100">
         <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">
           New <span class="to-hide">&nbsp;Contact</span>
         </v-btn>
       </div>
       <div class="w-75 mt-10">
-        <v-text-field
-          v-model="search_item"
-          label="Type CID or last name..."
-          @keyup.enter="searchClients"
-          :loading="validating"
-        ></v-text-field>
-        <v-btn
-          prepend-icon="mdi-magnify"
-          class="bg-teal-lighten-3 ms-2"
-          size="large"
-          :disabled="!searchValid || validating"
-          @click="searchClients"
-        >
+        <v-text-field v-model="search_item" label="Type CID or last name..." @keyup.enter="searchClients"
+          :loading="validating"></v-text-field>
+        <v-btn prepend-icon="mdi-magnify" class="bg-teal-lighten-3 ms-2" size="large"
+          :disabled="!searchValid || validating" @click="searchClients">
           Search
         </v-btn>
       </div>
     </v-sheet>
 
     <!-- Dialog for viewing client details -->
-    <v-dialog v-model="dialog" max-width="600px">
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px">
       <v-card>
         <v-card-title>
           <span class="headline">Client Details</span>
         </v-card-title>
         <v-card-text>
           <v-container>
+            <div class="text-center">
+              <h3><span class="text-grey-lighten-1">CID: </span>{{ selectedClient?.cid }}</h3>
+              <!-- <p><span class="text-grey-lighten-1">Image File: </span>{{ selectedClient?.image_file }}</p> -->
+              <p class="my-5"><img :src="imageSrc" width="280" style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" /></p>
+            </div>
             <v-row>
-              <v-col cols="12">
-                <p><span class="text-grey-lighten-1">CID: </span>{{ selectedClient?.cid }}</p>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">First Name: </span>{{ selectedClient?.first_name }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Middle Name: </span>{{ selectedClient?.middle_name }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Last Name: </span>{{ selectedClient?.last_name }}</p>
-                <p><span class="text-grey-lighten-1">Type: </span>{{ getTitle(selectedClient?.type, typeItems, 'type') }}</p>
-                <p><span class="text-grey-lighten-1">Title: </span>{{ getTitle(selectedClient?.title, titleItems, 'title') }}</p>
-                <p><span class="text-grey-lighten-1">Client Status: </span>{{ getTitle(selectedClient?.client_status, clientstatusItems, 'client_status') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Type: </span>{{ getTitle(selectedClient?.type, typeItems,
+                  'type') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Title: </span>{{ getTitle(selectedClient?.title, titleItems,
+                  'title') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Client Status: </span>{{
+                  getTitle(selectedClient?.client_status, clientstatusItems, 'client_status') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Initial: </span>{{ selectedClient?.initial }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Display Name: </span>{{ selectedClient?.display_name }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Staff: </span>{{ staffLabel }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">TIN: </span>{{ selectedClient?.tin }}</p>
-                <p><span class="text-grey-lighten-1">Gender: </span>{{ getTitle(selectedClient?.gender, genderItems, 'gender') }}</p>
-                <p><span class="text-grey-lighten-1">Civil Status: </span>{{ getTitle(selectedClient?.civil_status, civilstatusItems, 'civil_status') }}</p>
-                <p><span class="text-grey-lighten-1">Birthdate: </span>{{ selectedClient?.birthdate ? formatDate(selectedClient?.birthdate) : 'N/A' }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Gender: </span>{{ getTitle(selectedClient?.gender, genderItems,
+                  'gender') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Civil Status: </span>{{ getTitle(selectedClient?.civil_status,
+                  civilstatusItems, 'civil_status') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Birthdate: </span>{{ selectedClient?.birthdate ?
+                  formatDate(selectedClient?.birthdate) : 'N/A' }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Mobile 1: </span>{{ selectedClient?.mobile1 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Mobile 2: </span>{{ selectedClient?.mobile2 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Email: </span>{{ selectedClient?.email }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Nationality: </span>{{ selectedClient?.nationality }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Address Line 1: </span>{{ selectedClient?.address_line1 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Address Line 2: </span>{{ selectedClient?.address_line2 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Address Line 3: </span>{{ selectedClient?.address_line3 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Address Line 4: </span>{{ selectedClient?.address_line4 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Postal Code: </span>{{ selectedClient?.postal_code }}</p>
-                <p><span class="text-grey-lighten-1">Address Type: </span>{{ getTitle(selectedClient?.address_type, addresstypeItems, 'address_type') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Type: </span>{{ getTitle(selectedClient?.address_type,
+                  addresstypeItems, 'address_type') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Telephone: </span>{{ selectedClient?.telephone }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Fax: </span>{{ selectedClient?.fax }}</p>
-                <p><span class="text-grey-lighten-1">Undefined Field: </span>{{ getTitle(selectedClient?.undef, undefItems, 'undef') }}</p>
-                <p><span class="text-grey-lighten-1">Entity: </span>{{ getTitle(selectedClient?.entity, entityItems, 'entity') }}</p>
-                <p><span class="text-grey-lighten-1">Employment: </span>{{ getTitle(selectedClient?.employment, employmentItems, 'employment') }}</p>
-                <p><span class="text-grey-lighten-1">Customer Language Preference: </span>{{ selectedClient?.cus_lang_pref }}</p>
-                <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code, taxcodeItems, 'tax_code') }}</p>
-                <p><span class="text-grey-lighten-1">Image File: </span>{{ selectedClient?.image_file }}</p>
-                <p>
-                  <img :src="imageSrc" width="280" style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" />
-                </p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Undefined Field: </span>{{ getTitle(selectedClient?.undef,
+                  undefItems, 'undef') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Entity: </span>{{ getTitle(selectedClient?.entity, entityItems,
+                  'entity') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Employment: </span>{{ getTitle(selectedClient?.employment,
+                  employmentItems, 'employment') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Language Preference: </span>{{
+                  selectedClient?.cus_lang_pref }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code,
+                  taxcodeItems, 'tax_code') }}</p>
               </v-col>
             </v-row>
           </v-container>
@@ -78,7 +140,8 @@
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Close</v-btn>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false"
+            rounded>Close</v-btn>
           <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil" @click="toEditClientInfo" rounded>Edit</v-btn>
         </v-card-actions>
       </v-card>
@@ -150,7 +213,7 @@ export default {
           },
           responseType: 'blob', // Important for handling binary data
         });
-        
+
         // Create a blob URL from the response
         const blob = new Blob([response.data], { type: response.headers['content-type'] });
         this.imageSrc = URL.createObjectURL(blob);

@@ -174,10 +174,10 @@
                         </p>
                       </v-col> -->
                       <v-col cols="12">
-                        <v-text-field v-model="cus_lang_pref" label="Client Language Preferences" clearable></v-text-field>
+                        <v-text-field v-model="cus_lang_pref" label="Language Preferences" clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
-                        <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]" label="Client Tax Code"
+                        <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]" label="Tax Code"
                           :items="taxcodeItems" item-title="tax_code" item-value="id"></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -200,7 +200,7 @@
     <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>{{ snackbar.message }}</v-snackbar>
 
     <!-- Confirmation Dialog -->
-    <v-dialog v-model="dialog" max-width="1000px">
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px">
       <v-card>
         <v-card-title>
           <span class="headline">Confirm Submission</span>
@@ -290,10 +290,10 @@
                 <p><span class="text-grey-lighten-1">Employment: <br /></span><strong>{{getTitle(employment, employmentItems, 'employment') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Client Language Preferences: <br /></span><strong>{{ cus_lang_pref }}</strong></p>
+                <p><span class="text-grey-lighten-1">Language Preferences: <br /></span><strong>{{ cus_lang_pref }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Client Tax Code: <br /></span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Tax Code: <br /></span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong></p>
               </v-col>
             </v-row>
             <v-row>
@@ -310,7 +310,7 @@
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Cancel</v-btn>
-          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="submitForm" rounded>Confirm</v-btn>
+          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="submitForm" rounded>Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
