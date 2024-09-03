@@ -11,15 +11,16 @@
                 <v-row justify="center">
                   <!-- Form Fields -->
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-text-field v-model="first_name" :rules="[firstnameRule]" label="First Name"
-                      outlined clearable></v-text-field>
+                    <v-text-field v-model="first_name" :rules="[firstnameRule]" label="First Name" outlined
+                      clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-text-field v-model="middle_name" :rules="[middlenameRule]" label="Middle Name"
-                      outlined clearable></v-text-field>
+                    <v-text-field v-model="middle_name" :rules="[middlenameRule]" label="Middle Name" outlined
+                      clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name" outlined clearable></v-text-field>
+                    <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name" outlined
+                      clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                     <v-autocomplete v-model="type" :rules="[typeRule]" label="Type" :items="typeItems" item-title="type"
@@ -56,7 +57,7 @@
                       <v-col cols="12">
                         <v-row>
                           <v-col cols="12">
-                            <v-text-field v-model="tin" label="TIN" clearable></v-text-field>
+                            <v-text-field v-model="tin" :rules="[tinRule]" label="TIN" clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
                             <v-autocomplete v-model="gender" :rules="[genderRule]" label="Gender" :items="genderItems"
@@ -87,18 +88,19 @@
                       <v-col cols="12">
                         <v-row>
                           <v-col cols="12">
-                            <v-text-field v-model="mobile1" :rules="[mobile1Rule]" label="Mobile 1"
-                              outlined clearable></v-text-field>
+                            <v-text-field v-model="mobile1" :rules="[mobile1Rule]" label="Mobile 1" outlined
+                              clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
                             <v-text-field v-model="mobile2" label="Mobile 2" outlined clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
-                            <v-text-field v-model="email" :rules="[emailRule]" label="Email" outlined clearable></v-text-field>
+                            <v-text-field v-model="email" :rules="[emailRule]" label="Email" outlined
+                              clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
-                            <v-text-field v-model="nationality" :rules="[nationalityRule]" label="Nationality"
-                              outlined clearable></v-text-field>
+                            <v-text-field v-model="nationality" :rules="[nationalityRule]" label="Nationality" outlined
+                              clearable></v-text-field>
                           </v-col>
                         </v-row>
                       </v-col>
@@ -177,8 +179,8 @@
                         <v-text-field v-model="cus_lang_pref" label="Language Preferences" clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
-                        <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]" label="Tax Code"
-                          :items="taxcodeItems" item-title="tax_code" item-value="id"></v-autocomplete>
+                        <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]" label="Tax Code" :items="taxcodeItems"
+                          item-title="tax_code" item-value="id"></v-autocomplete>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -189,7 +191,8 @@
         </v-card>
       </v-sheet>
       <div class="mt-4 w-100 d-flex justify-end">
-        <v-btn @click="onRefresh" prepend-icon="mdi-refresh" class="bg-red-darken-4" size="large" variant="tonal" height="40" width="135" rounded>Reset</v-btn>
+        <v-btn @click="onRefresh" prepend-icon="mdi-refresh" class="bg-red-darken-4" size="large" variant="tonal"
+          height="40" width="135" rounded>Reset</v-btn>
         <v-btn :disabled="!isFormValid || validating" @click="showConfirmDialog" prepend-icon="mdi-check"
           class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" height="40" width="135" rounded>
           Submit
@@ -221,13 +224,15 @@
                 <p><span class="text-grey-lighten-1">Display Name: <br /></span><strong>{{ display_name }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Title: <br /></span><strong>{{ getTitle(title, titleItems, 'title') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Title: <br /></span><strong>{{ getTitle(title, titleItems, 'title')
+                    }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Initial: <br /></span><strong>{{ initial }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Type: <br /></span><strong>{{ getTitle(type, typeItems, 'type') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Type: <br /></span><strong>{{ getTitle(type, typeItems, 'type')
+                    }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Staff: <br /></span><strong>{{ staffLabel }}</strong></p>
@@ -236,13 +241,16 @@
                 <p><span class="text-grey-lighten-1">TIN: <br /></span><strong>{{ tin }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Gender: <br /></span><strong>{{ getTitle(gender, genderItems, 'gender') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Gender: <br /></span><strong>{{ getTitle(gender, genderItems,
+                    'gender') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Civil Status: <br /></span><strong>{{ getTitle(civil_status, civilstatusItems, 'civil_status') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Civil Status: <br /></span><strong>{{ getTitle(civil_status,
+                  civilstatusItems, 'civil_status') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Birthdate: <br /></span><strong>{{ formattedBirthdate }}</strong></p>
+                <p><span class="text-grey-lighten-1">Birthdate: <br /></span><strong>{{ formattedBirthdate }}</strong>
+                </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Mobile 1: <br /></span><strong>{{ mobile1 }}</strong></p>
@@ -257,22 +265,27 @@
                 <p><span class="text-grey-lighten-1">Nationality: <br /></span><strong>{{ nationality }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Address Line 1: <br /></span><strong>{{ address_line1 }}</strong></p>
+                <p><span class="text-grey-lighten-1">Address Line 1: <br /></span><strong>{{ address_line1 }}</strong>
+                </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Address Line 2: <br /></span><strong>{{ address_line2 }}</strong></p>
+                <p><span class="text-grey-lighten-1">Address Line 2: <br /></span><strong>{{ address_line2 }}</strong>
+                </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Address Line 3: <br /></span><strong>{{ address_line1 }}</strong></p>
+                <p><span class="text-grey-lighten-1">Address Line 3: <br /></span><strong>{{ address_line1 }}</strong>
+                </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Address Line 4: <br /></span><strong>{{ address_line4 }}</strong></p>
+                <p><span class="text-grey-lighten-1">Address Line 4: <br /></span><strong>{{ address_line4 }}</strong>
+                </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Postal Code: <br /></span><strong>{{ postal_code }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Address Type: <br /></span><strong>{{ getTitle(address_type, addresstypeItems, 'address_type') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Address Type: <br /></span><strong>{{ getTitle(address_type,
+                  addresstypeItems, 'address_type') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Telephone: <br /></span><strong>{{ telephone }}</strong></p>
@@ -281,19 +294,24 @@
                 <p><span class="text-grey-lighten-1">Fax: <br /></span><strong>{{ fax }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Undefined: <br /></span><strong>{{ getTitle(undef, undefItems, 'undef') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Undefined: <br /></span><strong>{{ getTitle(undef, undefItems,
+                    'undef') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Entity: <br /></span><strong>{{ getTitle(entity, entityItems, 'entity') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Entity: <br /></span><strong>{{ getTitle(entity, entityItems,
+                    'entity') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Employment: <br /></span><strong>{{getTitle(employment, employmentItems, 'employment') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Employment: <br /></span><strong>{{ getTitle(employment,
+                  employmentItems, 'employment') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Language Preferences: <br /></span><strong>{{ cus_lang_pref }}</strong></p>
+                <p><span class="text-grey-lighten-1">Language Preferences: <br /></span><strong>{{ cus_lang_pref
+                    }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Tax Code: <br /></span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Tax Code: <br /></span><strong>{{ getTitle(tax_code, taxcodeItems,
+                    'tax_code') }}</strong></p>
               </v-col>
             </v-row>
             <v-row>
@@ -309,7 +327,8 @@
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false" rounded>Cancel</v-btn>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false"
+            rounded>Cancel</v-btn>
           <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="submitForm" rounded>Save</v-btn>
         </v-card-actions>
       </v-card>
@@ -320,6 +339,7 @@
 
 <script>
 import apiClient from '../axios';
+import { debounce } from 'lodash';
 
 export default {
   data() {
@@ -354,8 +374,6 @@ export default {
       undef: null,
       entity: null,
       employment: null,
-      // image_file: null,
-      // image_url: '',
       cus_lang_pref: 'English - US',
       tax_code: null,
       validating: false,
@@ -376,6 +394,7 @@ export default {
       middlenameRule: (v) => !!v || 'Middle name is required',
       lastnameRule: (v) => !!v || 'Last name is required',
       displaynameRule: (v) => !!v || 'Display name is required',
+      tinRule: (v) => !!v || 'TIN is required',
       genderRule: (v) => !!v || 'Gender is required',
       civilstatusRule: (v) => !!v || 'Civil status is required',
       mobile1Rule: (v) => !!v || 'Mobile 1 is required',
@@ -399,19 +418,25 @@ export default {
       }
     };
   },
+  watch: {
+    first_name: 'checkIdentityWebhooks',
+    middle_name: 'checkIdentityWebhooks',
+    last_name: 'checkIdentityWebhooks',
+    displayName(newVal) {
+      this.display_name = newVal;
+    }
+  },
   created() {
     this.fetchCID_LastName();
+    this.debouncedIdentityChecking = debounce(this.debouncedIdentityChecking, 300);
   },
   computed: {
-    // imageSrc() {
-    //   if (this.image_file && this.image_file instanceof File) {
-    //     return URL.createObjectURL(this.image_file);
-    //   }
-    //   if (this.image_url) {
-    //     return this.image_url;
-    //   }
-    //   return '';
-    // },
+    displayName() {
+      const firstName = this.first_name || '';
+      const middleName = this.middle_name ? `${this.middle_name.charAt(0)}.` : '';
+      const lastName = this.last_name || '';
+      return `${lastName}, ${firstName} ${middleName}`.trim();
+    },
     isStaff: {
       get() {
         return this.staff_or_not === 1;
@@ -445,11 +470,34 @@ export default {
     }
   },
   methods: {
+    checkIdentityWebhooks() {
+      this.debouncedIdentityChecking();
+    },
     formatToDateString(date) {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
+    },
+    async debouncedIdentityChecking() {
+      if (!this.first_name || !this.middle_name || !this.last_name) return;
+      try {
+        const [response1, response2] = await Promise.all([
+          apiClient.get('/check_mbwin_client_info', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+          }),
+          apiClient.get('/check_new_db_client_info', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+          })
+        ]);
+
+        if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
+        if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
+      } catch (error) {
+        this.showSnackbar('Error checking identity. Refresh the page!', 'error');
+      }
     },
     async fetchClientData(cid, last_name) {
       this.validating = true;
@@ -461,7 +509,6 @@ export default {
         });
         const client = response.data;
         Object.assign(this, client);
-        // this.image_url = client.image_url || '';
         this.staff_or_not = client.staff_or_not;
       } catch (error) {
         this.snackbar.message = error.response && error.response.status === 404
@@ -530,9 +577,9 @@ export default {
         const [response1, response2] = await Promise.all([
           apiClient.get('/check_mbwin_client_info', {
             headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-            params: { 
-              first_name: this.first_name, 
-              middle_name: this.middle_name, 
+            params: {
+              first_name: this.first_name,
+              middle_name: this.middle_name,
               last_name: this.last_name,
               gender: this.gender,
               birthdate: this.birthdate,
@@ -542,9 +589,9 @@ export default {
           }),
           apiClient.get('/check_new_db_client_info', {
             headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-            params: { 
-              first_name: this.first_name, 
-              middle_name: this.middle_name, 
+            params: {
+              first_name: this.first_name,
+              middle_name: this.middle_name,
               last_name: this.last_name,
               gender: this.gender,
               birthdate: this.birthdate,
@@ -584,13 +631,11 @@ export default {
         if (
           Object.prototype.hasOwnProperty.call(this, key) &&
           key !== 'dialog' &&
-          key !== 'validating' 
-          // && key !== 'image_url'
+          key !== 'validating'
         ) {
           formData.append(key, this[key]);
         }
       }
-      // if (this.image_file) formData.append('image_file', this.image_file);
 
       try {
         await apiClient.post(`/update_client_info/${this.cid}`, formData, {
