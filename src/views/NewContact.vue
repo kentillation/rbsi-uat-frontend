@@ -219,7 +219,11 @@
                 class="bg-teal-darken-3 ms-2 mb-8" size="large" variant="tonal" height="40" width="135" rounded>Submit</v-btn>
             </div>
         </v-form>
-        <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>{{ snackbar.message }}</v-snackbar>
+        <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
+            <div class="d-flex align-items-center justify-space-between">
+                {{ snackbar.message }}
+            </div>
+        </v-snackbar>
 
         <v-dialog v-model="dialog" max-width="600px">
             <v-card>

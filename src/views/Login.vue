@@ -30,7 +30,9 @@
         </v-row>
 
         <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-            {{ snackbar.message }}
+            <div class="d-flex align-items-center justify-space-between">
+                {{ snackbar.message }}
+            </div>
         </v-snackbar>
     </v-container>
 </template>

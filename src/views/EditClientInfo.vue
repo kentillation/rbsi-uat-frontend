@@ -164,17 +164,6 @@
                         <v-autocomplete v-model="employment" :rules="[employmentRule]" label="Employment"
                           :items="employmentItems" item-title="employment" item-value="id"></v-autocomplete>
                       </v-col>
-                      <!-- <v-col cols="12">
-                        <v-file-input accept="image/*" v-model="image_file" :rules="[imagefileRule]" label="Image file"
-                          append-inner-icon="mdi-camera" prepend-icon="" chips show-size>
-                        </v-file-input>
-                        <p v-if="imageSrc">
-                          <img :src="imageSrc" width="195" alt="Client Image" />
-                        </p>
-                        <p v-else>
-                          No image available
-                        </p>
-                      </v-col> -->
                       <v-col cols="12">
                         <v-text-field v-model="cus_lang_pref" label="Language Preferences" clearable></v-text-field>
                       </v-col>
@@ -200,10 +189,15 @@
       </div>
     </v-form>
 
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>{{ snackbar.message }}</v-snackbar>
+    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
+      <div class="d-flex align-items-center justify-space-between">
+        <span class="mt-1">{{ snackbar.message }}</span>
+        <span><v-btn @click="toHomePage" v-if="!to_HomePage" size="small" class="bg-red" style="font-size: 11px;">Go to Homepage</v-btn></span>
+      </div>
+    </v-snackbar>
 
     <!-- Confirmation Dialog -->
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px">
+    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">Confirm Submission</span>
@@ -314,15 +308,6 @@
                     'tax_code') }}</strong></p>
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12">
-                <!-- <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ? `${image_file}` : `${image_url}`
-                    }}</strong></p>
-                <p>
-                  <img :src="imageSrc" width="195" alt="Client Image" />
-                </p> -->
-              </v-col>
-            </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
@@ -338,8 +323,8 @@
 
 
 <script>
+// There's an issue when applying `debounce`
 import apiClient from '../axios';
-import { debounce } from 'lodash';
 
 export default {
   data() {
@@ -409,8 +394,8 @@ export default {
       undefRule: (v) => !!v || 'Undefined code is required',
       entityRule: (v) => !!v || 'Entity code is required',
       employmentRule: (v) => !!v || 'Employment code is required',
-      // imagefileRule: (v) => !!v || 'Image file is required',
       taxcodeRule: (v) => !!v || 'Client Tax Code is required',
+      to_HomePage: false,
       snackbar: {
         visible: false,
         message: '',
@@ -418,17 +403,8 @@ export default {
       }
     };
   },
-  watch: {
-    first_name: 'checkIdentityWebhooks',
-    middle_name: 'checkIdentityWebhooks',
-    last_name: 'checkIdentityWebhooks',
-    displayName(newVal) {
-      this.display_name = newVal;
-    }
-  },
   created() {
     this.fetchCID_LastName();
-    this.debouncedIdentityChecking = debounce(this.debouncedIdentityChecking, 300);
   },
   computed: {
     displayName() {
@@ -464,40 +440,19 @@ export default {
         this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
         this.address_line2, this.address_line3, this.address_line4, this.postal_code,
-        this.address_type, this.undef, this.entity, this.employment, this.image_file,
-        this.cus_lang_pref, this.tax_code
+        this.address_type, this.undef, this.entity, this.employment, this.cus_lang_pref, this.tax_code
       ].every(field => !!field);
     }
   },
   methods: {
-    checkIdentityWebhooks() {
-      this.debouncedIdentityChecking();
+    toHomePage() {
+      this.$router.push({ name: 'Home' });
     },
     formatToDateString(date) {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
-    },
-    async debouncedIdentityChecking() {
-      if (!this.first_name || !this.middle_name || !this.last_name) return;
-      try {
-        const [response1, response2] = await Promise.all([
-          apiClient.get('/check_mbwin_client_info', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
-          }),
-          apiClient.get('/check_new_db_client_info', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
-          })
-        ]);
-
-        if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
-        if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
-      } catch (error) {
-        this.showSnackbar('Error checking identity. Refresh the page!', 'error');
-      }
     },
     async fetchClientData(cid, last_name) {
       this.validating = true;
@@ -572,7 +527,7 @@ export default {
       this.fetchItems('/tax_code', 'taxcodeItems', 'Failed to fetch tax codes');
     },
     async checkIdentity() {
-      if (!this.first_name || !this.middle_name || !this.last_name || !this.gender || !this.birthdate || !this.image_file || !this.staff_or_not) return;
+      if (!this.first_name || !this.middle_name || !this.last_name || !this.gender || !this.birthdate || !this.staff_or_not) return;
       try {
         const [response1, response2] = await Promise.all([
           apiClient.get('/check_mbwin_client_info', {
@@ -583,7 +538,6 @@ export default {
               last_name: this.last_name,
               gender: this.gender,
               birthdate: this.birthdate,
-              image_file: this.image_file,
               staff_or_not: this.staff_or_not
             }
           }),
@@ -595,7 +549,6 @@ export default {
               last_name: this.last_name,
               gender: this.gender,
               birthdate: this.birthdate,
-              image_file: this.image_file,
               staff_or_not: this.staff_or_not
             }
           })
@@ -613,7 +566,7 @@ export default {
     async submitForm() {
       this.dialog = false;
       this.validating = true;
-
+      this.to_HomePage = true
       try {
         await this.checkIdentity();
         if (this.snackbar.color === 'error') {
@@ -679,15 +632,12 @@ export default {
 <style>
 .custom-date-input input[type="date"]::-webkit-inner-spin-button {
   display: none;
-  /* Hides the spin button (Chrome/Safari) */
 }
 
 .custom-date-input input[type="date"]::-webkit-calendar-picker-indicator {
   position: absolute;
   left: 15px;
-  /* Adjust as needed */
   color: gray;
-  /* Icon color */
   cursor: pointer;
   font-size: 25px;
 }
@@ -698,13 +648,10 @@ export default {
 
 .custom-date-input input[type="date"] {
   padding-left: 50px;
-  /* Adjust to ensure text does not overlap with icon */
   color: transparent;
-  /* Hides the text */
 }
 
 .custom-date-input input[type="date"]::-webkit-datetime-edit {
   color: transparent;
-  /* For WebKit browsers */
 }
 </style>

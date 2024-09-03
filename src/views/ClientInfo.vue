@@ -4,9 +4,7 @@
     <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
       rounded>
       <div class="d-flex justify-end w-100">
-        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">
-          New <span class="to-hide">&nbsp;Contact</span>
-        </v-btn>
+        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">New</v-btn>
       </div>
       <div class="w-75 mt-10">
         <v-text-field v-model="search_item" label="Type CID or last name..." @keyup.enter="searchClients"
@@ -153,7 +151,9 @@
     </v-dialog>
 
     <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-      {{ snackbar.message }}
+      <div class="d-flex align-items-center justify-content-center">
+        {{ snackbar.message }}
+      </div>
     </v-snackbar>
   </v-container>
 </template>
