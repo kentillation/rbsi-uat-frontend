@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-container>
     <h1>Client Info</h1>
@@ -7,17 +8,17 @@
         <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">New</v-btn>
       </div>
       <div class="w-75 mt-10">
-        <v-text-field v-model="search_item" label="Type CID or last name..." @keyup.enter="searchClients"
+        <v-text-field v-model="search_item" label="Search CID or last name..." @keyup.enter="searchClients"
           :loading="validating"></v-text-field>
-        <v-btn prepend-icon="mdi-magnify" class="bg-teal-lighten-3 ms-2" size="large"
-          :disabled="!searchValid || validating" @click="searchClients">
+        <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
+          :disabled="!searchValid || validating" @click="searchClients" rounded>
           Search
         </v-btn>
       </div>
     </v-sheet>
 
-    <!-- Dialog for viewing client details -->
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px" persistent>
+    <!-- Dialog for viewing client filtered details -->
+    <v-dialog v-model="dialogSingle" transition="dialog-bottom-transition" width="1000px" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">Client Details</span>
@@ -27,7 +28,8 @@
             <div class="text-center">
               <v-container class="skeleton-loader">
                 <p>
-                  <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248" style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
+                  <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
+                    style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
                   <img v-if="imageCard" :src="imageSrc" width="241" style="border: 1px solid #ccc ;border-radius: 10px;"
                     alt="Client Image" />
                 </p>
@@ -139,20 +141,48 @@
               </v-col>
             </v-row>
           </v-container>
-          <!--Insert table for the same last_name -->
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false"
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialogSingle = false"
             rounded>Close</v-btn>
           <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil" @click="toEditClientInfo" rounded>Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
+    <!-- Dialog for viewing multiple filtered client details -->
+    <v-dialog v-model="dialogMultiple" transition="dialog-bottom-transition" width="1200px" persistent>
+      <v-card>
+        <v-card-title>
+          <span class="headline">Clients Details</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-data-table :headers="headers" :items="multipleClients" item-key="cid" class="elevation-1">
+              <template v-slot:loading>
+                <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+              </template>
+              <template v-slot:item.action="{ item }">
+                <div class="text-center">
+                  <v-btn size="small" @click="viewItem(item)" class="bg-blue" prepend-icon="mdi-eye">View</v-btn>
+                </div>
+              </template>
+            </v-data-table>
+          </v-container>
+        </v-card-text>
+        <v-card-actions class="mx-4 my-4">
+          <v-spacer></v-spacer>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialogMultiple = false"
+            rounded>Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-      <div class="d-flex align-items-center justify-content-center">
-        {{ snackbar.message }}
+      <div class="d-flex align-items-center">
+        <span><v-icon icon="mdi-information-outline"></v-icon></span>
+        <span>&nbsp; {{ snackbar.message }}</span>
       </div>
     </v-snackbar>
   </v-container>
@@ -165,17 +195,22 @@ export default {
   name: 'ClientInfo',
   data() {
     return {
-      search_item: '',
-      validating: false,
-      selectedClient: null,
-      dialog: false,
+      loading: true,
       skeletonLoader: false,
       imageCard: false,
-      snackbar: {
-        visible: false,
-        message: '',
-        color: ''
-      },
+      search_item: '',
+      headers: [
+        { title: 'CID', value: 'cid', sortable: false },
+        { title: 'Last Name', value: 'last_name', sortable: false },
+        { title: 'First Name', value: 'first_name', sortable: false },
+        { title: 'Middle Name', value: 'middle_name', sortable: false },
+        { title: 'Display Name', value: 'display_name', sortable: true },
+        { title: 'Created At', value: 'created_at', sortable: true },
+        { title: 'Updated At', value: 'updated_at', sortable: true },
+        { title: 'Actions', value: 'action', sortable: false }
+      ],
+      selectedClient: null,
+
       typeItems: [],
       titleItems: [],
       clientstatusItems: [],
@@ -185,21 +220,37 @@ export default {
       undefItems: [],
       entityItems: [],
       employmentItems: [],
-      taxcodeItems: []
+      taxcodeItems: [],
+
+      validating: false,
+      singleClient: null,
+      multipleClients: [],
+      dialogSingle: false,
+      dialogMultiple: false,
+
+      snackbar: {
+        visible: false,
+        message: '',
+        color: ''
+      },
     };
-  },
-  computed: {
-    searchValid() {
-      return this.search_item.trim() !== '';
-    },
-    staffLabel() {
-      return this.selectedClient?.staff_or_not === 1 ? 'Yes' : 'No';
-    },
   },
   created() {
     if (this.selectedClient?.image_file) {
       this.fetchClientImage(this.selectedClient.image_file);
     }
+  },
+  mounted() {
+    this.fetchItems('/types', 'typeItems');
+    this.fetchItems('/titles', 'titleItems');
+    this.fetchItems('/client_status', 'clientstatusItems');
+    this.fetchItems('/genders', 'genderItems');
+    this.fetchItems('/civil_status', 'civilstatusItems');
+    this.fetchItems('/address_type', 'addresstypeItems');
+    this.fetchItems('/undef', 'undefItems');
+    this.fetchItems('/entity', 'entityItems');
+    this.fetchItems('/employment', 'employmentItems');
+    this.fetchItems('/tax_code', 'taxcodeItems');
   },
   watch: {
     'selectedClient.image_file': {
@@ -211,7 +262,30 @@ export default {
       },
     },
   },
+  computed: {
+    searchValid() {
+      return this.search_item.trim() !== '';
+    },
+    staffLabel() {
+      return this.selectedClient?.staff_or_not === 1 ? 'Yes' : 'No';
+    },
+  },
   methods: {
+    viewItem(item) {
+      this.selectedClient = {
+        ...item,
+        created_at: this.formatDate(item.created_at),
+        updated_at: this.formatDate(item.updated_at)
+      };
+      //this.dialogMultiple = false;  // Close multiple dialog
+      this.dialogSingle = true;     // Open single client dialog
+      this.skeletonLoader = true;
+      this.imageCard = false;
+      setTimeout(() => {
+        this.skeletonLoader = false;
+        this.imageCard = true;
+      }, 1000);
+    },
     async fetchClientImage(imageFileName) {
       try {
         const response = await apiClient.get(`/client_image/${imageFileName}`, {
@@ -255,18 +329,29 @@ export default {
           params: { search: this.search_item }
         });
 
-        if (response.data && response.data.length > 0) {
-          this.selectedClient = response.data[0];
-          this.dialog = true;
+        const clients = response.data.map(client => ({
+          ...client,
+          created_at: this.formatDate(client.created_at),
+          updated_at: this.formatDate(client.updated_at)
+        }));
 
+        if (clients.length === 1) {
+          this.singleClient = clients[0];
+          this.selectedClient = this.singleClient;
+          this.dialogSingle = true;
+          // this.fetchClientImage(this.singleClient.image_file);
           this.skeletonLoader = true
-            this.imageCard = false
-            setTimeout(() => {
-                this.skeletonLoader = false
-                this.imageCard = true
-            }, 1000)
+          this.imageCard = false
+          setTimeout(() => {
+            this.loading = false;
+            this.skeletonLoader = false
+            this.imageCard = true
+          }, 1000)
+        } else if (clients.length > 1) {
+          this.multipleClients = clients;
+          this.dialogMultiple = true;
         } else {
-          this.showSnackbar('No client found with the provided CID or last name', 'error');
+          this.showSnackbar('No client record found.', 'error');
         }
       } catch (error) {
         this.showSnackbar('An error occurred while searching for clients', 'error');
@@ -296,22 +381,15 @@ export default {
       this.snackbar.visible = true;
     },
     formatDate(date) {
+      if (!date) return 'Invalid date'; // Handle null or undefined date
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) {
+        return 'Invalid date'; // Handle invalid date format
+      }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Intl.DateTimeFormat('en-US', options).format(new Date(date));
+      return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
     },
   },
-  mounted() {
-    this.fetchItems('/types', 'typeItems');
-    this.fetchItems('/titles', 'titleItems');
-    this.fetchItems('/client_status', 'clientstatusItems');
-    this.fetchItems('/genders', 'genderItems');
-    this.fetchItems('/civil_status', 'civilstatusItems');
-    this.fetchItems('/address_type', 'addresstypeItems');
-    this.fetchItems('/undef', 'undefItems');
-    this.fetchItems('/entity', 'entityItems');
-    this.fetchItems('/employment', 'employmentItems');
-    this.fetchItems('/tax_code', 'taxcodeItems');
-  }
 };
 </script>
 

@@ -1,3 +1,55 @@
 .v-data-table {
   max-width: 100%;
 }
+
+/* Vuetify Date Picker */
+.v-date-picker__title {
+  display: none !important;
+  height: 0 !important;
+}
+.v-date-picker-header {
+  display: none !important;
+  padding-top: 0 !important;
+  height: 40px !important;
+}
+.v-date-picker-header__content {
+  margin-top: 0 !important;
+  display: none !important;
+  height: 0 !important;
+}
+.v-picker-title {
+  height: 0 !important;
+  margin-top: 0 !important;
+  padding-inline: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.v-date-picker-controls {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-inline-start: 0 !important;
+  padding-inline-end: 0 !important;
+}
+
+/* Default Date Picker */
+.custom-date-input input[type="date"]::-webkit-inner-spin-button {
+  display: none;
+}
+.custom-date-input input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  left: 15px;
+  color: gray;
+  cursor: pointer;
+  font-size: 25px;
+}
+.custom-date-input {
+  position: relative;
+}
+.custom-date-input input[type="date"] {
+  padding-left: 50px;
+  color: transparent;
+}
+.custom-date-input input[type="date"]::-webkit-datetime-edit {
+  color: transparent;
+}

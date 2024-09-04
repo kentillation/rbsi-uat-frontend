@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <h1>Clients Masterlist</h1>
-        <v-data-table :headers="headers" :items="filteredClients" :loading="loading" density="compact"
+        <v-data-table :headers="headers" :items="filteredClients" :loading="loading"
             class="elevation-1">
             <template v-slot:loading>
                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -25,9 +25,7 @@
             </template>
             <template v-slot:item.action="{ item }">
                 <div class="text-center">
-                    <v-btn size="x-small" icon @click="viewItem(item)" class="bg-blue">
-                        <v-icon size="small">mdi-eye</v-icon>
-                    </v-btn>
+                    <v-btn size="small" @click="viewItem(item)" class="bg-blue" prepend-icon="mdi-eye">View</v-btn>
                 </div>
             </template>
         </v-data-table>
@@ -75,7 +73,7 @@
                                 <p><span class="text-grey-lighten-1">Display Name: </span>{{ selectedClient?.display_name }}</p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Staff or Not: </span>{{ selectedClient?.staff_or_not ? 'Yes' : 'No' }}</p>
+                                <p><span class="text-grey-lighten-1">Staff or Not: </span>{{ staffLabel }}</p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">TIN: </span>{{ selectedClient?.tin }}</p>
@@ -184,7 +182,6 @@ export default {
             skeletonLoader: false,
             imageCard: false,
             search_item: '',
-            client_info: [],
             headers: [
                 { title: 'CID', value: 'cid', sortable: false },
                 { title: 'Last Name', value: 'last_name', sortable: false },
@@ -195,10 +192,8 @@ export default {
                 { title: 'Updated At', value: 'updated_at', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
-            dialog: false,
             selectedClient: null,
-            pollingInterval: 5000, // Polling every second
-            pollingTimer: null,
+
             typeItems: [],
             titleItems: [],
             clientstatusItems: [],
@@ -208,13 +203,22 @@ export default {
             undefItems: [],
             entityItems: [],
             employmentItems: [],
-            taxcodeItems: []
+            taxcodeItems: [],
+
+            client_info: [],
+            dialog: false,
+            pollingInterval: 5000,
+            pollingTimer: null
         };
+    },
+    created() {
+        if (this.selectedClient?.image_file) {
+        this.fetchClientImage(this.selectedClient.image_file);
+        }
     },
     mounted() {
         this.fetchClientInfo();
         this.startPolling();
-        // Fill search_item with the query parameter if available
         if (this.$route.query.search) {
             this.search_item = this.$route.query.search;
         }
@@ -234,11 +238,6 @@ export default {
             clearInterval(this.pollingTimer);
         }
     },
-    created() {
-        if (this.selectedClient?.image_file) {
-        this.fetchClientImage(this.selectedClient.image_file);
-        }
-    },
     watch: {
         'selectedClient.image_file': {
         immediate: true,
@@ -250,6 +249,9 @@ export default {
         },
     },
     computed: {
+        staffLabel() {
+            return this.selectedClient?.staff_or_not === 1 ? 'Yes' : 'No';
+        },
         filteredClients() {
             const searchTerm = this.search_item.toLowerCase();
             return this.client_info.filter((client) => {
@@ -263,6 +265,17 @@ export default {
         },
     },
     methods: {
+        toEditClientInfo() {
+            if (this.selectedClient) {
+                this.$router.push({
+                name: 'EditClientInfo',
+                params: {
+                    cid: this.selectedClient.cid,
+                    last_name: this.selectedClient.last_name,
+                },
+                });
+            }
+        },
         async fetchClientImage(imageFileName) {
             try {
                 const response = await apiClient.get(`/client_image/${imageFileName}`, {
@@ -333,9 +346,14 @@ export default {
                 this.imageCard = true
             }, 1000)
         },
-        formatDate(dateString) {
+        formatDate(date) {
+            if (!date) return 'Invalid date'; // Handle null or undefined date
+            const parsedDate = new Date(date);
+            if (isNaN(parsedDate.getTime())) {
+                return 'Invalid date'; // Handle invalid date format
+            }
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+            return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
         },
         startPolling() {
             this.pollingTimer = setInterval(() => {

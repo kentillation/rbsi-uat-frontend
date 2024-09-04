@@ -4,12 +4,6 @@
       <v-app-bar prominent>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title><span class="to-hide-head">Rural Bank of Sagay, Inc.</span><span class="to-show-head">RBSI</span></v-toolbar-title>
-        <v-spacer></v-spacer>
-        <template v-if="$vuetify.display.mdAndUp">
-          <v-btn icon="mdi-magnify" variant="text"></v-btn>
-          <v-btn icon="mdi-filter" variant="text"></v-btn>
-        </template>
-        <v-btn icon="mdi-dots-vertical" variant="text"></v-btn>
       </v-app-bar>
       <v-navigation-drawer class="h-screen" v-model="drawer" v-if="showSidebar" expand-on-hover rail>
         <v-list>
@@ -19,8 +13,9 @@
         </v-list>
         <v-divider></v-divider>
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-home-outline" @click="home">Home</v-list-item>
-          <v-list-item prepend-icon="mdi-information-outline" @click="client_info">Client_Information</v-list-item>
+          <v-list-subheader class="ms-5" size="30">Client</v-list-subheader>
+          <v-list-item prepend-icon="mdi-information-outline" @click="client_info">Information</v-list-item>
+          <v-list-item prepend-icon="mdi-plus-circle-outline" @click="new_contact">Add_New</v-list-item>
           <v-list-subheader class="ms-5" size="30">Reports</v-list-subheader>
           <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients">Clients_Masterlist</v-list-item>
         </v-list>
@@ -57,16 +52,16 @@ export default {
     }
   },
   methods: {
-    async home() {
-      try {
-        this.$router.push('/home');
-      } catch (error) {
-        console.error('Error accessing home:', error);
-      }
-    },
     async client_info() {
       try {
         this.$router.push('/client_info');
+      } catch (error) {
+        console.error('Error in accessing client info:', error);
+      }
+    },
+    async new_contact() {
+      try {
+        this.$router.push('/new_contact');
       } catch (error) {
         console.error('Error in accessing client info:', error);
       }
