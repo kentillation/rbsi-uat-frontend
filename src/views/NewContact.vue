@@ -322,6 +322,7 @@
 
 <script>
 import apiClient from '../axios';
+import watchlistData from '@/temp/watchlist.json';
 import { debounce } from 'lodash';
 import formMixins from '@/mixins/formMixins';
 
@@ -352,14 +353,32 @@ export default {
             this.confirm_identity_dialog = false;
             this.checkWatchlist();
         },
+        // async checkWatchlist() {
+        //     if (this.isIdentityCheckDisabled) return;
+        //     try {
+        //         const response = await apiClient.get('/watchlist', {
+        //             headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+        //             params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+        //         });
+        //         if (response.data.exists) {
+        //             this.showSnackbar('Name is on the watchlist.', 'error');
+        //         } else {
+        //             this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
+        //         }
+        //     } catch (error) {
+        //         this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
+        //     }
+        // },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
             try {
-                const response = await apiClient.get('/watchlist', {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-                    params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
-                });
-                if (response.data.exists) {
+                const data = watchlistData;
+                const isOnWatchlist = data.watchlist.some(item =>
+                    item.first_name === this.first_name &&
+                    item.middle_name === this.middle_name &&
+                    item.last_name === this.last_name
+                );
+                if (isOnWatchlist) {
                     this.showSnackbar('Name is on the watchlist.', 'error');
                 } else {
                     this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
