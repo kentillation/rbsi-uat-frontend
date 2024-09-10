@@ -23,7 +23,7 @@
         <v-card-title>
           <span class="headline">Client Details</span>
         </v-card-title>
-        <v-card-text>
+        <!-- <v-card-text>
           <v-container>
             <div class="text-center">
               <v-container class="skeleton-loader">
@@ -141,7 +141,12 @@
               </v-col>
             </v-row>
           </v-container>
-        </v-card-text>
+        </v-card-text> -->
+        <ClientDataMixin :client="selectedClient" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
+          :imageSrc="imageSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
+          :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
+          :undefItems="undefItems" :entityItems="entityItems" :employmentItems="employmentItems"
+          :taxcodeItems="taxcodeItems" />
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialogSingle = false"
@@ -190,67 +195,28 @@
 
 <script>
 import apiClient from '../axios';
+import dataMixins from '@/mixins/dataMixins';
+import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
   name: 'ClientInfo',
+  mixins: [dataMixins],
+  components: {
+    ClientDataMixin
+  },
   data() {
     return {
-      loading: true,
-      skeletonLoader: false,
-      imageCard: false,
-      search_item: '',
-      headers: [
-        { title: 'CID', value: 'cid', sortable: false },
-        { title: 'Last Name', value: 'last_name', sortable: false },
-        { title: 'First Name', value: 'first_name', sortable: false },
-        { title: 'Middle Name', value: 'middle_name', sortable: false },
-        { title: 'Display Name', value: 'display_name', sortable: true },
-        { title: 'Created At', value: 'created_at', sortable: true },
-        { title: 'Updated At', value: 'updated_at', sortable: true },
-        { title: 'Actions', value: 'action', sortable: false }
-      ],
-      selectedClient: null,
-
-      typeItems: [],
-      titleItems: [],
-      clientstatusItems: [],
-      genderItems: [],
-      civilstatusItems: [],
-      addresstypeItems: [],
-      undefItems: [],
-      entityItems: [],
-      employmentItems: [],
-      taxcodeItems: [],
-
       validating: false,
       singleClient: null,
       multipleClients: [],
       dialogSingle: false,
       dialogMultiple: false,
-
       snackbar: {
         visible: false,
         message: '',
         color: ''
       },
     };
-  },
-  created() {
-    if (this.selectedClient?.image_file) {
-      this.fetchClientImage(this.selectedClient.image_file);
-    }
-  },
-  mounted() {
-    this.fetchItems('/types', 'typeItems');
-    this.fetchItems('/titles', 'titleItems');
-    this.fetchItems('/client_status', 'clientstatusItems');
-    this.fetchItems('/genders', 'genderItems');
-    this.fetchItems('/civil_status', 'civilstatusItems');
-    this.fetchItems('/address_type', 'addresstypeItems');
-    this.fetchItems('/undef', 'undefItems');
-    this.fetchItems('/entity', 'entityItems');
-    this.fetchItems('/employment', 'employmentItems');
-    this.fetchItems('/tax_code', 'taxcodeItems');
   },
   watch: {
     'selectedClient.image_file': {
@@ -266,60 +232,13 @@ export default {
     searchValid() {
       return this.search_item.trim() !== '';
     },
-    staffLabel() {
-      return this.selectedClient?.staff_or_not === 1 ? 'Yes' : 'No';
-    },
   },
   methods: {
-    viewItem(item) {
-      this.selectedClient = {
-        ...item,
-        created_at: this.formatDate(item.created_at),
-        updated_at: this.formatDate(item.updated_at)
-      };
-      //this.dialogMultiple = false;  // Close multiple dialog
-      this.dialogSingle = true;     // Open single client dialog
-      this.skeletonLoader = true;
-      this.imageCard = false;
-      setTimeout(() => {
-        this.skeletonLoader = false;
-        this.imageCard = true;
-      }, 1000);
-    },
-    async fetchClientImage(imageFileName) {
-      try {
-        const response = await apiClient.get(`/client_image/${imageFileName}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-          },
-          responseType: 'blob', // Important for handling binary data
-        });
-
-        // Create a blob URL from the response
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
-        this.imageSrc = URL.createObjectURL(blob);
-      } catch (error) {
-        console.error('Error fetching client image:', error);
-        this.imageSrc = ''; // Handle errors by clearing the image
-      }
-    },
     toNewContact() {
       this.$router.push({ name: 'NewContact' });
     },
-    toEditClientInfo() {
-      if (this.selectedClient) {
-        this.$router.push({
-          name: 'EditClientInfo',
-          params: {
-            cid: this.selectedClient.cid,
-            last_name: this.selectedClient.last_name,
-          },
-        });
-      }
-    },
     async searchClients() {
       if (!this.searchValid) return;
-
       this.validating = true;
       try {
         const response = await apiClient.get('/client_info', {
@@ -328,18 +247,15 @@ export default {
           },
           params: { search: this.search_item }
         });
-
         const clients = response.data.map(client => ({
           ...client,
           created_at: this.formatDate(client.created_at),
           updated_at: this.formatDate(client.updated_at)
         }));
-
         if (clients.length === 1) {
           this.singleClient = clients[0];
           this.selectedClient = this.singleClient;
           this.dialogSingle = true;
-          // this.fetchClientImage(this.singleClient.image_file);
           this.skeletonLoader = true
           this.imageCard = false
           setTimeout(() => {
@@ -359,35 +275,10 @@ export default {
         this.validating = false;
       }
     },
-    getTitle(id, items, titleKey) {
-      const item = items.find(item => item.id === id);
-      return item ? item[titleKey] : 'Unknown';
-    },
-    async fetchItems(endpoint, key) {
-      try {
-        const response = await apiClient.get(endpoint, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-          }
-        });
-        this[key] = response.data;
-      } catch (error) {
-        this.showSnackbar(`Failed to fetch ${key}`, 'error');
-      }
-    },
     showSnackbar(message, color) {
       this.snackbar.message = message;
       this.snackbar.color = color;
       this.snackbar.visible = true;
-    },
-    formatDate(date) {
-      if (!date) return 'Invalid date'; // Handle null or undefined date
-      const parsedDate = new Date(date);
-      if (isNaN(parsedDate.getTime())) {
-        return 'Invalid date'; // Handle invalid date format
-      }
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
     },
   },
 };

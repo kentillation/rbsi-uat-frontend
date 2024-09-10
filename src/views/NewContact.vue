@@ -395,6 +395,7 @@ import { debounce } from 'lodash';
 import formMixins from '@/mixins/formMixins';
 
 export default {
+    mixins: [formMixins],
     data () {
         return {
             skeletonLoader: false,
@@ -402,7 +403,6 @@ export default {
             imageSrc: '',
         }
     },
-    mixins: [formMixins],
     created() {
         this.checkIdentity = debounce(this.checkIdentity, 300);
     },

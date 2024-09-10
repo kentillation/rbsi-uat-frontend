@@ -53,3 +53,25 @@
 .custom-date-input input[type="date"]::-webkit-datetime-edit {
   color: transparent;
 }
+
+/*  */
+
+thead .v-data-table__th .v-data-table-header__content {
+  color: #b9b8b8;
+}
+
+tbody .v-data-table__td {
+  color: #f7fffd;
+}
+
+@media (max-width: 530px) {
+  .to-hide {
+      display: none;
+  }
+}
+
+.skeleton-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
