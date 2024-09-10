@@ -76,9 +76,9 @@ export default {
       taxcodeRule: (v) => !!v || 'Client Tax Code is required',
       validating: false,
       snackbar: {
-          visible: false,
-          message: '',
-          color: ''
+        visible: false,
+        message: '',
+        color: ''
       },
       to_HomePage: false,
       confirm_identity_dialog: false,
@@ -100,35 +100,35 @@ export default {
     this.fetchEmploymentItems();
     this.fetchAddressTypeItems();
     this.fetchTaxCodeItems();
-},
-computed: {
-  displayName() {
-    const firstName = this.first_name || '';
-    const middleName = this.middle_name ? `${this.middle_name.charAt(0)}.` : '';
-    const lastName = this.last_name || '';
-    return `${lastName}, ${firstName} ${middleName}`.trim();
   },
-  formattedBirthdate() {
-    if (!this.birthdate) return '';
-    const date = new Date(this.birthdate);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: this.timezone,
-    }).format(date);
-  },
-  isFormValid() {
-    return [
+  computed: {
+    displayName() {
+      const firstName = this.first_name || '';
+      const middleName = this.middle_name ? `${this.middle_name.charAt(0)}.` : '';
+      const lastName = this.last_name || '';
+      return `${lastName}, ${firstName} ${middleName}`.trim();
+    },
+    formattedBirthdate() {
+      if (!this.birthdate) return '';
+      const date = new Date(this.birthdate);
+      return new Intl.DateTimeFormat('en-PH', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: this.timezone,
+      }).format(date);
+    },
+    isFormValid() {
+      return [
         this.type, this.title, this.client_status, this.first_name, this.middle_name,
         this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
         this.address_line2, this.address_line3, this.address_line4, this.postal_code,
         this.address_type, this.undef, this.entity, this.employment, this.image_file,
         this.cus_lang_pref, this.tax_code
-    ].every(field => !!field);
-  }
-},
+      ].every(field => !!field);
+    }
+  },
   methods: {
     goBack() {
       this.$router.go(-1);
@@ -184,21 +184,21 @@ computed: {
     async checkIdentity() {
       if (!this.first_name || !this.middle_name || !this.last_name) return;
       try {
-          const [response1, response2] = await Promise.all([
+        const [response1, response2] = await Promise.all([
           apiClient.get('/check_mbwin_client_info', {
-              headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-              params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
           }),
           apiClient.get('/check_new_db_client_info', {
-              headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-              params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+            headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+            params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
           })
-          ]);
+        ]);
 
-          if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
-          if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
+        if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
+        if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
       } catch (error) {
-          this.showSnackbar('Error checking identity. Refresh the page!', 'error');
+        this.showSnackbar('Error checking identity. Refresh the page!', 'error');
       }
     },
     getTitle(value, items, key) {
@@ -213,34 +213,41 @@ computed: {
     handleFormError(error) {
       let message = 'An unknown error occurred.';
       if (error.response) {
-          switch (error.response.status) {
-              case 404:
-                  message = 'Client not found.';
-                  break;
-              case 422:
-                  message = 'Invalid input.';
-                  break;
-              case 429:
-                  message = 'Too many API requests. Refresh the page!';
-                  break;
-              case 409:
-                  message = 'Contact already exist!';
-                  break;
-              case 500:
-                  message = 'Internal server error. Please try again later.';
-                  break;
-              default:
-                  message = `Error: ${error.response.status}`;
-          }
+        switch (error.response.status) {
+          case 404:
+            message = 'Client not found.';
+            break;
+          case 422:
+            message = 'Invalid input.';
+            break;
+          case 429:
+            message = 'Too many API requests. Refresh the page!';
+            break;
+          case 409:
+            message = 'Contact already exist!';
+            break;
+          case 500:
+            message = 'Internal server error. Please try again later.';
+            break;
+          default:
+            message = `Error: ${error.response.status}`;
+        }
       } else if (error.request) {
-          message = 'No response from server.';
+        message = 'No response from server.';
       } else {
-          message = 'Request error. Please try again!';
+        message = 'Request error. Please try again!';
       }
       this.showSnackbar(message, 'error');
     },
     showConfirmDialog() {
       if (this.isFormValid) this.dialog = true;
+      this.skeletonLoader = true;
+      this.imageCard = false;
+      setTimeout(() => {
+        this.skeletonLoader = false;
+        this.imageCard = true;
+        this.imageSrc = URL.createObjectURL(this.image_file);
+      }, 1000);
     },
   },
 };

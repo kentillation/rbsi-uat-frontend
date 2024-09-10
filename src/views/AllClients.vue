@@ -218,7 +218,6 @@ export default {
     },
     mounted() {
         this.fetchClientInfo();
-        this.startPolling();
         if (this.$route.query.search) {
             this.search_item = this.$route.query.search;
         }
@@ -282,15 +281,14 @@ export default {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
-                responseType: 'blob', // Important for handling binary data
+                responseType: 'blob',
                 });
 
-                // Create a blob URL from the response
                 const blob = new Blob([response.data], { type: response.headers['content-type'] });
                 this.imageSrc = URL.createObjectURL(blob);
             } catch (error) {
                 console.error('Error fetching client image:', error);
-                this.imageSrc = ''; // Handle errors by clearing the image
+                this.imageSrc = '';
             }
         },
         async fetchItems(endpoint, key) {
@@ -347,18 +345,13 @@ export default {
             }, 1000)
         },
         formatDate(date) {
-            if (!date) return 'Invalid date'; // Handle null or undefined date
+            if (!date) return 'Invalid date';
             const parsedDate = new Date(date);
             if (isNaN(parsedDate.getTime())) {
-                return 'Invalid date'; // Handle invalid date format
+                return 'Invalid date';
             }
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
-        },
-        startPolling() {
-            this.pollingTimer = setInterval(() => {
-                this.fetchClientInfo();
-            }, this.pollingInterval);
         },
         getTitle(id, items, titleKey) {
             const item = items.find(item => item.id === id);

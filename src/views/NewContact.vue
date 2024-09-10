@@ -188,9 +188,9 @@
                                                     item-value="id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-file-input accept="image/*" v-model="image_file"
-                                                    :rules="[imagefileRule]" label="Image file" a
-                                                    ppend-inner-icon="mdi-camera" prepend-icon="" chips show-size>
+                                                <v-file-input v-model="image_file" :rules="[imagefileRule]"
+                                                accept="image/*" label="Image file" append-inner-icon="mdi-camera" 
+                                                    prepend-icon="" chips show-size>
                                                 </v-file-input>
                                             </v-col>
                                             <v-col cols="12">
@@ -246,74 +246,142 @@
                 </v-card-title>
                 <v-card-text>
                     <v-container>
+                        <div class="text-center">
+                            <v-container class="skeleton-loader">
+                                <p>
+                                <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
+                                    style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
+                                <img v-if="imageCard" :src="imageSrc" width="241" style="border: 1px solid #ccc ;border-radius: 10px;"
+                                    alt="Client Image" />
+                                </p>
+                            </v-container>
+                        </div>
+                            <!-- <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ?
+                                    'Selected' : 'None' }}</strong> </p> -->
                         <v-row>
-                            <v-col cols="12">
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">First Name: </span><strong>{{ first_name
                                         }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name
                                         }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong>
                                 </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems,
                                     'type') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Title: </span><strong>{{ getTitle(title,
                                     titleItems, 'title') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{
                                     getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name
                                         }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' :
                                     'No' }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">TIN: </span><strong>{{ tin }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender,
                                     genderItems, 'gender') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Civil Status: </span><strong>{{
                                     getTitle(civil_status, civilstatusItems, 'civil_status') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate
                                         }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong>
                                 </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Mobile 2: </span><strong>{{ mobile2 }}</strong>
                                 </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Email: </span><strong>{{ email }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Nationality: </span><strong>{{ nationality
                                         }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Line 1: </span><strong>{{ address_line1
                                         }}</strong></p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Line 2: </span><strong>{{ address_line2
                                         }}</strong></p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Line 3: </span><strong>{{ address_line3
                                         }}</strong></p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Line 4: </span><strong>{{ address_line4
                                         }}</strong></p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code
                                         }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Type: </span><strong>{{
                                     getTitle(address_type, addresstypeItems, 'address_type') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Telephone: </span><strong>{{ telephone }}</strong>
                                 </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Undefined: </span><strong>{{ getTitle(undef,
                                     undefItems, 'undef') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity,
                                     entityItems, 'entity') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment,
                                     employmentItems, 'employment') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Language Preferences: </span><strong>{{
                                     cus_lang_pref }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{
                                     getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong> </p>
-                                <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ?
-                                    'Selected' : 'None' }}</strong> </p>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4" text @click="dialog = false">Cancel</v-btn>
-                    <v-btn class="bg-teal-darken-3" text @click="submitForm">Confirm</v-btn>
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="dialog" rounded>Check again</v-btn>
+                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm" rounded>Confirm</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -327,6 +395,13 @@ import { debounce } from 'lodash';
 import formMixins from '@/mixins/formMixins';
 
 export default {
+    data () {
+        return {
+            skeletonLoader: false,
+            imageCard: false,
+            imageSrc: '',
+        }
+    },
     mixins: [formMixins],
     created() {
         this.checkIdentity = debounce(this.checkIdentity, 300);
@@ -400,15 +475,16 @@ export default {
                         'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
                         'fax', 'undef', 'entity', 'employment', 'image_file', 'cus_lang_pref', 'tax_code'
                     ];
-                    // Convert birthdate to yyyy-MM-dd format if it's valid
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
                     formData.append('birthdate', formattedBirthdate);
-                    // Append other fields
                     fields.forEach(field => {
-                        if (field !== 'birthdate') { // Skip 'birthdate' because it's handled separately
+                        if (field !== 'birthdate') { 
                             formData.append(field, this[field]);
                         }
                     });
+                    if (this.image_file) {
+                        formData.append('image_file', this.image_file);
+                    }
                     formData.append('staff_or_not', staffValue);
                     const response = await apiClient.post('/new_client_info', formData, {
                         headers: {
@@ -432,7 +508,3 @@ export default {
 };
 
 </script>
-
-<style>
-/* @import '~vuetify/styles'; */
-</style>
