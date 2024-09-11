@@ -1,0 +1,16 @@
+// async sendNewLocationCode() {
+//       try {
+//         const response = await apiClient.post('/clone_location_code', {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+//           }
+//         });
+//         if (response.status === 200) {
+//           this.showSnackbar('Location code cloned successfully', 'success');
+//         }
+//       } catch (error) {
+//         this.showSnackbar('Error cloning location code.', 'error');
+//       } finally {
+//         this.validating = false;
+//       }
+//     },

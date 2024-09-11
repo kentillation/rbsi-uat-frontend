@@ -151,7 +151,8 @@
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
             rounded>Close</v-btn>
-          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil-outline" @click="toEditClientInfo" rounded>Edit</v-btn>
+          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil-outline" @click="toEditClientInfo"
+            rounded>Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -170,7 +171,8 @@
               </template>
               <template v-slot:item.action="{ item }">
                 <div class="text-center">
-                  <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>View</v-btn>
+                  <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline"
+                    rounded>View</v-btn>
                 </div>
               </template>
             </v-data-table>
