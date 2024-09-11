@@ -23,10 +23,21 @@
                     </div>
                 </v-toolbar>
             </template>
-            <template v-slot:item.action="{ item }">
-                <div class="text-center">
-                    <v-btn size="small" @click="viewItem(item)" class="bg-blue" prepend-icon="mdi-eye">View</v-btn>
-                </div>
+            <template v-slot:item="{ item }">
+                <tr :class="{'bg-teal-darken-1': !item.existsInMBWin}">
+                    <td>{{ item.cid }}</td>
+                    <td>{{ item.last_name }}</td>
+                    <td>{{ item.first_name }}</td>
+                    <td>{{ item.middle_name }}</td>
+                    <td>{{ item.display_name }}</td>
+                    <td>{{ item.created_at }}</td>
+                    <td>{{ item.updated_at }}</td>
+                    <td class="text-center">
+                        <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>
+                            View
+                        </v-btn>
+                    </td>
+                </tr>
             </template>
         </v-data-table>
 
@@ -44,9 +55,9 @@
 
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialogSingle = false"
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
                         rounded>Close</v-btn>
-                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil" @click="toEditClientInfo"
+                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil-outline" @click="toEditClientInfo"
                         rounded>Edit</v-btn>
                 </v-card-actions>
             </v-card>
@@ -76,6 +87,7 @@ export default {
         if (this.$route.query.search) {
             this.search_item = this.$route.query.search;
         }
+        this.fetchMBWinClientInfo();
     },
     beforeUnmount() {
         if (this.pollingTimer) {
@@ -116,11 +128,37 @@ export default {
                 this.client_info = response.data.map(client => ({
                     ...client,
                     created_at: this.formatDate(client.created_at),
-                    updated_at: this.formatDate(client.updated_at)
+                    updated_at: this.formatDate(client.updated_at),
+                    existsInMBWin: false
                     // fullName: `${client.last_name}, ${client.first_name} ${client.middle_name}`.trim(),
                 }));
             } catch (error) {
                 console.error('Error fetching client_info:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+        async fetchMBWinClientInfo() {
+            try {
+                const response = await apiClient.get('/mbwin_client_info', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                    }
+                });
+                const mbwinClients = response.data;
+                this.client_info = this.client_info.map(client => {
+                    const match = mbwinClients.some(mbwinClient => 
+                        (mbwinClient.Name1 && mbwinClient.Name1.toLowerCase() === client.last_name.toLowerCase()) &&
+                        (mbwinClient.Name2 && mbwinClient.Name2.toLowerCase() === client.first_name.toLowerCase()) &&
+                        (mbwinClient.Name3 && mbwinClient.Name3.toLowerCase() === client.middle_name.toLowerCase())
+                    );
+                    return {
+                        ...client,
+                        existsInMBWin: match
+                    };
+                });
+            } catch (error) {
+                console.error('Error fetching mbwin_client_info:', error);
             } finally {
                 this.loading = false;
             }
@@ -130,6 +168,7 @@ export default {
             setTimeout(() => {
                 this.loading = false
                 this.fetchClientInfo()
+                this.fetchMBWinClientInfo()
             }, 2000)
         },
     }

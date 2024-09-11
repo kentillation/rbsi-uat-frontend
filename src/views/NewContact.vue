@@ -102,12 +102,12 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="mobile1" type="number"
+                                                        <v-text-field v-model="mobile1"
                                                             :rules="[mobile1Rule]" label="Mobile 1"
                                                             clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="mobile2" type="number" label="Mobile 2"
+                                                        <v-text-field v-model="mobile2" label="Mobile 2"
                                                             clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">

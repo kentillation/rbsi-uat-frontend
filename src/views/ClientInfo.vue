@@ -149,9 +149,9 @@
           :taxcodeItems="taxcodeItems" />
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialogSingle = false"
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
             rounded>Close</v-btn>
-          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil" @click="toEditClientInfo" rounded>Edit</v-btn>
+          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil-outline" @click="toEditClientInfo" rounded>Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -170,7 +170,7 @@
               </template>
               <template v-slot:item.action="{ item }">
                 <div class="text-center">
-                  <v-btn size="small" @click="viewItem(item)" class="bg-blue" prepend-icon="mdi-eye">View</v-btn>
+                  <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>View</v-btn>
                 </div>
               </template>
             </v-data-table>
@@ -178,7 +178,7 @@
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialogMultiple = false"
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogMultiple = false"
             rounded>Close</v-btn>
         </v-card-actions>
       </v-card>
