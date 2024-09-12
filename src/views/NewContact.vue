@@ -68,7 +68,7 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="tin" :rules="[tinRule]" type="number"
+                                                        <v-text-field v-model="tin" :rules="[tinRule]"
                                                             label="TIN" clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
@@ -146,7 +146,7 @@
                                                     label="Line 4" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="postal_code" type="number"
+                                                <v-text-field v-model="postal_code"
                                                     :rules="[postalcodeRule]" label="Postal Code"
                                                     clearable></v-text-field>
                                             </v-col>
@@ -156,11 +156,11 @@
                                                     item-title="address_type" item-value="id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="telephone" type="number" label="Telephone"
+                                                <v-text-field v-model="telephone" label="Telephone"
                                                     clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="fax" type="number" label="Fax"
+                                                <v-text-field v-model="fax" label="Fax"
                                                     clearable></v-text-field>
                                             </v-col>
                                         </v-row>
@@ -173,8 +173,8 @@
                                         <h3 class="mb-4">Client Classification Codes</h3>
                                         <v-row>
                                             <v-col cols="12">
-                                                <v-autocomplete v-model="undef" :rules="[undefRule]" label="Undefined"
-                                                    :items="undefItems" item-title="undef"
+                                                <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Instituion"
+                                                    :items="institutionItems" item-title="institution"
                                                     item-value="id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
@@ -192,10 +192,6 @@
                                                 accept="image/*" label="Image file" append-inner-icon="mdi-camera" 
                                                     prepend-icon="" chips show-size>
                                                 </v-file-input>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="cus_lang_pref"
-                                                    label="Client Language Preferences"></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]"
@@ -356,8 +352,8 @@
                                 <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Undefined: </span><strong>{{ getTitle(undef,
-                                    undefItems, 'undef') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Instituion: </span><strong>{{ getTitle(institution,
+                                    institutionItems, 'institution') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity,
@@ -366,10 +362,6 @@
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment,
                                     employmentItems, 'employment') }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Client Language Preferences: </span><strong>{{
-                                    cus_lang_pref }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{
@@ -473,7 +465,7 @@ export default {
                         'initial', 'display_name', 'tin', 'gender', 'civil_status', 'birthdate',
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
-                        'fax', 'undef', 'entity', 'employment', 'image_file', 'cus_lang_pref', 'tax_code'
+                        'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
                     ];
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
                     formData.append('birthdate', formattedBirthdate);

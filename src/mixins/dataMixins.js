@@ -27,7 +27,7 @@ export default {
       genderItems: [],
       civilstatusItems: [],
       addresstypeItems: [],
-      undefItems: [],
+      institutionItems: [],
       entityItems: [],
       employmentItems: [],
       taxcodeItems: [],
@@ -45,7 +45,7 @@ export default {
     this.fetchItems('/genders', 'genderItems');
     this.fetchItems('/civil_status', 'civilstatusItems');
     this.fetchItems('/address_type', 'addresstypeItems');
-    this.fetchItems('/undef', 'undefItems');
+    this.fetchItems('/institution', 'institutionItems');
     this.fetchItems('/entity', 'entityItems');
     this.fetchItems('/employment', 'employmentItems');
     this.fetchItems('/tax_code', 'taxcodeItems');

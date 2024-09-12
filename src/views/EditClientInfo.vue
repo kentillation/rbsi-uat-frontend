@@ -156,8 +156,8 @@
                     <h3 class="mb-4">Client Classification Codes</h3>
                     <v-row>
                       <v-col cols="12">
-                        <v-autocomplete v-model="undef" :rules="[undefRule]" label="Undefined" :items="undefItems"
-                          item-title="undef" item-value="id"></v-autocomplete>
+                        <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Undefined" :items="institutionItems"
+                          item-title="institution" item-value="id"></v-autocomplete>
                       </v-col>
                       <v-col cols="12">
                         <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity" :items="entityItems"
@@ -166,9 +166,6 @@
                       <v-col cols="12">
                         <v-autocomplete v-model="employment" :rules="[employmentRule]" label="Employment"
                           :items="employmentItems" item-title="employment" item-value="id"></v-autocomplete>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field v-model="cus_lang_pref" label="Language Preferences" clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
                         <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]" label="Tax Code" :items="taxcodeItems"
@@ -292,8 +289,8 @@
                 <p><span class="text-grey-lighten-1">Fax: <br /></span><strong>{{ fax }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Undefined: <br /></span><strong>{{ getTitle(undef, undefItems,
-                  'undef') }}</strong></p>
+                <p><span class="text-grey-lighten-1">Undefined: <br /></span><strong>{{ getTitle(institution, institutionItems,
+                  'institution') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Entity: <br /></span><strong>{{ getTitle(entity, entityItems,
@@ -302,10 +299,6 @@
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Employment: <br /></span><strong>{{ getTitle(employment,
                   employmentItems, 'employment') }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Language Preferences: <br /></span><strong>{{ cus_lang_pref
-                    }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Tax Code: <br /></span><strong>{{ getTitle(tax_code, taxcodeItems,

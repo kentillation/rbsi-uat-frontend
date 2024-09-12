@@ -31,7 +31,7 @@ export default {
     genderItems: Array,
     civilstatusItems: Array,
     addresstypeItems: Array,
-    undefItems: Array,
+    institutionItems: Array,
     entityItems: Array,
     employmentItems: Array,
     taxcodeItems: Array,
@@ -64,10 +64,9 @@ export default {
         { label: "Telephone", value: this.client?.telephone },
         { label: "Fax", value: this.client?.fax },
         { label: "Postal Code", value: this.client?.postal_code },
-        { label: "Undefined", value: this.getTitle(this.client?.undef, this.undefItems, "undef") },
+        { label: "Undefined", value: this.getTitle(this.client?.institution, this.institutionItems, "institution") },
         { label: "Entity", value: this.getTitle(this.client?.entity, this.entityItems, "entity") },
         { label: "Employment", value: this.getTitle(this.client?.employment, this.employmentItems, "employment") },
-        { label: "Language Preferences", value: this.client?.cus_lang_pref },
         { label: "Tax Code", value: this.getTitle(this.client?.tax_code, this.taxcodeItems, "tax_code") }
       ];
     },

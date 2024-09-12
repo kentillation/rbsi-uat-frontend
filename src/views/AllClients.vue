@@ -50,7 +50,7 @@
                 <ClientDataMixin :client="selectedClient" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
                     :imageSrc="imageSrc" :typeItems="typeItems" :titleItems="titleItems"
                     :clientstatusItems="clientstatusItems" :genderItems="genderItems"
-                    :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems" :undefItems="undefItems"
+                    :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems" :institutionItems="institutionItems"
                     :entityItems="entityItems" :employmentItems="employmentItems" :taxcodeItems="taxcodeItems" />
 
                 <v-card-actions class="mx-4 my-4">

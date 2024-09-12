@@ -120,8 +120,8 @@
                 <p><span class="text-grey-lighten-1">Fax: </span>{{ selectedClient?.fax }}</p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Undefined Field: </span>{{ getTitle(selectedClient?.undef,
-                  undefItems, 'undef') }}</p>
+                <p><span class="text-grey-lighten-1">Undefined Field: </span>{{ getTitle(selectedClient?.institution,
+                  institutionItems, 'institution') }}</p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Entity: </span>{{ getTitle(selectedClient?.entity, entityItems,
@@ -130,11 +130,7 @@
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Employment: </span>{{ getTitle(selectedClient?.employment,
                   employmentItems, 'employment') }}</p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Language Preference: </span>{{
-                  selectedClient?.cus_lang_pref }}</p>
-              </v-col>
+              </v-col> 
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code,
                   taxcodeItems, 'tax_code') }}</p>
@@ -145,7 +141,7 @@
         <ClientDataMixin :client="selectedClient" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
           :imageSrc="imageSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
           :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
-          :undefItems="undefItems" :entityItems="entityItems" :employmentItems="employmentItems"
+          :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems"
           :taxcodeItems="taxcodeItems" />
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>

@@ -34,11 +34,10 @@ export default {
       address_type: '',
       telephone: '',
       fax: '',
-      undef: '',
+      institution: '',
       entity: '',
       employment: '',
       image_file: '',
-      cus_lang_pref: 'English - US',
       tax_code: '',
       typeItems: [],
       titleItems: [],
@@ -46,7 +45,7 @@ export default {
       genderItems: [],
       civilstatusItems: [],
       addresstypeItems: [],
-      undefItems: [],
+      institutionItems: [],
       entityItems: [],
       employmentItems: [],
       taxcodeItems: [],
@@ -69,7 +68,7 @@ export default {
       addressline4Rule: (v) => !!v || 'Address Line 4 is required',
       postalcodeRule: (v) => !!v || 'Postal Code is required',
       addresstypeRule: (v) => !!v || 'Address type is required',
-      undefRule: (v) => !!v || 'Undefined code is required',
+      institutionRule: (v) => !!v || 'Undefined code is required',
       entityRule: (v) => !!v || 'Entity code is required',
       employmentRule: (v) => !!v || 'Employment code is required',
       imagefileRule: (v) => !!v || 'Image file is required',
@@ -124,8 +123,7 @@ export default {
         this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
         this.address_line2, this.address_line3, this.address_line4, this.postal_code,
-        this.address_type, this.undef, this.entity, this.employment, this.image_file,
-        this.cus_lang_pref, this.tax_code
+        this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code
       ].every(field => !!field);
     }
   },
@@ -170,7 +168,7 @@ export default {
       this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
     },
     async fetchUndefItems() {
-      this.fetchItems('/undef', 'undefItems', 'Failed to fetch undefined codes');
+      this.fetchItems('/institution', 'institutionItems', 'Failed to fetch institution codes');
     },
     async fetchEntityItems() {
       this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
@@ -194,7 +192,6 @@ export default {
             params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
           })
         ]);
-
         if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
         if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
       } catch (error) {
