@@ -68,8 +68,8 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="tin" :rules="[tinRule]"
-                                                            label="TIN" clearable></v-text-field>
+                                                        <v-text-field v-model="tin" :rules="[tinRule]" label="TIN"
+                                                            clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-autocomplete v-model="gender" :rules="[genderRule]"
@@ -86,7 +86,7 @@
                                                         <v-text-field disabled>Birthdate: {{
                                                             formattedBirthdate }}</v-text-field>
                                                         <v-date-picker :min="minDate" :max="maxDate"
-                                                            v-model="birthdate"></v-date-picker>
+                                                            v-model="formData.birthdate"></v-date-picker>
                                                     </v-col>
                                                 </v-row>
                                             </v-col>
@@ -102,9 +102,8 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="mobile1"
-                                                            :rules="[mobile1Rule]" label="Mobile 1"
-                                                            clearable></v-text-field>
+                                                        <v-text-field v-model="mobile1" :rules="[mobile1Rule]"
+                                                            label="Mobile 1" clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-text-field v-model="mobile2" label="Mobile 2"
@@ -130,7 +129,7 @@
                                         <h3 class="mb-4">Address</h3>
                                         <v-row>
                                             <v-col cols="12">
-                                                <v-text-field v-model="address_line1" :rules="[addressline1Rule]"
+                                                <v-text-field v-model="formData.address[0]" :rules="[addressline1Rule]"
                                                     label="Line 1" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
@@ -146,9 +145,8 @@
                                                     label="Line 4" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="postal_code"
-                                                    :rules="[postalcodeRule]" label="Postal Code"
-                                                    clearable></v-text-field>
+                                                <v-text-field v-model="postal_code" :rules="[postalcodeRule]"
+                                                    label="Postal Code" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="address_type" :rules="[addresstypeRule]"
@@ -160,8 +158,7 @@
                                                     clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="fax" label="Fax"
-                                                    clearable></v-text-field>
+                                                <v-text-field v-model="fax" label="Fax" clearable></v-text-field>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -173,9 +170,9 @@
                                         <h3 class="mb-4">Client Classification Codes</h3>
                                         <v-row>
                                             <v-col cols="12">
-                                                <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Instituion"
-                                                    :items="institutionItems" item-title="institution"
-                                                    item-value="id"></v-autocomplete>
+                                                <v-autocomplete v-model="institution" :rules="[institutionRule]"
+                                                    label="Instituion" :items="institutionItems"
+                                                    item-title="institution" item-value="id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity"
@@ -189,7 +186,7 @@
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-file-input v-model="image_file" :rules="[imagefileRule]"
-                                                accept="image/*" label="Image file" append-inner-icon="mdi-camera" 
+                                                    accept="image/*" label="Image file" append-inner-icon="mdi-camera"
                                                     prepend-icon="" chips show-size>
                                                 </v-file-input>
                                             </v-col>
@@ -245,14 +242,14 @@
                         <div class="text-center">
                             <v-container class="skeleton-loader">
                                 <p>
-                                <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
-                                    style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
-                                <img v-if="imageCard" :src="imageSrc" width="241" style="border: 1px solid #ccc ;border-radius: 10px;"
-                                    alt="Client Image" />
+                                    <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
+                                        style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
+                                    <img v-if="imageCard" :src="imageSrc" width="241"
+                                        style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" />
                                 </p>
                             </v-container>
                         </div>
-                            <!-- <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ?
+                        <!-- <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ?
                                     'Selected' : 'None' }}</strong> </p> -->
                         <v-row>
                             <v-col cols="12" lg="4" md="4" sm="4">
@@ -372,8 +369,10 @@
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="dialog" rounded>Check again</v-btn>
-                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm" rounded>Confirm</v-btn>
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="dialog"
+                        rounded>Check again</v-btn>
+                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm"
+                        rounded>Confirm</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -388,7 +387,7 @@ import formMixins from '@/mixins/formMixins';
 
 export default {
     mixins: [formMixins],
-    data () {
+    data() {
         return {
             skeletonLoader: false,
             imageCard: false,
@@ -420,22 +419,6 @@ export default {
             this.confirm_identity_dialog = false;
             this.checkWatchlist();
         },
-        // async checkWatchlist() {
-        //     if (this.isIdentityCheckDisabled) return;
-        //     try {
-        //         const response = await apiClient.get('/watchlist', {
-        //             headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-        //             params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
-        //         });
-        //         if (response.data.exists) {
-        //             this.showSnackbar('Name is on the watchlist.', 'error');
-        //         } else {
-        //             this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
-        //         }
-        //     } catch (error) {
-        //         this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
-        //     }
-        // },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
             try {
@@ -454,36 +437,82 @@ export default {
                 this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
             }
         },
+        mapFormDataToAPI() {
+            return {
+                messageId: this.formData.message_id,
+                token: this.formData.token,
+                br: this.formData.br,
+                cidType: this.formData.cid_type,
+                title: this.formData.title,
+                name1: this.formData.last_name,
+                gender: this.formData.gender,
+                civilStatus: this.formData.civil_status,
+                dob: this.formData.birthdate,
+                langType: this.formData.lang_type,
+                appType: this.formData.app_type,
+                prType: this.formData.pr_type,
+                glCode: this.formData.gl_code,
+                ownershipType: this.formData.ownership_type,
+                cid: this.formData.cid,
+                staff: this.formData.staff_or_not ? '1' : '2',
+                taxCode: this.formData.tax_code,
+                address: this.formData.address.map(addr => ({
+                    addressType: addr.address_type,
+                    line1: addr.address_line1,
+                    primary: addr.primary,
+                    mailing: addr.mailing,
+                    tempMailing: addr.temp_mailing,
+                    startDate: addr.start_date,
+                })),
+                ccCode1: this.formData.institution,
+                ccCode2: this.formData.entity,
+                ccCode3: this.formData.employment,
+                regDate: this.formData.reg_date,
+                relation: this.formData.relation.map(rel => ({
+                    cid: rel.cid,
+                    relationType: rel.relation_type,
+                })),
+            };
+        },
+
         async submitForm() {
             this.validating = true;
             try {
                 if (this.$refs.form.validate()) {
-                    const staffValue = this.staff_or_not ? 1 : 2;
+                    const apiData = this.mapFormDataToAPI();
+
+                    // Create a new FormData object for sending the request
                     const formData = new FormData();
-                    const fields = [
-                        'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
-                        'initial', 'display_name', 'tin', 'gender', 'civil_status', 'birthdate',
-                        'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
-                        'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
-                        'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
-                    ];
-                    const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
+                    const formattedBirthdate = this.formData.birthdate
+                        ? new Date(this.formData.birthdate).toISOString().split('T')[0]
+                        : '';
+
+                    // Append all form fields to FormData
                     formData.append('birthdate', formattedBirthdate);
-                    fields.forEach(field => {
-                        if (field !== 'birthdate') { 
-                            formData.append(field, this[field]);
+                    Object.keys(apiData).forEach((key) => {
+                        if (Array.isArray(apiData[key])) {
+                            apiData[key].forEach((item, index) => {
+                                formData.append(`${key}[${index}]`, JSON.stringify(item));
+                            });
+                        } else {
+                            formData.append(key, apiData[key]);
                         }
                     });
-                    if (this.image_file) {
-                        formData.append('image_file', this.image_file);
+
+                    // Append image file if available
+                    if (this.formData.image_file) {
+                        formData.append('image_file', this.formData.image_file);
                     }
-                    formData.append('staff_or_not', staffValue);
-                    const response = await apiClient.post('/new_client_info', formData, {
+
+                    // Make the API request
+                    const response = await apiClient.post('/create_customer', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                        }
+                            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                        },
                     });
+
+                    // Handle response
                     if (response.status === 200) {
                         this.showSnackbar('New client has been saved successfully.', 'success');
                         this.dialog = false;
@@ -495,7 +524,48 @@ export default {
                 this.validating = false;
             }
         },
-
+        // async submitForm() {
+        //     this.validating = true;
+        //     try {
+        //         if (this.$refs.form.validate()) {
+        //             const apiData = this.mapFormDataToAPI();
+        //             const fields = [
+        //                 'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
+        //                 'initial', 'display_name', 'tin', 'gender', 'civil_status', 'birthdate',
+        //                 'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
+        //                 'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
+        //                 'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
+        //             ];
+        //             const staffValue = this.staff_or_not ? 1 : 2;
+        //             const formData = new apiData();
+        //             const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
+        //             formData.append('birthdate', formattedBirthdate);
+        //             fields.forEach(field => {
+        //                 if (field !== 'birthdate') {
+        //                     formData.append(field, this[field]);
+        //                 }
+        //             });
+        //             if (this.image_file) {
+        //                 formData.append('image_file', this.image_file);
+        //             }
+        //             formData.append('staff_or_not', staffValue);
+        //             const response = await apiClient.post('/create_customer', formData, {
+        //                 headers: {
+        //                     'Content-Type': 'multipart/form-data',
+        //                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        //                 }
+        //             });
+        //             if (response.status === 200) {
+        //                 this.showSnackbar('New client has been saved successfully.', 'success');
+        //                 this.dialog = false;
+        //             }
+        //         }
+        //     } catch (error) {
+        //         this.handleFormError(error);
+        //     } finally {
+        //         this.validating = false;
+        //     }
+        // },
     },
 };
 
