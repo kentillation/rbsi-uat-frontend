@@ -5,29 +5,19 @@ export default {
   data() {
     return {
       dialog: false,
-      message_id: "a309beb6788dd16bef3feafb3fc1f4f9dae2443f", //include
-      token: "411d08286446c62706f0f434fbb3b35dd07d975f", //include
-      br: "000000", //include
-      cid_type: "001", //include
-      cid: '', //include
       type: '',
-      title: '', //include
+      title: '',
       client_status: '',
       first_name: '',
       middle_name: '',
-      last_name: '', //include
+      last_name: '',
       display_name: '',
       initial: '',
-      staff_or_not: 2, //include
+      staff_or_not: 2,
       tin: '',
-      gender: '', //include
-      civil_status: '', //include
-      birthdate: null, //include
-      lang_type: '001',  //include
-      app_type: '1',  //include
-      pr_type: '01',  //include
-      gl_code: '01',  //include
-      ownership_type: "010", //include
+      gender: '',
+      civil_status: '',
+      birthdate: null,
       pickerVisible: false,
       minDate: '1930-01-01',
       maxDate: this.formatToDateString(new Date()),
@@ -48,25 +38,7 @@ export default {
       entity: '',
       employment: '',
       image_file: '',
-      tax_code: '', //include
-      address: [
-        {
-          address_type: '', //include
-          address_line1: '', //include
-          primary: "T", //include
-          mailing: "T", //include
-          temp_mailing: "F", //include
-          start_date: this.formatToDateString(new Date()),  //include
-        },
-      ],
-      cc_code_1: "001", // include (institution)
-      ccCode2: "002", // include (entity)
-      ccCode3: "000", // include (employment)
-      reg_date: this.formatToDateString(new Date()),
-      relation: [
-        { cid: "000001", relation_type: "063" }, //include
-        { cid: "000002", relation_type: "063" }, //include
-      ],
+      tax_code: '',
       typeItems: [],
       titleItems: [],
       clientstatusItems: [],
