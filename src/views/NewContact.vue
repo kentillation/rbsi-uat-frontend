@@ -33,17 +33,18 @@
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-autocomplete v-model="type" :rules="[typeRule]" label="Type"
-                                            :items="typeItems" item-title="type" item-value="id">
+                                            :items="typeItems" item-title="type" item-value="type_code">
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-autocomplete v-model="title" :rules="[titleRule]" label="Title"
-                                            :items="titleItems" item-title="title" item-value="id"></v-autocomplete>
+                                            :items="titleItems" item-title="title"
+                                            item-value="title_code"></v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-autocomplete v-model="client_status" :rules="[clientstatusRule]"
                                             label="Client Status" :items="clientstatusItems" item-title="client_status"
-                                            item-value="id"></v-autocomplete>
+                                            item-value="client_status_code"></v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-text-field v-model="initial" label="Initial"></v-text-field>
@@ -68,19 +69,19 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="tin" :rules="[tinRule]"
-                                                            label="TIN" clearable></v-text-field>
+                                                        <v-text-field v-model="tin" :rules="[tinRule]" label="TIN"
+                                                            clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-autocomplete v-model="gender" :rules="[genderRule]"
                                                             label="Gender" :items="genderItems" item-title="gender"
-                                                            item-value="id"></v-autocomplete>
+                                                            item-value="gender_code"></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-autocomplete v-model="civil_status"
                                                             :rules="[civilstatusRule]" label="Civil status"
                                                             :items="civilstatusItems" item-title="civil_status"
-                                                            item-value="id"></v-autocomplete>
+                                                            item-value="civil_status_code"></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-text-field disabled>Birthdate: {{
@@ -102,9 +103,8 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="mobile1"
-                                                            :rules="[mobile1Rule]" label="Mobile 1"
-                                                            clearable></v-text-field>
+                                                        <v-text-field v-model="mobile1" :rules="[mobile1Rule]"
+                                                            label="Mobile 1" clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-text-field v-model="mobile2" label="Mobile 2"
@@ -130,8 +130,8 @@
                                         <h3 class="mb-4">Address</h3>
                                         <v-row>
                                             <v-col cols="12">
-                                                <v-text-field v-model="address_line1" :rules="[addressline1Rule]"
-                                                    label="Line 1" clearable></v-text-field>
+                                                <v-text-field v-model="address[0].address_line1"
+                                                    :rules="[addressline1Rule]" label="Line 1" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line2" :rules="[addressline2Rule]"
@@ -146,22 +146,21 @@
                                                     label="Line 4" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="postal_code"
-                                                    :rules="[postalcodeRule]" label="Postal Code"
-                                                    clearable></v-text-field>
+                                                <v-text-field v-model="postal_code" :rules="[postalcodeRule]"
+                                                    label="Postal Code" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-autocomplete v-model="address_type" :rules="[addresstypeRule]"
-                                                    label="Address Type" :items="addresstypeItems"
-                                                    item-title="address_type" item-value="id"></v-autocomplete>
+                                                <v-autocomplete v-model="address[0].address_type"
+                                                    :rules="[addresstypeRule]" label="Address Type"
+                                                    :items="addresstypeItems" item-title="address_type"
+                                                    item-value="address_code"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="telephone" label="Telephone"
                                                     clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="fax" label="Fax"
-                                                    clearable></v-text-field>
+                                                <v-text-field v-model="fax" label="Fax" clearable></v-text-field>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -173,30 +172,31 @@
                                         <h3 class="mb-4">Client Classification Codes</h3>
                                         <v-row>
                                             <v-col cols="12">
-                                                <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Instituion"
-                                                    :items="institutionItems" item-title="institution"
-                                                    item-value="id"></v-autocomplete>
+                                                <v-autocomplete v-model="institution" :rules="[institutionRule]"
+                                                    label="Instituion" :items="institutionItems"
+                                                    item-title="institution"
+                                                    item-value="institution_id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity"
                                                     :items="entityItems" item-title="entity"
-                                                    item-value="id"></v-autocomplete>
+                                                    item-value="entity_id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="employment" :rules="[employmentRule]"
                                                     label="Employment" :items="employmentItems" item-title="employment"
-                                                    item-value="id"></v-autocomplete>
+                                                    item-value="employment_id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-file-input v-model="image_file" :rules="[imagefileRule]"
-                                                accept="image/*" label="Image file" append-inner-icon="mdi-camera" 
+                                                    accept="image/*" label="Image file" append-inner-icon="mdi-camera"
                                                     prepend-icon="" chips show-size>
                                                 </v-file-input>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]"
                                                     label="Client Tax Code" :items="taxcodeItems" item-title="tax_code"
-                                                    item-value="id"></v-autocomplete>
+                                                    item-value="taxx_code"></v-autocomplete>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -245,14 +245,14 @@
                         <div class="text-center">
                             <v-container class="skeleton-loader">
                                 <p>
-                                <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
-                                    style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
-                                <img v-if="imageCard" :src="imageSrc" width="241" style="border: 1px solid #ccc ;border-radius: 10px;"
-                                    alt="Client Image" />
+                                    <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
+                                        style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
+                                    <img v-if="imageCard" :src="imageSrc" width="241"
+                                        style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" />
                                 </p>
                             </v-container>
                         </div>
-                            <!-- <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ?
+                        <!-- <p><span class="text-grey-lighten-1">Image File: </span><strong>{{ image_file ?
                                     'Selected' : 'None' }}</strong> </p> -->
                         <v-row>
                             <v-col cols="12" lg="4" md="4" sm="4">
@@ -264,20 +264,20 @@
                                         }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong>
+                                <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{
+                                        mapFormDataToAPI().name1 }}</strong>
                                 </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems,
-                                    'type') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Type: </span><strong>{{ type }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Title: </span><strong>{{ getTitle(title,
-                                    titleItems, 'title') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Title: </span><strong>{{ mapFormDataToAPI().title
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{
-                                    getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{ client_status
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong> </p>
@@ -287,22 +287,22 @@
                                         }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' :
-                                    'No' }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ mapFormDataToAPI().staff
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">TIN: </span><strong>{{ tin }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender,
-                                    genderItems, 'gender') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ mapFormDataToAPI().gender
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Civil Status: </span><strong>{{
-                                    getTitle(civil_status, civilstatusItems, 'civil_status') }}</strong> </p>
+                                        mapFormDataToAPI().civilStatus }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate
+                                <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ mapFormDataToAPI().dob
                                         }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
@@ -321,8 +321,8 @@
                                         }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Address Line 1: </span><strong>{{ address_line1
-                                        }}</strong></p>
+                                <p><span class="text-grey-lighten-1">Address Line 1: </span><strong>{{
+                                        mapFormDataToAPI().line1 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Line 2: </span><strong>{{ address_line2
@@ -342,7 +342,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Type: </span><strong>{{
-                                    getTitle(address_type, addresstypeItems, 'address_type') }}</strong> </p>
+                                        mapFormDataToAPI().addressType }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Telephone: </span><strong>{{ telephone }}</strong>
@@ -352,28 +352,30 @@
                                 <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Instituion: </span><strong>{{ getTitle(institution,
-                                    institutionItems, 'institution') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Instituion: </span><strong>{{
+                                        mapFormDataToAPI().ccCode1 }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity,
-                                    entityItems, 'entity') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Entity: </span><strong>{{
+                                        mapFormDataToAPI().ccCode2 }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment,
-                                    employmentItems, 'employment') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Employment: </span><strong>{{
+                                        mapFormDataToAPI().ccCode3 }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{
-                                    getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong> </p>
+                                        mapFormDataToAPI().taxCode }}</strong> </p>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="dialog" rounded>Check again</v-btn>
-                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm" rounded>Confirm</v-btn>
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="dialog"
+                        rounded>Check again</v-btn>
+                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm"
+                        rounded>Confirm</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -388,8 +390,40 @@ import formMixins from '@/mixins/formMixins';
 
 export default {
     mixins: [formMixins],
-    data () {
+    data() {
         return {
+            br: "000000", // (6 chars)
+            cid_type: "001", // (3 chars)
+            title: "", // (3 chars)
+            last_name: "", // (24 chars)
+            gender: "", // (3 chars)
+            civil_status: "", // (3 chars)
+            birthdate: null, // (10 chars)
+            lang_type: "001", //(3 chars)
+            app_type: "1", //(1 char)
+            pr_type: "01", //(2 chars)
+            gl_code: "01", //(2 chars)
+            ownership_type: "010", //(3 chars)
+            staff_or_not: 2, // (1 char)
+            tax_code: "", // (3 chars)
+            address: [
+                {
+                    address_line1: "", // (24 chars)
+                    address_type: "", // (3 chars)
+                    primary: "T", //(1 char)
+                    mailing: "T", //(1 char)
+                    temp_mailing: "F", //direct insert
+                    start_date: this.formatToDateString(new Date()), //(10 chars)
+                },
+            ],
+            institution: "", // (3 chars)
+            entity: "", // (3 chars)
+            employment: "", // (3 chars)
+            reg_date: this.formatToDateString(new Date()), //(10 chars)
+            relation: [ // (10 chars)
+                { cid: "000281", relation_type: "051" }, //(6 chars, 3 chars)
+                { cid: "000282", relation_type: "051" }, //(6 chars, 3 chars)
+            ],
             skeletonLoader: false,
             imageCard: false,
             imageSrc: '',
@@ -420,22 +454,6 @@ export default {
             this.confirm_identity_dialog = false;
             this.checkWatchlist();
         },
-        // async checkWatchlist() {
-        //     if (this.isIdentityCheckDisabled) return;
-        //     try {
-        //         const response = await apiClient.get('/watchlist', {
-        //             headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-        //             params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
-        //         });
-        //         if (response.data.exists) {
-        //             this.showSnackbar('Name is on the watchlist.', 'error');
-        //         } else {
-        //             this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
-        //         }
-        //     } catch (error) {
-        //         this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
-        //     }
-        // },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
             try {
@@ -454,35 +472,66 @@ export default {
                 this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
             }
         },
+        mapFormDataToAPI() {
+            return {
+                br: this.br,
+                cidType: this.cid_type,
+                title: this.title,
+                name1: this.last_name,
+                gender: this.gender,
+                civilStatus: this.civil_status,
+                dob: this.formatToDateString(this.birthdate),
+                langType: this.lang_type,
+                appType: this.app_type,
+                prType: this.pr_type,
+                glCode: this.gl_code,
+                ownershipType: this.ownership_type,
+                staff: this.staff_or_not ? "T" : "F",
+                taxCode: this.tax_code,
+                address: this.address.map(addr => ({
+                    addressType: addr.address_type,
+                    line1: addr.address_line1,
+                    primary: addr.primary,
+                    mailing: addr.mailing,
+                    tempMailing: addr.temp_mailing,
+                    startDate: addr.start_date,
+                })),
+                ccCode1: this.institution,
+                ccCode2: this.entity,
+                ccCode3: this.employment,
+                regDate: this.reg_date,
+                relation: this.relation.map(rel => ({
+                    cid: rel.cid,
+                    relationType: rel.relation_type,
+                })),
+            };
+        },
         async submitForm() {
             this.validating = true;
             try {
                 if (this.$refs.form.validate()) {
-                    const staffValue = this.staff_or_not ? 1 : 2;
+                    const apiData = this.mapFormDataToAPI();
                     const formData = new FormData();
-                    const fields = [
-                        'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
-                        'initial', 'display_name', 'tin', 'gender', 'civil_status', 'birthdate',
-                        'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
-                        'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
-                        'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
-                    ];
-                    const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
-                    formData.append('birthdate', formattedBirthdate);
-                    fields.forEach(field => {
-                        if (field !== 'birthdate') { 
-                            formData.append(field, this[field]);
+                    formData.append('birthdate', apiData.dob ? apiData.dob : '');
+                    Object.keys(apiData).forEach((key) => {
+                        if (Array.isArray(apiData[key])) {
+                            apiData[key].forEach((item, index) => {
+                                Object.keys(item).forEach((subKey) => {
+                                    formData.append(`${key}[${index}][${subKey}]`, item[subKey]);
+                                });
+                            });
+                        } else {
+                            formData.append(key, apiData[key]);
                         }
                     });
                     if (this.image_file) {
                         formData.append('image_file', this.image_file);
                     }
-                    formData.append('staff_or_not', staffValue);
-                    const response = await apiClient.post('/new_client_info', formData, {
+                    const response = await apiClient.post('/create_customer', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                        }
+                            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                        },
                     });
                     if (response.status === 200) {
                         this.showSnackbar('New client has been saved successfully.', 'success');
@@ -495,7 +544,47 @@ export default {
                 this.validating = false;
             }
         },
-
+        // async submitForm() {
+        //     this.validating = true;
+        //     try {
+        //         if (this.$refs.form.validate()) {
+        //             const staffValue = this.staff_or_not ? 1 : 2;
+        //             const formData = new FormData();
+        //             const fields = [
+        //                 'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
+        //                 'initial', 'display_name', 'tin', 'gender', 'civil_status', 'birthdate',
+        //                 'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
+        //                 'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
+        //                 'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
+        //             ];
+        //             const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
+        //             formData.append('birthdate', formattedBirthdate);
+        //             fields.forEach(field => {
+        //                 if (field !== 'birthdate') { 
+        //                     formData.append(field, this[field]);
+        //                 }
+        //             });
+        //             if (this.image_file) {
+        //                 formData.append('image_file', this.image_file);
+        //             }
+        //             formData.append('staff_or_not', staffValue);
+        //             const response = await apiClient.post('/new_client_info', formData, {
+        //                 headers: {
+        //                     'Content-Type': 'multipart/form-data',
+        //                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        //                 }
+        //             });
+        //             if (response.status === 200) {
+        //                 this.showSnackbar('New client has been saved successfully.', 'success');
+        //                 this.dialog = false;
+        //             }
+        //         }
+        //     } catch (error) {
+        //         this.handleFormError(error);
+        //     } finally {
+        //         this.validating = false;
+        //     }
+        // },
     },
 };
 

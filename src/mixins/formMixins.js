@@ -5,40 +5,28 @@ export default {
   data() {
     return {
       dialog: false,
-      type: '',
-      title: '',
-      client_status: '',
-      first_name: '',
-      middle_name: '',
-      last_name: '',
-      display_name: '',
-      initial: '',
-      staff_or_not: 2,
-      tin: '',
-      gender: '',
-      civil_status: '',
-      birthdate: null,
+      type: "",
+      client_status: "",
+      first_name: "",
+      middle_name: "",
+      display_name: "",
+      initial: "",
+      tin: "",
       pickerVisible: false,
       minDate: '1930-01-01',
       maxDate: this.formatToDateString(new Date()),
       timezone: 'Asia/Manila',
-      mobile1: '',
-      mobile2: '',
-      email: '',
+      mobile1: "",
+      mobile2: "",
+      email: "",
       nationality: 'Filipino',
-      address_line1: '',
-      address_line2: '',
-      address_line3: '',
-      address_line4: '',
-      postal_code: '',
-      address_type: '',
-      telephone: '',
-      fax: '',
-      institution: '',
-      entity: '',
-      employment: '',
-      image_file: '',
-      tax_code: '',
+      address_line2: "",
+      address_line3: "",
+      address_line4: "",
+      postal_code: "",
+      telephone: "",
+      fax: "",
+      image_file: null,
       typeItems: [],
       titleItems: [],
       clientstatusItems: [],
@@ -76,8 +64,8 @@ export default {
       validating: false,
       snackbar: {
         visible: false,
-        message: '',
-        color: ''
+        message: "",
+        color: ""
       },
       to_HomePage: false,
       confirm_identity_dialog: false,
@@ -121,9 +109,9 @@ export default {
       return [
         this.type, this.title, this.client_status, this.first_name, this.middle_name,
         this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
-        this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
+        this.birthdate, this.mobile1, this.email, this.nationality, this.address[0].address_line1,
         this.address_line2, this.address_line3, this.address_line4, this.postal_code,
-        this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code
+        this.address[0].address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code
       ].every(field => !!field);
     }
   },
@@ -237,6 +225,7 @@ export default {
       this.showSnackbar(message, 'error');
     },
     showConfirmDialog() {
+      console.log(this.mapFormDataToAPI());
       if (this.isFormValid) this.dialog = true;
       this.skeletonLoader = true;
       this.imageCard = false;
