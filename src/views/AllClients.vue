@@ -87,7 +87,7 @@ export default {
         if (this.$route.query.search) {
             this.search_item = this.$route.query.search;
         }
-        this.fetchMBWinClientInfo();
+        // this.fetchMBWinClientInfo();
     },
     beforeUnmount() {
         if (this.pollingTimer) {
@@ -138,37 +138,37 @@ export default {
                 this.loading = false;
             }
         },
-        async fetchMBWinClientInfo() {
-            try {
-                const response = await apiClient.get('/mbwin_client_info', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                const mbwinClients = response.data;
-                this.client_info = this.client_info.map(client => {
-                    const match = mbwinClients.some(mbwinClient => 
-                        (mbwinClient.Name1 && mbwinClient.Name1.toLowerCase() === client.last_name.toLowerCase()) &&
-                        (mbwinClient.Name2 && mbwinClient.Name2.toLowerCase() === client.first_name.toLowerCase()) &&
-                        (mbwinClient.Name3 && mbwinClient.Name3.toLowerCase() === client.middle_name.toLowerCase())
-                    );
-                    return {
-                        ...client,
-                        existsInMBWin: match
-                    };
-                });
-            } catch (error) {
-                console.error('Error fetching mbwin_client_info:', error);
-            } finally {
-                this.loading = false;
-            }
-        },
+        // async fetchMBWinClientInfo() {
+        //     try {
+        //         const response = await apiClient.get('/mbwin_client_info', {
+        //             headers: {
+        //                 Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        //             }
+        //         });
+        //         const mbwinClients = response.data;
+        //         this.client_info = this.client_info.map(client => {
+        //             const match = mbwinClients.some(mbwinClient => 
+        //                 (mbwinClient.Name1 && mbwinClient.Name1.toLowerCase() === client.last_name.toLowerCase()) &&
+        //                 (mbwinClient.Name2 && mbwinClient.Name2.toLowerCase() === client.first_name.toLowerCase()) &&
+        //                 (mbwinClient.Name3 && mbwinClient.Name3.toLowerCase() === client.middle_name.toLowerCase())
+        //             );
+        //             return {
+        //                 ...client,
+        //                 existsInMBWin: match
+        //             };
+        //         });
+        //     } catch (error) {
+        //         console.error('Error fetching mbwin_client_info:', error);
+        //     } finally {
+        //         this.loading = false;
+        //     }
+        // },
         onRefresh() {
             this.loading = true
             setTimeout(() => {
                 this.loading = false
                 this.fetchClientInfo()
-                this.fetchMBWinClientInfo()
+                // this.fetchMBWinClientInfo()
             }, 2000)
         },
     }

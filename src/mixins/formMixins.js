@@ -109,9 +109,9 @@ export default {
       return [
         this.type, this.title, this.client_status, this.first_name, this.middle_name,
         this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
-        this.birthdate, this.mobile1, this.email, this.nationality, this.address[0].address_line1,
+        this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
         this.address_line2, this.address_line3, this.address_line4, this.postal_code,
-        this.address[0].address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code
+        this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code
       ].every(field => !!field);
     }
   },
@@ -225,7 +225,7 @@ export default {
       this.showSnackbar(message, 'error');
     },
     showConfirmDialog() {
-      console.log(this.mapFormDataToAPI());
+      // console.log(this.mapFormDataToAPI());
       if (this.isFormValid) this.dialog = true;
       this.skeletonLoader = true;
       this.imageCard = false;
