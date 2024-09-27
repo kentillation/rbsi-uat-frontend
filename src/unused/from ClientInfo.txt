@@ -1,0 +1,115 @@
+<!-- <v-card-text>
+          <v-container>
+            <div class="text-center">
+              <v-container class="skeleton-loader">
+                <p>
+                  <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
+                    style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
+                  <img v-if="imageCard" :src="imageSrc" width="241" style="border: 1px solid #ccc ;border-radius: 10px;"
+                    alt="Client Image" />
+                </p>
+              </v-container>
+              <h3 class="mb-7"><span class="text-grey-lighten-1">CID: </span>{{ selectedClient?.cid }}</h3>
+            </div>
+            <v-row>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">First Name: </span>{{ selectedClient?.first_name }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Middle Name: </span>{{ selectedClient?.middle_name }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Last Name: </span>{{ selectedClient?.last_name }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Type: </span>{{ getTitle(selectedClient?.type, typeItems,
+                  'type') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Title: </span>{{ getTitle(selectedClient?.title, titleItems,
+                  'title') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Client Status: </span>{{
+                  getTitle(selectedClient?.client_status, clientstatusItems, 'client_status') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Initial: </span>{{ selectedClient?.initial }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Display Name: </span>{{ selectedClient?.display_name }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Staff: </span>{{ staffLabel }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">TIN: </span>{{ selectedClient?.tin }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Gender: </span>{{ getTitle(selectedClient?.gender, genderItems,
+                  'gender') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Civil Status: </span>{{ getTitle(selectedClient?.civil_status,
+                  civilstatusItems, 'civil_status') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Birthdate: </span>{{ selectedClient?.birthdate ?
+                  formatDate(selectedClient?.birthdate) : 'N/A' }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Mobile 1: </span>{{ selectedClient?.mobile1 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Mobile 2: </span>{{ selectedClient?.mobile2 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Email: </span>{{ selectedClient?.email }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Nationality: </span>{{ selectedClient?.nationality }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 1: </span>{{ selectedClient?.address_line1 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 2: </span>{{ selectedClient?.address_line2 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 3: </span>{{ selectedClient?.address_line3 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Line 4: </span>{{ selectedClient?.address_line4 }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Postal Code: </span>{{ selectedClient?.postal_code }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Address Type: </span>{{ getTitle(selectedClient?.address_type,
+                  addresstypeItems, 'address_type') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Telephone: </span>{{ selectedClient?.telephone }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Fax: </span>{{ selectedClient?.fax }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Undefined Field: </span>{{ getTitle(selectedClient?.institution,
+                  institutionItems, 'institution') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Entity: </span>{{ getTitle(selectedClient?.entity, entityItems,
+                  'entity') }}</p>
+              </v-col>
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Employment: </span>{{ getTitle(selectedClient?.employment,
+                  employmentItems, 'employment') }}</p>
+              </v-col> 
+              <v-col cols="12" lg="4" md="4" sm="4">
+                <p><span class="text-grey-lighten-1">Tax Code: </span>{{ getTitle(selectedClient?.tax_code,
+                  taxcodeItems, 'tax_code') }}</p>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text> -->
