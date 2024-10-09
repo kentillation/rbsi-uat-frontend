@@ -147,21 +147,21 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line1"
-                                                    :rules="[addressline1Rule]" label="Line 1" clearable></v-text-field>
+                                                    :rules="[addressline1Rule]" label="Street/Purok/Sitio/Hda." clearable></v-text-field>
                                                 <!-- <v-text-field v-model="address[0].address_line1"
-                                                    :rules="[addressline1Rule]" label="Line 1" clearable></v-text-field> -->
+                                                    :rules="[addressline1Rule]" label="Street/Purok/Sitio/Hda." clearable></v-text-field> -->
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line2" :rules="[addressline2Rule]"
-                                                    label="Line 2" clearable></v-text-field>
+                                                    label="Barangay" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
-                                                    label="Line 3" clearable></v-text-field>
+                                                    label="City" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line4" :rules="[addressline4Rule]"
-                                                    label="Line 4" clearable></v-text-field>
+                                                    label="Province" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="postal_code" :rules="[postalcodeRule]"
@@ -555,6 +555,7 @@ export default {
                         'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
                         'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
                     ];
+                    // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
                     formData.append('birthdate', formattedBirthdate);
                     fields.forEach(field => {

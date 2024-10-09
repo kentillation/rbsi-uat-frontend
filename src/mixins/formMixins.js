@@ -9,21 +9,26 @@ export default {
       client_status: "",
       first_name: "",
       middle_name: "",
+      last_name: "",
       display_name: "",
+      staff_or_not: "",
       initial: "",
       tin: "",
       pickerVisible: false,
       minDate: '1930-01-01',
       maxDate: this.formatToDateString(new Date()),
       timezone: 'Asia/Manila',
+      birthdate: "",
       mobile1: "",
       mobile2: "",
       email: "",
       nationality: 'Filipino',
+      address_line1: "",
       address_line2: "",
       address_line3: "",
-      address_line4: "",
+      address_line4: "Negros Island Region",
       postal_code: "",
+      address_type: "",
       telephone: "",
       fax: "",
       image_file: null,
@@ -108,7 +113,7 @@ export default {
     isFormValid() {
       return [
         this.type, this.title, this.client_status, this.first_name, this.middle_name,
-        this.last_name, this.display_name, this.tin, this.gender, this.civil_status,
+        this.last_name, this.display_name, this.staff_or_not, this.tin, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
         this.address_line2, this.address_line3, this.address_line4, this.postal_code,
         this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code
@@ -186,9 +191,9 @@ export default {
         this.showSnackbar('Error checking identity. Refresh the page!', 'error');
       }
     },
-    getTitle(value, items, key) {
-      const item = items.find(item => item.id === value);
-      return item ? item[key] : 'N/A';
+    getTitle(id, items, titleKey) {
+      const item = items.find(item => String(item.id) === String(id));
+      return item ? item[titleKey] : "Unknown";
     },
     showSnackbar(message, color) {
       this.snackbar.message = message;

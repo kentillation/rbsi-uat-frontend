@@ -45,7 +45,7 @@
                       disabled></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-checkbox v-model="isStaff" label="Staff" color="primary"></v-checkbox>
+                    <v-checkbox v-model="isStaff" :label="staffLabel" :color="checkboxColor" ></v-checkbox>
                   </v-col>
                 </v-row>
               </v-container>
@@ -117,19 +117,19 @@
                     <h3 class="mb-4">Address</h3>
                     <v-row>
                       <v-col cols="12">
-                        <v-text-field v-model="address_line1" :rules="[addressline1Rule]" label="Line 1"
+                        <v-text-field v-model="address_line1" :rules="[addressline1Rule]" label="Street/Purok/Sitio/Hda."
                           clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
-                        <v-text-field v-model="address_line2" :rules="[addressline2Rule]" label="Line 2"
+                        <v-text-field v-model="address_line2" :rules="[addressline2Rule]" label="Barangay"
                           clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
-                        <v-text-field v-model="address_line3" :rules="[addressline3Rule]" label="Line 3"
+                        <v-text-field v-model="address_line3" :rules="[addressline3Rule]" label="City"
                           clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
-                        <v-text-field v-model="address_line4" :rules="[addressline4Rule]" label="Line 4"
+                        <v-text-field v-model="address_line4" :rules="[addressline4Rule]" label="Province"
                           clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
@@ -156,7 +156,7 @@
                     <h3 class="mb-4">Client Classification Codes</h3>
                     <v-row>
                       <v-col cols="12">
-                        <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Undefined" :items="institutionItems"
+                        <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Institution" :items="institutionItems"
                           item-title="institution" item-value="id"></v-autocomplete>
                       </v-col>
                       <v-col cols="12">
@@ -289,7 +289,7 @@
                 <p><span class="text-grey-lighten-1">Fax: <br /></span><strong>{{ fax }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Undefined: <br /></span><strong>{{ getTitle(institution, institutionItems,
+                <p><span class="text-grey-lighten-1">Institution: <br /></span><strong>{{ getTitle(institution, institutionItems,
                   'institution') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
@@ -338,8 +338,11 @@ export default {
       },
     },
     staffLabel() {
-      return this.staff_or_not === 1 ? 'Yes' : 'No';
-    }
+      return this.staff_or_not === 1 ? 'Staff' : 'Not a Staff';
+    },
+    checkboxColor() {
+      return this.staff_or_not === 1 ? 'primary' : 'secondary';
+    },
   },
   methods: {
     toClientInfo() {
