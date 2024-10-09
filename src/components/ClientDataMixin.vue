@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     getTitle(id, items, titleKey) {
-      const item = items.find(item => item.id === id);
+      const item = items.find(item => String(item.id) === String(id));
       return item ? item[titleKey] : "Unknown";
     },
     formatDate(date) {
@@ -87,7 +87,7 @@ export default {
       }
       const options = { year: "numeric", month: "long", day: "numeric" };
       return new Intl.DateTimeFormat("en-US", options).format(parsedDate);
-    }
+    },
   }
 };
 </script>

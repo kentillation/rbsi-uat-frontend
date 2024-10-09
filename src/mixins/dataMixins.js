@@ -91,10 +91,6 @@ export default {
           this.imageSrc = '';
       }
     },
-    getTitle(id, items, titleKey) {
-      const item = items.find(item => item.id === id);
-      return item ? item[titleKey] : 'Unknown';
-    },
     async fetchItems(endpoint, key) {
       try {
         const response = await apiClient.get(endpoint, {
