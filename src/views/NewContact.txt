@@ -35,13 +35,22 @@
                                         <v-autocomplete v-model="type" :rules="[typeRule]" label="Type"
                                             :items="typeItems" item-title="type" item-value="id">
                                         </v-autocomplete>
+                                        <!-- <v-autocomplete v-model="type" :rules="[typeRule]" label="Type"
+                                            :items="typeItems" item-title="type" item-value="type_code">
+                                        </v-autocomplete> -->
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                        <!-- <v-autocomplete v-model="title" :rules="[titleRule]" label="Title"
+                                            :items="titleItems" item-title="title"
+                                            item-value="title_code"></v-autocomplete> -->
                                         <v-autocomplete v-model="title" :rules="[titleRule]" label="Title"
                                             :items="titleItems" item-title="title"
                                             item-value="id"></v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                        <!-- <v-autocomplete v-model="client_status" :rules="[clientstatusRule]"
+                                            label="Client Status" :items="clientstatusItems" item-title="client_status"
+                                            item-value="client_status_code"></v-autocomplete> -->
                                         <v-autocomplete v-model="client_status" :rules="[clientstatusRule]"
                                             label="Client Status" :items="clientstatusItems" item-title="client_status"
                                             item-value="id"></v-autocomplete>
@@ -73,11 +82,18 @@
                                                             clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
+                                                        <!-- <v-autocomplete v-model="gender" :rules="[genderRule]"
+                                                            label="Gender" :items="genderItems" item-title="gender"
+                                                            item-value="gender_code"></v-autocomplete> -->
                                                         <v-autocomplete v-model="gender" :rules="[genderRule]"
                                                             label="Gender" :items="genderItems" item-title="gender"
                                                             item-value="id"></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
+                                                        <!-- <v-autocomplete v-model="civil_status"
+                                                            :rules="[civilstatusRule]" label="Civil status"
+                                                            :items="civilstatusItems" item-title="civil_status"
+                                                            item-value="civil_status_code"></v-autocomplete> -->
                                                         <v-autocomplete v-model="civil_status"
                                                             :rules="[civilstatusRule]" label="Civil status"
                                                             :items="civilstatusItems" item-title="civil_status"
@@ -131,19 +147,21 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line1"
-                                                    :rules="[addressline1Rule]" label="Line 1" clearable></v-text-field>
+                                                    :rules="[addressline1Rule]" label="Street/Purok/Sitio/Hda." clearable></v-text-field>
+                                                <!-- <v-text-field v-model="address[0].address_line1"
+                                                    :rules="[addressline1Rule]" label="Street/Purok/Sitio/Hda." clearable></v-text-field> -->
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line2" :rules="[addressline2Rule]"
-                                                    label="Line 2" clearable></v-text-field>
+                                                    label="Barangay" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
-                                                    label="Line 3" clearable></v-text-field>
+                                                    label="City" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line4" :rules="[addressline4Rule]"
-                                                    label="Line 4" clearable></v-text-field>
+                                                    label="Province" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="postal_code" :rules="[postalcodeRule]"
@@ -154,6 +172,10 @@
                                                     :rules="[addresstypeRule]" label="Address Type"
                                                     :items="addresstypeItems" item-title="address_type"
                                                     item-value="id"></v-autocomplete>
+                                                    <!-- <v-autocomplete v-model="address[0].address_type"
+                                                    :rules="[addresstypeRule]" label="Address Type"
+                                                    :items="addresstypeItems" item-title="address_type"
+                                                    item-value="address_code"></v-autocomplete> -->
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="telephone" label="Telephone"
@@ -172,17 +194,27 @@
                                         <h3 class="mb-4">Client Classification Codes</h3>
                                         <v-row>
                                             <v-col cols="12">
+                                                <!-- <v-autocomplete v-model="institution" :rules="[institutionRule]"
+                                                    label="Instituion" :items="institutionItems"
+                                                    item-title="institution"
+                                                    item-value="institution_id"></v-autocomplete> -->
                                                 <v-autocomplete v-model="institution" :rules="[institutionRule]"
                                                     label="Instituion" :items="institutionItems"
                                                     item-title="institution"
                                                     item-value="id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
+                                                <!-- <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity"
+                                                    :items="entityItems" item-title="entity"
+                                                    item-value="entity_id"></v-autocomplete> -->
                                                 <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity"
                                                     :items="entityItems" item-title="entity"
                                                     item-value="id"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
+                                                <!-- <v-autocomplete v-model="employment" :rules="[employmentRule]"
+                                                    label="Employment" :items="employmentItems" item-title="employment"
+                                                    item-value="employment_id"></v-autocomplete> -->
                                                 <v-autocomplete v-model="employment" :rules="[employmentRule]"
                                                     label="Employment" :items="employmentItems" item-title="employment"
                                                     item-value="id"></v-autocomplete>
@@ -194,6 +226,9 @@
                                                 </v-file-input>
                                             </v-col>
                                             <v-col cols="12">
+                                                <!-- <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]"
+                                                    label="Client Tax Code" :items="taxcodeItems" item-title="tax_code"
+                                                    item-value="taxx_code"></v-autocomplete> -->
                                                 <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]"
                                                     label="Client Tax Code" :items="taxcodeItems" item-title="tax_code"
                                                     item-value="id"></v-autocomplete>
@@ -388,6 +423,41 @@ export default {
     mixins: [formMixins],
     data() {
         return {
+            br: "000000", // (6 chars)
+            cid_type: "001", // (3 chars)
+            type: "", // (3 chars)
+            title: "", // (3 chars)
+            last_name: "", // (24 chars)
+            gender: "", // (3 chars)
+            civil_status: "", // (3 chars)
+            birthdate: null, // (10 chars)
+            lang_type: "001", //(3 chars)
+            app_type: "1", //(1 char)
+            pr_type: "01", //(2 chars)
+            gl_code: "01", //(2 chars)
+            ownership_type: "010", //(3 chars)
+            staff_or_not: 2, // (1 char)
+            tax_code: "", // (3 chars)
+            address_line1: "", // (24 chars)
+            address_type: "", // (3 chars)
+            // address: [
+            //     {
+            //         address_line1: "", // (24 chars)
+            //         address_type: "", // (3 chars)
+            //         primary: "T", //(1 char)
+            //         mailing: "T", //(1 char)
+            //         temp_mailing: "F", //direct insert
+            //         start_date: this.formatToDateString(new Date()), //(10 chars)
+            //     },
+            // ],
+            institution: "", // (3 chars)
+            entity: "", // (3 chars)
+            employment: "", // (3 chars)
+            reg_date: this.formatToDateString(new Date()), //(10 chars)
+            relation: [ // (10 chars)
+                { cid: "000281", relation_type: "051" }, //(6 chars, 3 chars)
+                { cid: "000282", relation_type: "051" }, //(6 chars, 3 chars)
+            ],
             skeletonLoader: false,
             imageCard: false,
             imageSrc: '',
@@ -436,6 +506,42 @@ export default {
                 this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
             }
         },
+        // mapFormDataToAPI() {
+        //     return {
+        //         br: this.br,
+        //         cidType: this.cid_type,
+        //         type: this.type,
+        //         title: this.title,
+        //         name1: this.last_name,
+        //         gender: this.gender,
+        //         civilStatus: this.civil_status,
+        //         displayName: this.display_name,
+        //         dob: this.formatToDateString(this.birthdate),
+        //         langType: this.lang_type,
+        //         appType: this.app_type,
+        //         prType: this.pr_type,
+        //         glCode: this.gl_code,
+        //         ownershipType: this.ownership_type,
+        //         staff: this.staff_or_not ? "T" : "F",
+        //         taxCode: this.tax_code,
+        //         address: this.address.map(addr => ({
+        //             addressType: addr.address_type,
+        //             line1: addr.address_line1,
+        //             primary: addr.primary,
+        //             mailing: addr.mailing,
+        //             tempMailing: addr.temp_mailing,
+        //             startDate: addr.start_date,
+        //         })),
+        //         ccCode1: this.institution,
+        //         ccCode2: this.entity,
+        //         ccCode3: this.employment,
+        //         regDate: this.reg_date,
+        //         relation: this.relation.map(rel => ({
+        //             cid: rel.cid,
+        //             relationType: rel.relation_type,
+        //         })),
+        //     };
+        // },
         async submitForm() {
             this.validating = true;
             try {
@@ -449,6 +555,7 @@ export default {
                         'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
                         'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
                     ];
+                    // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
                     formData.append('birthdate', formattedBirthdate);
                     fields.forEach(field => {
