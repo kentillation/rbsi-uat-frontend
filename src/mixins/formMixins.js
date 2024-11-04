@@ -4,7 +4,7 @@ import apiClient from '../axios';
 export default {
   data() {
     return {
-      dialog: false,
+      confirmDialog: false,
       type: "",
       client_status: "",
       first_name: "",
@@ -13,6 +13,7 @@ export default {
       display_name: "",
       staff_or_not: "",
       initial: "",
+      suffix: "",
       tin: "",
       pickerVisible: false,
       minDate: '1930-01-01',
@@ -32,6 +33,7 @@ export default {
       telephone: "",
       fax: "",
       image_file: null,
+      suffixesItems: [],
       typeItems: [],
       titleItems: [],
       clientstatusItems: [],
@@ -49,16 +51,15 @@ export default {
       middlenameRule: (v) => !!v || 'Middle name is required',
       lastnameRule: (v) => !!v || 'Last name is required',
       displaynameRule: (v) => !!v || 'Display name is required',
-      tinRule: (v) => !!v || 'TIN is required',
       genderRule: (v) => !!v || 'Gender is required',
       civilstatusRule: (v) => !!v || 'Civil status is required',
       mobile1Rule: (v) => !!v || 'Mobile 1 is required',
       emailRule: (v) => !!v || 'Email is required',
       nationalityRule: (v) => !!v || 'Nationality is required',
-      addressline1Rule: (v) => !!v || 'Address Line 1 is required',
-      addressline2Rule: (v) => !!v || 'Address Line 2 is required',
-      addressline3Rule: (v) => !!v || 'Address Line 3 is required',
-      addressline4Rule: (v) => !!v || 'Address Line 4 is required',
+      addressline1Rule: (v) => !!v || 'Street/Purok/Sitio/Hda. is required',
+      addressline2Rule: (v) => !!v || 'Barangay is required',
+      addressline3Rule: (v) => !!v || 'City is required',
+      addressline4Rule: (v) => !!v || 'Province is required',
       postalcodeRule: (v) => !!v || 'Postal Code is required',
       addresstypeRule: (v) => !!v || 'Address type is required',
       institutionRule: (v) => !!v || 'Undefined code is required',
@@ -66,6 +67,8 @@ export default {
       employmentRule: (v) => !!v || 'Employment code is required',
       imagefileRule: (v) => !!v || 'Image file is required',
       taxcodeRule: (v) => !!v || 'Client Tax Code is required',
+      message_idRule: (v) => !!v || 'Message ID is required',
+      tokenRule: (v) => !!v || 'Token is required',
       validating: false,
       snackbar: {
         visible: false,
@@ -82,6 +85,7 @@ export default {
     }
   },
   mounted() {
+    this.fetchSuffixesItems();
     this.fetchTypesItems();
     this.fetchTitlesItems();
     this.fetchClientStatusItems();
@@ -113,10 +117,11 @@ export default {
     isFormValid() {
       return [
         this.type, this.title, this.client_status, this.first_name, this.middle_name,
-        this.last_name, this.display_name, this.staff_or_not, this.tin, this.gender, this.civil_status,
+        this.last_name, this.display_name, this.staff_or_not, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
         this.address_line2, this.address_line3, this.address_line4, this.postal_code,
-        this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code
+        this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code,
+        this.message_id, this.token
       ].every(field => !!field);
     }
   },
@@ -141,6 +146,9 @@ export default {
       } catch (error) {
         this.showSnackbar(errorMessage, 'error');
       }
+    },
+    async fetchSuffixesItems() {
+      this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
     },
     async fetchTypesItems() {
       this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
@@ -230,8 +238,7 @@ export default {
       this.showSnackbar(message, 'error');
     },
     showConfirmDialog() {
-      // console.log(this.mapFormDataToAPI());
-      if (this.isFormValid) this.dialog = true;
+      if (this.isFormValid) this.confirmDialog = true;
       this.skeletonLoader = true;
       this.imageCard = false;
       setTimeout(() => {

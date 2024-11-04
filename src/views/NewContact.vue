@@ -32,6 +32,18 @@
                                             clearable></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                        <v-text-field v-model="display_name" :rules="[displaynameRule]"
+                                            label="Display Name" disabled></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                        <v-autocomplete v-model="suffix" label="Suffix"
+                                            :items="suffixesItems" item-title="suffix" item-value="id">
+                                        </v-autocomplete>
+                                    </v-col>
+                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                        <v-text-field v-model="initial" label="Initial"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-autocomplete v-model="type" :rules="[typeRule]" label="Type"
                                             :items="typeItems" item-title="type" item-value="id">
                                         </v-autocomplete>
@@ -46,21 +58,15 @@
                                             label="Client Status" :items="clientstatusItems" item-title="client_status"
                                             item-value="id"></v-autocomplete>
                                     </v-col>
-                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-text-field v-model="initial" label="Initial"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-text-field v-model="display_name" :rules="[displaynameRule]"
-                                            label="Display Name" disabled></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-checkbox v-model="staff_or_not" label="Staff"></v-checkbox>
+                                    <v-col cols="12">
+                                        <v-checkbox v-model="staff_or_not" color="success" label="Staff"></v-checkbox>
                                     </v-col>
                                 </v-row>
                             </v-container>
                         </v-card>
 
                         <v-row>
+                            <!-- Personal Information -->
                             <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                 <v-card border="opacity-50 sm" class="mb-5">
                                     <v-container>
@@ -69,7 +75,7 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="tin" :rules="[tinRule]" label="TIN"
+                                                        <v-text-field v-model="tin" label="TIN"
                                                             clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
@@ -95,35 +101,7 @@
                                     </v-container>
                                 </v-card>
                             </v-col>
-                            <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                                <v-card border="opacity-50 sm" class="mb-5">
-                                    <v-container>
-                                        <h3 class="mb-4">Contact Information</h3>
-                                        <v-row>
-                                            <v-col cols="12">
-                                                <v-row>
-                                                    <v-col cols="12">
-                                                        <v-text-field v-model="mobile1" :rules="[mobile1Rule]"
-                                                            label="Mobile 1" clearable></v-text-field>
-                                                    </v-col>
-                                                    <v-col cols="12">
-                                                        <v-text-field v-model="mobile2" label="Mobile 2"
-                                                            clearable></v-text-field>
-                                                    </v-col>
-                                                    <v-col cols="12">
-                                                        <v-text-field v-model="email" type="email" :rules="[emailRule]"
-                                                            label="Email" clearable></v-text-field>
-                                                    </v-col>
-                                                    <v-col cols="12">
-                                                        <v-text-field v-model="nationality" :rules="[nationalityRule]"
-                                                            label="Nationality" clearable></v-text-field>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card>
-                            </v-col>
+                            <!-- Address -->
                             <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                 <v-card border="opacity-50 sm" class="mb-5">
                                     <v-container>
@@ -166,6 +144,7 @@
                                     </v-container>
                                 </v-card>
                             </v-col>
+                            <!-- Client Classification Codes -->
                             <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                 <v-card border="opacity-50 sm" class="mb-5">
                                     <v-container>
@@ -173,7 +152,7 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="institution" :rules="[institutionRule]"
-                                                    label="Instituion" :items="institutionItems"
+                                                    label="Institution" :items="institutionItems"
                                                     item-title="institution"
                                                     item-value="id"></v-autocomplete>
                                             </v-col>
@@ -202,6 +181,58 @@
                                     </v-container>
                                 </v-card>
                             </v-col>
+                            <v-col cols="12" lg="6" md="6" sm="6" xs="12">
+                                <v-row>
+                                    <!-- Contact Information -->
+                                    <v-col cols="12">
+                                        <v-card border="opacity-50 sm" class="mb-5">
+                                            <v-container>
+                                                <h3 class="mb-4">Contact Information</h3>
+                                                <v-row>
+                                                    <v-col cols="12">
+                                                        <v-row>
+                                                            <v-col cols="12">
+                                                                <v-text-field v-model="mobile1" :rules="[mobile1Rule]"
+                                                                    label="Mobile 1" clearable></v-text-field>
+                                                            </v-col>
+                                                            <v-col cols="12">
+                                                                <v-text-field v-model="mobile2" label="Mobile 2"
+                                                                    clearable></v-text-field>
+                                                            </v-col>
+                                                            <v-col cols="12">
+                                                                <v-text-field v-model="email" type="email" :rules="[emailRule]"
+                                                                    label="Email" clearable></v-text-field>
+                                                            </v-col>
+                                                            <v-col cols="12">
+                                                                <v-text-field v-model="nationality" :rules="[nationalityRule]"
+                                                                    label="Nationality" clearable></v-text-field>
+                                                            </v-col>
+                                                        </v-row>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card>
+                                    </v-col>
+                                    <!-- Authentication Codes -->
+                                    <v-col cols="12">
+                                        <v-card border="opacity-50 sm" class="mb-5">
+                                            <v-container>
+                                                <h3 class="mb-4">Authentication Codes</h3>
+                                                <v-row>
+                                                    <v-col cols="12">
+                                                        <v-text-field v-model="message_id" :rules="[message_idRule]" label="Message ID"
+                                                            clearable></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <v-text-field v-model="token" :rules="[tokenRule]" label="Token"
+                                                            clearable></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                            </v-col>
                         </v-row>
                     </v-card-text>
                 </v-card>
@@ -222,7 +253,7 @@
             <v-card>
                 <v-card-title class="headline">Confirmation</v-card-title>
                 <v-card-text>
-                    Every checking of identity has a subscription from its API Provider. Make it sure to fill in the
+                    Every checking of identity has a subscription from e-KYC API Provider. Make it sure to fill in the
                     exact name before you click Confirm button.
                 </v-card-text>
                 <v-card-actions>
@@ -235,7 +266,7 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="dialog" max-width="1000px">
+        <v-dialog v-model="confirmDialog" max-width="1000px">
             <v-card>
                 <v-card-title>
                     <span class="headline">Confirm Submission</span>
@@ -258,12 +289,20 @@
                                         }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name
-                                        }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong>
                                 </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
+                                <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
+                                <p><span class="text-grey-lighten-1">Suffix: </span><strong>{{ getTitle(suffix, suffixesItems, 'suffix') }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
+                                <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems, 'type') }}</strong> </p>
@@ -273,13 +312,6 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{ getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name
-                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' : 'No' }}</strong> </p>
@@ -340,7 +372,7 @@
                                 <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Instituion: </span><strong>{{ getTitle(institution, institutionItems, 'institution') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Institution: </span><strong>{{ getTitle(institution, institutionItems, 'institution') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity, entityItems, 'entity') }}</strong> </p>
@@ -351,12 +383,18 @@
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong> </p>
                             </v-col>
+                            <v-col cols="12" lg="6" md="6" sm="6">
+                                <p><span class="text-grey-lighten-1">Message ID: </span><strong>{{ message_id }}</strong> </p>
+                            </v-col>
+                            <v-col cols="12" lg="6" md="6" sm="6">
+                                <p><span class="text-grey-lighten-1">Token: </span><strong>{{ token }}</strong> </p>
+                            </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="dialog"
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="closeDialog"
                         rounded>Check again</v-btn>
                     <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm"
                         rounded>Confirm</v-btn>
@@ -376,44 +414,37 @@ export default {
     mixins: [formMixins],
     data() {
         return {
-            br: "000000",
-            cid_type: "001",
+            br: "",
+            cid_type: "",
             type: "",
             title: "",
-            last_name: "", // (24 chars)
+            last_name: "",
             gender: "",
             civil_status: "",
-            birthdate: null, // (10 chars)
-            lang_type: "001",
-            app_type: "1", //(1 char
-            pr_type: "01", //(2 chars)
-            gl_code: "01", //(2 chars)
-            ownership_type: "010",
-            staff_or_not: 2, // (1 char)
+            birthdate: null,
+            lang_type: "",
+            app_type: "",
+            pr_type: "",
+            gl_code: "",
+            ownership_type: "",
+            staff_or_not: 2,
             tax_code: "",
-            address_line1: "", // (24 chars)
+            address_line1: "",
             address_type: "",
-            // address: [
-            //     {
-            //         address_line1: "", // (24 chars)
-            //         address_type: "",
-            //         primary: "T", //(1 char)
-            //         mailing: "T", //(1 char)
-            //         temp_mailing: "F", //direct insert
-            //         start_date: this.formatToDateString(new Date()), //(10 chars)
-            //     },
-            // ],
             institution: "",
             entity: "",
             employment: "",
-            reg_date: this.formatToDateString(new Date()), //(10 chars)
-            relation: [ // (10 chars)
-                { cid: "000281", relation_type: "051" }, //(6 chars, 3 chars)
-                { cid: "000282", relation_type: "051" }, //(6 chars, 3 chars)
+            reg_date: this.formatToDateString(new Date()),
+            relation: [
+                { cid: "", relation_type: "" },
+                { cid: "", relation_type: "" },
             ],
+            message_id: "",
+            token: "",
             skeletonLoader: false,
             imageCard: false,
             imageSrc: '',
+            confirmDialog: false,
         }
     },
     created() {
@@ -441,6 +472,9 @@ export default {
             this.confirm_identity_dialog = false;
             this.checkWatchlist();
         },
+        closeDialog() {
+            this.confirmDialog = false;
+        },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
             try {
@@ -461,16 +495,17 @@ export default {
         },
         async submitForm() {
             this.validating = true;
+            this.confirmDialog = true;
             try {
                 if (this.$refs.form.validate()) {
                     const staffValue = this.staff_or_not ? 1 : 2;
                     const formData = new FormData();
                     const fields = [
                         'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
-                        'initial', 'display_name', 'tin', 'gender', 'civil_status', 'birthdate',
+                        'display_name', 'suffix', 'initial',  'tin', 'gender', 'civil_status', 'birthdate',
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
-                        'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code'
+                        'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code', 'message_id', 'token'
                     ];
                     // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
@@ -489,11 +524,10 @@ export default {
                             'Content-Type': 'multipart/form-data',
                             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                         }
-                        //DAPAT INDI STRINGS
                     });
                     if (response.status === 200) {
                         this.showSnackbar('New client has been saved successfully.', 'success');
-                        this.dialog = false;
+                        this.confirmDialog = false;
                     }
                 }
             } catch (error) {

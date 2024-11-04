@@ -39,6 +39,7 @@ export default {
     }
   },
   mounted() {
+    this.fetchItems('/suffixes', 'suffixesItems');
     this.fetchItems('/types', 'typeItems');
     this.fetchItems('/titles', 'titleItems');
     this.fetchItems('/client_status', 'clientstatusItems');
@@ -111,6 +112,11 @@ export default {
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
+    },
+    showSnackbar(message, color) {
+      this.snackbar.message = message;
+      this.snackbar.color = color;
+      this.snackbar.visible = true;
     },
   },
 };
