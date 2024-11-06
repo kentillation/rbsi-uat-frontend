@@ -109,19 +109,19 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line1"
-                                                    :rules="[addressline1Rule]" label="Street/Purok/Sitio/Hda." clearable></v-text-field>
+                                                    :rules="[addressline1Rule]" label="Barangay" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line2" :rules="[addressline2Rule]"
-                                                    label="Barangay" clearable></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
                                                     label="City" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="address_line4" :rules="[addressline4Rule]"
+                                                <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
                                                     label="Province" clearable></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field v-model="address_line4" :rules="[addressline4Rule]"
+                                                    label="Country" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="postal_code" :rules="[postalcodeRule]"

@@ -27,7 +27,7 @@ export default {
       address_line1: "",
       address_line2: "",
       address_line3: "",
-      address_line4: "Negros Island Region",
+      address_line4: "Philippines",
       postal_code: "",
       address_type: "",
       telephone: "",
