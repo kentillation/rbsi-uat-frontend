@@ -10,7 +10,12 @@
           <v-card-text>
             <v-card border="opacity-50 sm" class="mb-10">
               <v-container>
-                <h3 class="mb-4">Basic Information</h3>
+                <div class="d-flex align-items-center justify-space-between">
+                  <h3 class="mb-4">Basic Information</h3>
+                  <v-btn class="bg-teal-darken-3 mb-3" :disabled="isIdentityCheckDisabled"
+                    @click="openConfirmIdentityDialog" prepend-icon="mdi-magnify" rounded><span
+                      class="to-hide">Check&nbsp;</span>Identity</v-btn>
+                </div>
                 <v-row justify="center">
                   <!-- Form Fields -->
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
@@ -45,7 +50,7 @@
                       disabled></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-checkbox v-model="isStaff" :label="staffLabel" :color="checkboxColor" ></v-checkbox>
+                    <v-checkbox v-model="isStaff" :label="staffLabel" :color="checkboxColor"></v-checkbox>
                   </v-col>
                 </v-row>
               </v-container>
@@ -117,8 +122,8 @@
                     <h3 class="mb-4">Address</h3>
                     <v-row>
                       <v-col cols="12">
-                        <v-text-field v-model="address_line1" :rules="[addressline1Rule]" label="Street/Purok/Sitio/Hda."
-                          clearable></v-text-field>
+                        <v-text-field v-model="address_line1" :rules="[addressline1Rule]"
+                          label="Street/Purok/Sitio/Hda." clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
                         <v-text-field v-model="address_line2" :rules="[addressline2Rule]" label="Barangay"
@@ -156,8 +161,8 @@
                     <h3 class="mb-4">Client Classification Codes</h3>
                     <v-row>
                       <v-col cols="12">
-                        <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Institution" :items="institutionItems"
-                          item-title="institution" item-value="id"></v-autocomplete>
+                        <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Institution"
+                          :items="institutionItems" item-title="institution" item-value="id"></v-autocomplete>
                       </v-col>
                       <v-col cols="12">
                         <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity" :items="entityItems"
@@ -189,13 +194,23 @@
       </div>
     </v-form>
 
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-      <div class="d-flex align-items-center justify-space-between">
-        <span class="mt-1">{{ snackbar.message }}</span>
-        <span><v-btn @click="toClientInfo" v-if="!to_HomePage" size="small" class="bg-red" style="font-size: 11px;">Back to
-            Client Info</v-btn></span>
-      </div>
-    </v-snackbar>
+    <!-- Check Identiy Dialog -->
+    <v-dialog v-model="confirm_identity_dialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Confirmation</v-card-title>
+        <v-card-text>
+          Every checking of identity has a subscription from e-KYC API Provider. Make it sure to fill in the
+          exact name before you click Confirm button.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="bg-red-darken-4 px-3 mb-4" prepend-icon="mdi-close-circle"
+            @click="confirm_identity_dialog = false" rounded>Check again</v-btn>
+          <v-btn class="bg-teal-darken-3 px-3 me-4 mb-4" prepend-icon="mdi-check" @click="confirmCheck"
+            rounded>Confirm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <!-- Confirmation Dialog -->
     <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px" persistent>
@@ -289,7 +304,8 @@
                 <p><span class="text-grey-lighten-1">Fax: <br /></span><strong>{{ fax }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Institution: <br /></span><strong>{{ getTitle(institution, institutionItems,
+                <p><span class="text-grey-lighten-1">Institution: <br /></span><strong>{{ getTitle(institution,
+                  institutionItems,
                   'institution') }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
@@ -315,12 +331,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
+      <div class="d-flex align-items-center justify-space-between">
+        <span class="mt-1">{{ snackbar.message }}</span>
+      </div>
+    </v-snackbar>
+
   </v-container>
 </template>
 
 
 <script>
 import apiClient from '../axios';
+import watchlistData from '@/temp/watchlist.json';
 import formMixins from '@/mixins/formMixins.js';
 
 export default {
@@ -347,6 +371,31 @@ export default {
   methods: {
     toClientInfo() {
       this.$router.push({ name: 'ClientInfo' });
+    },
+    openConfirmIdentityDialog() {
+      this.confirm_identity_dialog = true;
+    },
+    confirmCheck() {
+      this.confirm_identity_dialog = false;
+      this.checkWatchlist();
+    },
+    async checkWatchlist() {
+      if (this.isIdentityCheckDisabled) return;
+      try {
+        const data = watchlistData;
+        const isOnWatchlist = data.watchlist.some(item =>
+          item.first_name === this.first_name &&
+          item.middle_name === this.middle_name &&
+          item.last_name === this.last_name
+        );
+        if (isOnWatchlist) {
+          this.showSnackbar('Name is on the watchlist.', 'error');
+        } else {
+          this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
+        }
+      } catch (error) {
+        this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
+      }
     },
     async fetchClientData(cid, last_name) {
       this.validating = true;

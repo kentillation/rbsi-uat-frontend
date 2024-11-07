@@ -27,7 +27,6 @@ export default {
       address_line1: "",
       address_line2: "",
       address_line3: "",
-      address_line4: "Philippines",
       postal_code: "",
       address_type: "",
       telephone: "",
@@ -56,10 +55,9 @@ export default {
       mobile1Rule: (v) => !!v || 'Mobile 1 is required',
       emailRule: (v) => !!v || 'Email is required',
       nationalityRule: (v) => !!v || 'Nationality is required',
-      addressline1Rule: (v) => !!v || 'Street/Purok/Sitio/Hda. is required',
-      addressline2Rule: (v) => !!v || 'Barangay is required',
-      addressline3Rule: (v) => !!v || 'City is required',
-      addressline4Rule: (v) => !!v || 'Province is required',
+      addressline1Rule: (v) => !!v || 'Barangay is required',
+      addressline2Rule: (v) => !!v || 'City is required',
+      addressline3Rule: (v) => !!v || 'Province is required',
       postalcodeRule: (v) => !!v || 'Postal Code is required',
       addresstypeRule: (v) => !!v || 'Address type is required',
       institutionRule: (v) => !!v || 'Undefined code is required',
@@ -119,7 +117,7 @@ export default {
         this.type, this.title, this.client_status, this.first_name, this.middle_name,
         this.last_name, this.display_name, this.staff_or_not, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
-        this.address_line2, this.address_line3, this.address_line4, this.postal_code,
+        this.address_line2, this.address_line3, this.postal_code,
         this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code,
         this.message_id, this.token
       ].every(field => !!field);
@@ -212,6 +210,9 @@ export default {
       let message = 'An unknown error occurred.';
       if (error.response) {
         switch (error.response.status) {
+          case 400:
+            message = 'Invalid/Expired Message ID or Token';
+            break;
           case 404:
             message = 'Client not found.';
             break;

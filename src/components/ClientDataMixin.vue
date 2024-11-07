@@ -52,14 +52,12 @@ export default {
         { label: "Mobile 2", value: this.client?.mobile2 },
         { label: "Email", value: this.client?.email },
         { label: "Nationality", value: this.client?.nationality },
-        { label: "TIN", value: this.client?.tin },
         { label: "Gender", value: this.getTitle(this.client?.gender, this.genderItems, "gender") },
         { label: "Civil Status", value: this.getTitle(this.client?.civil_status, this.civilstatusItems, "civil_status") },
         { label: "Birthdate", value: this.client?.birthdate ? this.formatDate(this.client?.birthdate) : "N/A" },
-        { label: "Street/Purok/Sitio/Hda.", value: this.client?.address_line1 }, //
-        { label: "Barangay", value: this.client?.address_line2 }, //
-        { label: "City", value: this.client?.address_line3 }, //
-        { label: "Province", value: this.client?.address_line4 }, //
+        { label: "Barangay", value: this.client?.address_line1 }, //
+        { label: "City", value: this.client?.address_line2 }, //
+        { label: "Province", value: this.client?.address_line3 }, //
         { label: "Address Type", value: this.getTitle(this.client?.address_type, this.addresstypeItems, "address_type") }, //
         { label: "Telephone", value: this.client?.telephone }, //
         { label: "Fax", value: this.client?.fax }, //

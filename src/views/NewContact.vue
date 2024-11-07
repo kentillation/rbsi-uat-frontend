@@ -21,44 +21,44 @@
                                 <v-row justify="center">
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-text-field v-model="first_name" :rules="[firstnameRule]" label="First Name"
-                                            clearable></v-text-field>
+                                        variant="underlined" clearable></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-text-field v-model="middle_name" :rules="[middlenameRule]"
-                                            label="Middle Name" clearable></v-text-field>
+                                            label="Middle Name" variant="underlined" clearable></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name"
-                                            clearable></v-text-field>
+                                            variant="underlined" clearable></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12" style="display: none;">
                                         <v-text-field v-model="display_name" :rules="[displaynameRule]"
-                                            label="Display Name" disabled></v-text-field>
+                                            label="Display Name" variant="underlined" disabled></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete v-model="suffix" label="Suffix"
-                                            :items="suffixesItems" item-title="suffix" item-value="id">
+                                        <v-autocomplete v-model="suffix" label="Suffix (optional)"
+                                            :items="suffixesItems" item-title="suffix" item-value="id" variant="underlined" >
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-text-field v-model="initial" label="Initial"></v-text-field>
+                                        <v-text-field v-model="initial" label="Initial (optional)" variant="underlined" clearable></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-autocomplete v-model="type" :rules="[typeRule]" label="Type"
-                                            :items="typeItems" item-title="type" item-value="id">
+                                            :items="typeItems" item-title="type" item-value="id" variant="underlined">
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-autocomplete v-model="title" :rules="[titleRule]" label="Title"
                                             :items="titleItems" item-title="title"
-                                            item-value="id"></v-autocomplete>
+                                            item-value="id" variant="underlined"></v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-autocomplete v-model="client_status" :rules="[clientstatusRule]"
                                             label="Client Status" :items="clientstatusItems" item-title="client_status"
-                                            item-value="id"></v-autocomplete>
+                                            item-value="id" variant="underlined"></v-autocomplete>
                                     </v-col>
-                                    <v-col cols="12">
+                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-checkbox v-model="staff_or_not" color="success" label="Staff"></v-checkbox>
                                     </v-col>
                                 </v-row>
@@ -75,22 +75,21 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-text-field v-model="tin" label="TIN"
-                                                            clearable></v-text-field>
+                                                        <v-text-field v-model="tin" label="TIN (optional)" variant="underlined" clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-autocomplete v-model="gender" :rules="[genderRule]"
                                                             label="Gender" :items="genderItems" item-title="gender"
-                                                            item-value="id"></v-autocomplete>
+                                                            item-value="id" variant="underlined" ></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-autocomplete v-model="civil_status"
                                                             :rules="[civilstatusRule]" label="Civil status"
                                                             :items="civilstatusItems" item-title="civil_status"
-                                                            item-value="id"></v-autocomplete>
+                                                            item-value="id" variant="underlined" ></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
-                                                        <v-text-field disabled>Birthdate: {{
+                                                        <v-text-field  variant="underlined" disabled>Birthdate: {{
                                                             formattedBirthdate }}</v-text-field>
                                                         <v-date-picker :min="minDate" :max="maxDate"
                                                             v-model="birthdate"></v-date-picker>
@@ -109,36 +108,32 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line1"
-                                                    :rules="[addressline1Rule]" label="Barangay" clearable></v-text-field>
+                                                    :rules="[addressline1Rule]" label="Barangay"  variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line2" :rules="[addressline2Rule]"
-                                                    label="City" clearable></v-text-field>
+                                                    label="City/Municipality"  variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
-                                                    label="Province" clearable></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="address_line4" :rules="[addressline4Rule]"
-                                                    label="Country" clearable></v-text-field>
+                                                    label="Province"  variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="postal_code" :rules="[postalcodeRule]"
-                                                    label="Postal Code" clearable></v-text-field>
+                                                    label="Postal Code"  variant="underlined" clearable></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field v-model="telephone" label="Telephone (optional)"
+                                                     variant="underlined" clearable></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field v-model="fax" label="Fax (optional)"  variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="address_type"
                                                     :rules="[addresstypeRule]" label="Address Type"
                                                     :items="addresstypeItems" item-title="address_type"
-                                                    item-value="id"></v-autocomplete>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="telephone" label="Telephone"
-                                                    clearable></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="fax" label="Fax" clearable></v-text-field>
+                                                    item-value="id" variant="underlined" ></v-autocomplete>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -154,28 +149,28 @@
                                                 <v-autocomplete v-model="institution" :rules="[institutionRule]"
                                                     label="Institution" :items="institutionItems"
                                                     item-title="institution"
-                                                    item-value="id"></v-autocomplete>
+                                                    item-value="id" variant="underlined" ></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity"
                                                     :items="entityItems" item-title="entity"
-                                                    item-value="id"></v-autocomplete>
+                                                    item-value="id" variant="underlined" ></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="employment" :rules="[employmentRule]"
                                                     label="Employment" :items="employmentItems" item-title="employment"
-                                                    item-value="id"></v-autocomplete>
+                                                    item-value="id" variant="underlined" ></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-file-input v-model="image_file" :rules="[imagefileRule]"
                                                     accept="image/*" label="Image file" append-inner-icon="mdi-camera"
-                                                    prepend-icon="" chips show-size>
+                                                    prepend-icon="" variant="underlined"  chips show-size>
                                                 </v-file-input>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]"
                                                     label="Client Tax Code" :items="taxcodeItems" item-title="tax_code"
-                                                    item-value="id"></v-autocomplete>
+                                                    item-value="id" variant="underlined" ></v-autocomplete>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -193,19 +188,19 @@
                                                         <v-row>
                                                             <v-col cols="12">
                                                                 <v-text-field v-model="mobile1" :rules="[mobile1Rule]"
-                                                                    label="Mobile 1" clearable></v-text-field>
+                                                                    label="Mobile 1"  variant="underlined" clearable></v-text-field>
                                                             </v-col>
                                                             <v-col cols="12">
-                                                                <v-text-field v-model="mobile2" label="Mobile 2"
-                                                                    clearable></v-text-field>
+                                                                <v-text-field v-model="mobile2" label="Mobile 2 (optional)"
+                                                                     variant="underlined" clearable></v-text-field>
                                                             </v-col>
                                                             <v-col cols="12">
                                                                 <v-text-field v-model="email" type="email" :rules="[emailRule]"
-                                                                    label="Email" clearable></v-text-field>
+                                                                    label="Email"  variant="underlined" clearable></v-text-field>
                                                             </v-col>
                                                             <v-col cols="12">
                                                                 <v-text-field v-model="nationality" :rules="[nationalityRule]"
-                                                                    label="Nationality" clearable></v-text-field>
+                                                                    label="Nationality"  variant="underlined" clearable></v-text-field>
                                                             </v-col>
                                                         </v-row>
                                                     </v-col>
@@ -221,11 +216,11 @@
                                                 <v-row>
                                                     <v-col cols="12">
                                                         <v-text-field v-model="message_id" :rules="[message_idRule]" label="Message ID"
-                                                            clearable></v-text-field>
+                                                             variant="underlined" clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-text-field v-model="token" :rules="[tokenRule]" label="Token"
-                                                            clearable></v-text-field>
+                                                             variant="underlined" clearable></v-text-field>
                                                     </v-col>
                                                 </v-row>
                                             </v-container>
@@ -285,24 +280,22 @@
                         </div>
                         <v-row>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">First Name: </span><strong>{{ first_name
-                                        }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">First Name: </span><strong>{{ first_name }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong>
-                                </p>
+                                <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Suffix: </span><strong>{{ getTitle(suffix, suffixesItems, 'suffix') }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Suffix (optional): </span><strong>{{ getTitle(suffix, suffixesItems, 'suffix') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Initial: </span><strong>{{ initial }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Initial (optional): </span><strong>{{ initial }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems, 'type') }}</strong> </p>
@@ -317,7 +310,7 @@
                                 <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' : 'No' }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">TIN: </span><strong>{{ tin }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">TIN (optional): </span><strong>{{ tin }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender, genderItems, 'gender') }}</strong> </p>
@@ -329,12 +322,10 @@
                                 <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong>
-                                </p>
+                                <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Mobile 2: </span><strong>{{ mobile2 }}</strong>
-                                </p>
+                                <p><span class="text-grey-lighten-1">Mobile 2 (optional): </span><strong>{{ mobile2 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Email: </span><strong>{{ email }}</strong> </p>
@@ -343,33 +334,25 @@
                                 <p><span class="text-grey-lighten-1">Nationality: </span><strong>{{ nationality }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Address Line 1: </span><strong>{{ address_line1 }}</strong></p>
+                                <p><span class="text-grey-lighten-1">Barangay: </span><strong>{{ address_line1 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Address Line 2: </span><strong>{{ address_line2
-                                        }}</strong></p>
+                                <p><span class="text-grey-lighten-1">City/Municipality: </span><strong>{{ address_line2 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Address Line 3: </span><strong>{{ address_line3
-                                        }}</strong></p>
+                                <p><span class="text-grey-lighten-1">Province: </span><strong>{{ address_line3 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Address Line 4: </span><strong>{{ address_line4
-                                        }}</strong></p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code
-                                        }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Type: </span><strong>{{ getTitle(address_type, addresstypeItems, 'address_type') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Telephone: </span><strong>{{ telephone }}</strong>
-                                </p>
+                                <p><span class="text-grey-lighten-1">Telephone (optional): </span><strong>{{ telephone }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Fax: </span><strong>{{ fax }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Fax (optional): </span><strong>{{ fax }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Institution: </span><strong>{{ getTitle(institution, institutionItems, 'institution') }}</strong> </p>
@@ -382,12 +365,6 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="6" md="6" sm="6">
-                                <p><span class="text-grey-lighten-1">Message ID: </span><strong>{{ message_id }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="6" md="6" sm="6">
-                                <p><span class="text-grey-lighten-1">Token: </span><strong>{{ token }}</strong> </p>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -504,7 +481,7 @@ export default {
                         'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
                         'display_name', 'suffix', 'initial',  'tin', 'gender', 'civil_status', 'birthdate',
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
-                        'address_line3', 'address_line4', 'postal_code', 'address_type', 'telephone',
+                        'address_line3', 'postal_code', 'address_type', 'telephone',
                         'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code', 'message_id', 'token'
                     ];
                     // CHANGE TO PH TIMEZONE
