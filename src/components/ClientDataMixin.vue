@@ -34,7 +34,6 @@ export default {
     institutionItems: Array,
     entityItems: Array,
     employmentItems: Array,
-    taxcodeItems: Array,
   },
   computed: {
     clientFields() {
@@ -65,7 +64,6 @@ export default {
         { label: "Institution", value: this.getTitle(this.client?.institution, this.institutionItems, "institution") },
         { label: "Entity", value: this.getTitle(this.client?.entity, this.entityItems, "entity") },
         { label: "Employment", value: this.getTitle(this.client?.employment, this.employmentItems, "employment") },
-        { label: "Tax Code", value: this.getTitle(this.client?.tax_code, this.taxcodeItems, "tax_code") }
       ];
     },
     staffLabel() {
