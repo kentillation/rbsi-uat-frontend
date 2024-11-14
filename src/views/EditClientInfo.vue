@@ -172,10 +172,6 @@
                         <v-autocomplete v-model="employment" :rules="[employmentRule]" label="Employment"
                           :items="employmentItems" item-title="employment" item-value="id"></v-autocomplete>
                       </v-col>
-                      <v-col cols="12">
-                        <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]" label="Tax Code" :items="taxcodeItems"
-                          item-title="tax_code" item-value="id"></v-autocomplete>
-                      </v-col>
                     </v-row>
                   </v-container>
                 </v-card>
@@ -315,10 +311,6 @@
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Employment: <br /></span><strong>{{ getTitle(employment,
                   employmentItems, 'employment') }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Tax Code: <br /></span><strong>{{ getTitle(tax_code, taxcodeItems,
-                  'tax_code') }}</strong></p>
               </v-col>
             </v-row>
           </v-container>

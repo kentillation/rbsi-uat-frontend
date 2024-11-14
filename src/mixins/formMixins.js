@@ -42,7 +42,6 @@ export default {
       institutionItems: [],
       entityItems: [],
       employmentItems: [],
-      taxcodeItems: [],
       typeRule: (v) => !!v || 'Type is required',
       titleRule: (v) => !!v || 'Title is required',
       clientstatusRule: (v) => !!v || 'Client status is required',
@@ -64,7 +63,6 @@ export default {
       entityRule: (v) => !!v || 'Entity code is required',
       employmentRule: (v) => !!v || 'Employment code is required',
       imagefileRule: (v) => !!v || 'Image file is required',
-      taxcodeRule: (v) => !!v || 'Client Tax Code is required',
       message_idRule: (v) => !!v || 'Message ID is required',
       tokenRule: (v) => !!v || 'Token is required',
       validating: false,
@@ -93,7 +91,6 @@ export default {
     this.fetchEntityItems();
     this.fetchEmploymentItems();
     this.fetchAddressTypeItems();
-    this.fetchTaxCodeItems();
   },
   computed: {
     displayName() {
@@ -118,7 +115,7 @@ export default {
         this.last_name, this.display_name, this.staff_or_not, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
         this.address_line2, this.address_line3, this.postal_code,
-        this.address_type, this.institution, this.entity, this.employment, this.image_file, this.tax_code,
+        this.address_type, this.institution, this.entity, this.employment, this.image_file,
         this.message_id, this.token
       ].every(field => !!field);
     }
@@ -174,9 +171,6 @@ export default {
     },
     async fetchEmploymentItems() {
       this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
-    },
-    async fetchTaxCodeItems() {
-      this.fetchItems('/tax_code', 'taxcodeItems', 'Failed to fetch tax codes');
     },
     async checkIdentity() {
       if (!this.first_name || !this.middle_name || !this.last_name) return;

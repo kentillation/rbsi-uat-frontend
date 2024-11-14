@@ -30,7 +30,6 @@ export default {
       institutionItems: [],
       entityItems: [],
       employmentItems: [],
-      taxcodeItems: [],
     };
   },
   created() {
@@ -49,7 +48,6 @@ export default {
     this.fetchItems('/institution', 'institutionItems');
     this.fetchItems('/entity', 'entityItems');
     this.fetchItems('/employment', 'employmentItems');
-    this.fetchItems('/tax_code', 'taxcodeItems');
   },
   methods: {
     toEditClientInfo() {

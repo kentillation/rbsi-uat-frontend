@@ -167,11 +167,6 @@
                                                     prepend-icon="" variant="underlined"  chips show-size>
                                                 </v-file-input>
                                             </v-col>
-                                            <v-col cols="12">
-                                                <v-autocomplete v-model="tax_code" :rules="[taxcodeRule]"
-                                                    label="Client Tax Code" :items="taxcodeItems" item-title="tax_code"
-                                                    item-value="id" variant="underlined" ></v-autocomplete>
-                                            </v-col>
                                         </v-row>
                                     </v-container>
                                 </v-card>
@@ -363,9 +358,6 @@
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment, employmentItems, 'employment') }}</strong> </p>
                             </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Client Tax Code: </span><strong>{{ getTitle(tax_code, taxcodeItems, 'tax_code') }}</strong> </p>
-                            </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
@@ -405,7 +397,6 @@ export default {
             gl_code: "",
             ownership_type: "",
             staff_or_not: 2,
-            tax_code: "",
             address_line1: "",
             address_type: "",
             institution: "",
@@ -482,7 +473,7 @@ export default {
                         'display_name', 'suffix', 'initial',  'tin', 'gender', 'civil_status', 'birthdate',
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'postal_code', 'address_type', 'telephone',
-                        'fax', 'institution', 'entity', 'employment', 'image_file', 'tax_code', 'message_id', 'token'
+                        'fax', 'institution', 'entity', 'employment', 'image_file', 'message_id', 'token'
                     ];
                     // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
