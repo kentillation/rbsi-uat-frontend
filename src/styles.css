@@ -1,7 +1,9 @@
 .v-data-table {
   max-width: 100%;
 }
-
+.v-date-picker {
+  width: 100%;
+}
 /* Vuetify Date Picker */
 .v-date-picker__title {
   display: none !important;

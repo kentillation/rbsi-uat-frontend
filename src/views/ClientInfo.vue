@@ -26,8 +26,7 @@
         <ClientDataMixin :client="selectedClient" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
           :imageSrc="imageSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
           :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
-          :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems"
-          :taxcodeItems="taxcodeItems" />
+          :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" />
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
@@ -150,7 +149,7 @@ export default {
           this.multipleClients = clients;
           this.dialogMultiple = true;
         } else {
-          this.showSnackbar('No client record found.', 'error');
+          this.showSnackbar('No record found!', 'error');
         }
       } catch (error) {
         this.showSnackbar('An error occurred while searching for clients', 'error');

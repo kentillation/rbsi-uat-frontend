@@ -65,9 +65,6 @@
                       <v-col cols="12">
                         <v-row>
                           <v-col cols="12">
-                            <v-text-field v-model="tin" :rules="[tinRule]" label="TIN" clearable></v-text-field>
-                          </v-col>
-                          <v-col cols="12">
                             <v-autocomplete v-model="gender" :rules="[genderRule]" label="Gender" :items="genderItems"
                               item-title="gender" item-value="id"></v-autocomplete>
                           </v-col>
@@ -242,9 +239,6 @@
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Staff: <br /></span><strong>{{ staffLabel }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">TIN: <br /></span><strong>{{ tin }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Gender: <br /></span><strong>{{ getTitle(gender, genderItems,

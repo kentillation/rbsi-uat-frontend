@@ -5,6 +5,7 @@ export default {
   data() {
     return {
       confirmDialog: false,
+      imgCard: false,
       type: "",
       client_status: "",
       first_name: "",
@@ -14,7 +15,6 @@ export default {
       staff_or_not: "",
       initial: "",
       suffix: "",
-      tin: "",
       pickerVisible: false,
       minDate: '1930-01-01',
       maxDate: this.formatToDateString(new Date()),
@@ -32,6 +32,13 @@ export default {
       telephone: "",
       fax: "",
       image_file: null,
+      headers: [
+        { title: 'CID', value: 'cid', sortable: false },
+        { title: 'Last Name', value: 'last_name', sortable: false },
+        { title: 'First Name', value: 'first_name', sortable: false },
+        { title: 'Middle Name', value: 'middle_name', sortable: false },
+        { title: 'Actions', value: 'action', sortable: false }
+      ],
       suffixesItems: [],
       typeItems: [],
       titleItems: [],
@@ -59,9 +66,9 @@ export default {
       addressline3Rule: (v) => !!v || 'Province is required',
       postalcodeRule: (v) => !!v || 'Postal Code is required',
       addresstypeRule: (v) => !!v || 'Address type is required',
-      institutionRule: (v) => !!v || 'Undefined code is required',
-      entityRule: (v) => !!v || 'Entity code is required',
-      employmentRule: (v) => !!v || 'Employment code is required',
+      institutionRule: (v) => !!v || 'Institution is required',
+      entityRule: (v) => !!v || 'Entity is required',
+      employmentRule: (v) => !!v || 'Employment is required',
       imagefileRule: (v) => !!v || 'Image file is required',
       message_idRule: (v) => !!v || 'Message ID is required',
       tokenRule: (v) => !!v || 'Token is required',
@@ -205,28 +212,28 @@ export default {
       if (error.response) {
         switch (error.response.status) {
           case 400:
-            message = 'Invalid/Expired Message ID or Token';
+            message = 'Invalid operation. Please try again!';
             break;
           case 404:
-            message = 'Client not found.';
+            message = 'Client not found!';
             break;
           case 422:
-            message = 'Invalid input.';
+            message = 'Invalid input!';
             break;
           case 429:
-            message = 'Too many API requests. Refresh the page!';
+            message = 'Too many API requests. Please refresh the page!';
             break;
           case 409:
             message = 'Contact already exist!';
             break;
           case 500:
-            message = 'Internal server error. Please try again later.';
+            message = 'Internal server error. Please try again later!';
             break;
           default:
             message = `Error: ${error.response.status}`;
         }
       } else if (error.request) {
-        message = 'No response from server.';
+        message = 'No response from server!';
       } else {
         message = 'Request error. Please try again!';
       }
@@ -234,10 +241,10 @@ export default {
     },
     showConfirmDialog() {
       if (this.isFormValid) this.confirmDialog = true;
-      this.skeletonLoader = true;
+      this.skeletonLoader1 = true;
       this.imageCard = false;
       setTimeout(() => {
-        this.skeletonLoader = false;
+        this.skeletonLoader1 = false;
         this.imageCard = true;
         this.imageSrc = URL.createObjectURL(this.image_file);
       }, 1000);
