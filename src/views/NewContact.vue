@@ -210,7 +210,7 @@
                                     <v-container>
                                         <div class="d-flex align-items-center justify-space-between">
                                             <h3 class="mb-4">Related Contacts</h3>
-                                            <v-btn class="bg-teal-darken-3 mb-3" @click="searchInfo"
+                                            <v-btn class="bg-teal-darken-3 mb-3" @click="searchRltdCntct"
                                                 prepend-icon="mdi-magnify" rounded>
                                                 <span class="to-hide">Search&nbsp; Contact</span></v-btn>
                                         </div>
@@ -420,7 +420,7 @@
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="closeDialog"
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="closeConfirmDialog"
                         rounded>Check again</v-btn>
                     <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm"
                         rounded>Confirm</v-btn>
@@ -429,7 +429,7 @@
         </v-dialog>
 
         <!-- Dialog for searching realted contact -->
-        <v-dialog v-model="searchInfoDialog" max-width="500px">
+        <v-dialog v-model="searchRltdDialog" max-width="500px">
             <v-card>
                 <v-card-title>
                     <span class="headline">Related Contacts</span>
@@ -446,13 +446,13 @@
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text
-                        @click="closeSearchInfoDialog" rounded>Close</v-btn>
+                        @click="closeSrchContactDialog" rounded>Close</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
         <!-- Dialog for viewing relation basic info -->
-        <v-dialog v-model="dialogSingleRelation" transition="dialog-bottom-transition" width="1000px" persistent>
+        <v-dialog v-model="singleRltnDialog" transition="dialog-bottom-transition" width="1000px" persistent>
             <v-card>
                 <v-card-title>
                     <span class="headline">Relation Basic Info</span>
@@ -465,8 +465,8 @@
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
-                        @click="dialogSingleRelation = false" rounded>Close</v-btn>
-                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="confirmSingleRelation"
+                        @click="closeSnglRltnDialog" rounded>Close</v-btn>
+                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="selectFrmSnglRltn"
                         rounded>Confirm</v-btn>
                 </v-card-actions>
             </v-card>
@@ -485,8 +485,8 @@
                                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
                             </template>
                             <template v-slot:item.action="{ item }">
-                                <v-btn @click="selectFrmMltplRltn(item)" class="bg-check"
-                                    prepend-icon="mdi-eye-outline" rounded>Select</v-btn>
+                                <v-btn @click="selectFrmMltplRltn(item)" class="bg-check" prepend-icon="mdi-eye-outline"
+                                    rounded>Select</v-btn>
                             </template>
                         </v-data-table>
                     </v-container>
@@ -494,7 +494,7 @@
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
-                        @click="dialogMultipleRelation = false" rounded>Close</v-btn>
+                        @click="closeMltplRltnDialog" rounded>Close</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -553,11 +553,11 @@ export default {
             token: "",
             imageSource: '',
             skeletonLoader1: false,
-            searchInfoDialog: false,
+            searchRltdDialog: false,
+            singleRltnDialog: false,
             validatingRelation: false,
             singleRelation: null,
             multipleRelation: [],
-            dialogSingleRelation: false,
             dialogMultipleRelation: false,
             confirmDialog: false,
         }
@@ -589,19 +589,33 @@ export default {
             this.confirm_identity_dialog = false;
             this.checkWatchlist();
         },
-        searchInfo() {
-            this.searchInfoDialog = true;
+        searchRltdCntct() {
+            this.searchRltdDialog = true;
         },
-        closeSearchInfoDialog() {
-            this.searchInfoDialog = false;
+        closeSnglRltnDialog() {
+            this.singleRltnDialog = false;
         },
-        confirmSingleRelation() {
-            // Add Code
-            this.dialogSingleRelation = false;
-            this.searchInfoDialog = false;
+        closeSrchContactDialog() {
+            this.searchRltdDialog = false;
+            this.singleRltnDialog = false;
         },
-        closeDialog() {
+        closeConfirmDialog() {
             this.confirmDialog = false;
+        },
+        selectFrmSnglRltn() {
+            if (this.singleRelation) {
+                this.rel_cid = this.singleRelation.cid;
+                this.rel_display_name = this.singleRelation.display_name;
+                this.singleRltnDialog = false;
+                this.searchRltdDialog = false;
+                this.showSnackbar('Related contact has been added successfully!', 'success');
+            } else {
+                this.showSnackbar('No related contact selected!', 'warning');
+            }
+            this.singleRltnDialog = false;
+        },
+        closeMltplRltnDialog() {
+            this.dialogMultipleRelation = false;
         },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
@@ -638,8 +652,8 @@ export default {
                     this.singleRelation = myRelation[0];
                     // this.rel_cid = this.singleRelation.cid;
                     // this.rel_display_name = this.singleRelation.display_name;
-                    this.dialogSingleRelation = true;
-                    this.skeletonLoader = true
+                    this.singleRltnDialog = true;
+                    this.skeletonLoader = true;
                     setTimeout(() => {
                         this.loading = false;
                         this.skeletonLoader = false
@@ -656,6 +670,7 @@ export default {
                 this.validatingRelation = false;
             }
         },
+
         async selectFrmMltplRltn(infoFrmMltplRltn) {
             try {
                 const response = await apiClient.get('/client_info', {
@@ -668,7 +683,7 @@ export default {
                 if (myRelation) {
                     this.rel_cid = myRelation.cid;
                     this.rel_display_name = myRelation.display_name;
-                    this.searchInfoDialog = false;
+                    this.searchRltdDialog = false;
                     this.dialogMultipleRelation = false;
                 } else {
                     this.showSnackbar('No additional details found!', 'info');
@@ -677,6 +692,7 @@ export default {
                 this.showSnackbar('An error occurred while selecting the item!', 'error');
             }
         },
+
         async submitForm() {
             this.validating = true;
             this.confirmDialog = true;
