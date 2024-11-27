@@ -37,9 +37,8 @@
                                             label="Display Name" variant="underlined" disabled></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete v-model="suffix" label="Suffix (optional)"
-                                            :items="suffixesItems" item-title="suffix" item-value="id"
-                                            variant="underlined">
+                                        <v-autocomplete v-model="suffix" label="Suffix" :items="suffixesItems"
+                                            item-title="suffix" item-value="id" variant="underlined">
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
@@ -271,7 +270,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3 mb-4" prepend-icon="mdi-close-circle"
-                        @click="confirmIdentityDialog = false" rounded>Check again</v-btn>
+                        @click="confirmIdentityDialog = false" rounded>Close</v-btn>
                     <v-btn class="bg-teal-darken-3 px-3 me-4 mb-4" prepend-icon="mdi-check" @click="confirmCheck"
                         rounded>Confirm</v-btn>
                 </v-card-actions>
@@ -291,7 +290,7 @@
                                 <p>
                                     <v-skeleton-loader v-if="skeletonLoader1" type="image" width="240" height="248"
                                         style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
-                                    <img v-if="imageCard" :src="imageSource" width="241"
+                                    <img v-if="imgCard" :src="imgSrc" width="241"
                                         style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" />
                                 </p>
                             </v-container>
@@ -314,7 +313,7 @@
                                         }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Suffix (optional): </span><strong>{{
+                                <p><span class="text-grey-lighten-1">Suffix: </span><strong>{{
                                     getTitle(suffix, suffixesItems, 'suffix') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
@@ -457,7 +456,8 @@
                 <v-card-title>
                     <span class="headline">Relation Basic Info</span>
                 </v-card-title>
-                <ClientDataMixin :client="singleRelation" :typeItems="typeItems" :titleItems="titleItems"
+                <ClientDataMixin :client="singleRelation" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
+                    :imageSrc="imageSrc" :typeItems="typeItems" :titleItems="titleItems"
                     :clientstatusItems="clientstatusItems" :genderItems="genderItems"
                     :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
                     :institutionItems="institutionItems" :entityItems="entityItems"
@@ -485,10 +485,9 @@
                                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
                             </template>
                             <template v-slot:item.action="{ item }">
-                                <v-btn @click="selectFrmMltplRltn(item)" class="bg-teal-darken-4"
-                                    rounded>Select</v-btn>
-                                <v-btn @click="viewFrmMltplRltn(item)" class="bg-teal-darken-4 ms-2 ps-6" prepend-icon="mdi-eye-outline"
-                                    rounded></v-btn>
+                                <v-btn @click="selectFrmMltplRltn(item)" class="bg-teal-darken-4" rounded>Select</v-btn>
+                                <v-btn @click="viewFrmMltplRltn(item)" class="bg-teal-darken-4 ms-2 ps-6"
+                                    prepend-icon="mdi-eye-outline" rounded></v-btn>
                             </template>
                         </v-data-table>
                     </v-container>
@@ -523,37 +522,14 @@ export default {
     },
     data() {
         return {
-            br: "",
-            cid_type: "",
-            type: "",
-            title: "",
-            last_name: "",
-            gender: "",
-            civil_status: "",
-            birthdate: null,
-            lang_type: "",
-            app_type: "",
-            pr_type: "",
-            gl_code: "",
-            ownership_type: "",
-            staff_or_not: 2,
-            address_line1: "",
-            address_type: "",
-            institution: "",
-            entity: "",
-            employment: "",
-            reg_date: this.formatToDateString(new Date()),
-            relation: [
-                { cid: "", relation_type: "" },
-                { cid: "", relation_type: "" },
-            ],
             search_relation_info: "",
             rel_cid: "",
             relationship: "",
             rel_display_name: "",
             message_id: "",
             token: "",
-            imageSource: '',
+            imgCard: Boolean,
+            imgSrc: String,
             skeletonLoader1: false,
             searchRltdDialog: false,
             singleRltnDialog: false,
@@ -571,6 +547,14 @@ export default {
         first_name: 'checkIdentityWebhooks',
         middle_name: 'checkIdentityWebhooks',
         last_name: 'checkIdentityWebhooks',
+        'singleRelation.image_file': {
+            immediate: true,
+            handler(newValue) {
+                if (newValue) {
+                    this.fetchClientImage(newValue);
+                }
+            },
+        },
     },
     computed: {
         isIdentityCheckDisabled() {
@@ -620,7 +604,7 @@ export default {
         closeMltplRltnDialog() {
             this.multipleRltnDialog = false;
         },
-        viewFrmMltplRltn (item) {
+        viewFrmMltplRltn(item) {
             this.singleRelation = item; // Set the selected item
             this.singleRltnDialog = true; // Open the dialog
         },
@@ -659,9 +643,11 @@ export default {
                     this.singleRelation = myRelation[0];
                     this.singleRltnDialog = true;
                     this.skeletonLoader = true;
+                    this.imageCard = false
                     setTimeout(() => {
                         this.loading = false;
                         this.skeletonLoader = false
+                        this.imageCard = true
                     }, 1000)
                 } else if (myRelation.length > 1) {
                     this.multipleRelation = myRelation;
@@ -695,6 +681,21 @@ export default {
                 }
             } catch (error) {
                 this.showSnackbar('An error occurred while selecting the item!', 'error');
+            }
+        },
+        async fetchClientImage(imageFileName) {
+            try {
+                const response = await apiClient.get(`/client_image/${imageFileName}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    },
+                    responseType: 'blob',
+                });
+                const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                this.imageSrc = URL.createObjectURL(blob);
+            } catch (error) {
+                console.error('Error fetching client image:', error);
+                this.imageSrc = '';
             }
         },
         async submitForm() {

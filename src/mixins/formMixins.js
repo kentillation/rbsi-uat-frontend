@@ -5,21 +5,25 @@ export default {
   data() {
     return {
       confirmDialog: false,
-      imgCard: false,
+      imageCard: false,
+      imageSrc: "",
       type: "",
+      title: "",
       client_status: "",
       first_name: "",
       middle_name: "",
       last_name: "",
       display_name: "",
-      staff_or_not: "",
+      staff_or_not: 2,
+      gender: "",
+      civil_status: "",
       initial: "",
       suffix: "",
       pickerVisible: false,
       minDate: '1930-01-01',
       maxDate: this.formatToDateString(new Date()),
       timezone: 'Asia/Manila',
-      birthdate: "",
+      birthdate: null,
       mobile1: "",
       mobile2: "",
       email: "",
@@ -32,6 +36,18 @@ export default {
       telephone: "",
       fax: "",
       image_file: null,
+      // app_type: "",
+      // pr_type: "",
+      // gl_code: "",
+      // ownership_type: "",
+      institution: "",
+      entity: "",
+      employment: "",
+      reg_date: this.formatToDateString(new Date()),
+      relation: [
+        { cid: "", relation_type: "" },
+        { cid: "", relation_type: "" },
+      ],
       headers: [
         { title: 'CID', value: 'cid', sortable: false },
         // { title: 'Last Name', value: 'last_name', sortable: false },
@@ -83,6 +99,11 @@ export default {
       confirmIdentityDialog: false,
     };
   },
+  created() {
+    if (this.singleRelation?.image_file) {
+      this.fetchClientImage(this.singleRelation.image_file);
+    }
+  },
   watch: {
     displayName(newVal) {
       this.display_name = newVal;
@@ -119,11 +140,13 @@ export default {
     },
     isFormValid() {
       return [
-        this.type, this.title, this.client_status, this.first_name, this.middle_name,
-        this.last_name, this.display_name, this.staff_or_not, this.gender, this.civil_status,
-        this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
-        this.address_line2, this.address_line3, this.postal_code,
-        this.address_type, this.institution, this.entity, this.employment, this.image_file,
+        this.first_name, this.middle_name, this.last_name,
+        this.type, this.title, this.client_status,
+        this.display_name, this.gender, this.civil_status,
+        this.birthdate, this.address_line1, this.address_line2, this.address_line3,
+        this.postal_code, this.address_type,
+        this.institution, this.entity, this.employment,
+        this.image_file, this.mobile1, this.email, this.nationality,
         this.message_id, this.token
       ].every(field => !!field);
     }
