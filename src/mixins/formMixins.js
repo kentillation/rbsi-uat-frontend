@@ -34,9 +34,10 @@ export default {
       image_file: null,
       headers: [
         { title: 'CID', value: 'cid', sortable: false },
-        { title: 'Last Name', value: 'last_name', sortable: false },
-        { title: 'First Name', value: 'first_name', sortable: false },
-        { title: 'Middle Name', value: 'middle_name', sortable: false },
+        // { title: 'Last Name', value: 'last_name', sortable: false },
+        // { title: 'First Name', value: 'first_name', sortable: false },
+        // { title: 'Middle Name', value: 'middle_name', sortable: false },
+        { title: 'Display Name', value: 'display_name', sortable: false },
         { title: 'Actions', value: 'action', sortable: false }
       ],
       suffixesItems: [],

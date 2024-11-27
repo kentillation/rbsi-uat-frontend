@@ -10,6 +10,7 @@
             <v-sheet elevation="3" rounded="lg">
                 <v-card>
                     <v-card-text>
+                        <!-- Basic Information -->
                         <v-card border="opacity-50 sm" class="mb-10">
                             <v-container>
                                 <div class="d-flex align-items-center justify-space-between">
@@ -66,7 +67,6 @@
                                 </v-row>
                             </v-container>
                         </v-card>
-
                         <v-row>
                             <!-- Personal Information -->
                             <v-col cols="12" lg="6" md="6" sm="6" xs="12">
@@ -220,17 +220,18 @@
                                                     variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="relationship" label="Relationship"
+                                                <v-text-field v-model="rel_display_name" label="Name"
                                                     variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="rel_display_name" label="Name"
+                                                <v-text-field v-model="relationship" label="Relationship"
                                                     variant="underlined" clearable></v-text-field>
                                             </v-col>
                                         </v-row>
                                     </v-container>
                                 </v-card>
                             </v-col>
+                            <!-- Authentication -->
                             <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                 <v-card border="opacity-50 sm" class="mb-5">
                                     <v-container>
@@ -259,6 +260,7 @@
             </div>
         </v-form>
 
+        <!-- Dialog for identity submission -->
         <v-dialog v-model="confirm_identity_dialog" max-width="600px">
             <v-card>
                 <v-card-title class="headline">Confirmation</v-card-title>
@@ -276,6 +278,7 @@
             </v-card>
         </v-dialog>
 
+        <!-- Dialog for submission confirmation -->
         <v-dialog v-model="confirmDialog" max-width="1000px">
             <v-card>
                 <v-card-title>
@@ -405,12 +408,12 @@
                                 </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Relationship: </span><strong>{{ relationship
-                                        }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Related person's name: </span><strong>{{
+                                    rel_display_name }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Related person's name: </span><strong>{{
-                                        rel_display_name }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Relationship: </span><strong>{{ relationship
+                                        }}</strong> </p>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -425,16 +428,19 @@
             </v-card>
         </v-dialog>
 
+        <!-- Dialog for searching realted contact -->
         <v-dialog v-model="searchInfoDialog" max-width="500px">
             <v-card>
                 <v-card-title>
-                    <span class="headline">Account Relation</span>
+                    <span class="headline">Related Contacts</span>
                 </v-card-title>
                 <v-card-text>
                     <div class="text-center w-100 mt-10">
-                        <v-text-field v-model="search_relation_info" label="Search CID or last name..."  @keyup.enter="searchRelationInfo"></v-text-field>
+                        <v-text-field v-model="search_relation_info" label="Search CID or last name..."
+                            @keyup.enter="searchRelationInfo"></v-text-field>
                         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
-                            :disabled="!searchRelationValid || validatingRelation" @click="searchRelationInfo" rounded>Search</v-btn>
+                            :disabled="!searchRelationValid || validatingRelation" @click="searchRelationInfo"
+                            rounded>Search</v-btn>
                     </div>
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
@@ -445,51 +451,50 @@
             </v-card>
         </v-dialog>
 
-        <!-- Dialog for viewing client filtered details -->
+        <!-- Dialog for viewing relation basic info -->
         <v-dialog v-model="dialogSingleRelation" transition="dialog-bottom-transition" width="1000px" persistent>
             <v-card>
                 <v-card-title>
-                <span class="headline">Relation Basic Info</span>
+                    <span class="headline">Relation Basic Info</span>
                 </v-card-title>
-                <ClientDataMixin :client="singleRelation" :typeItems="typeItems" 
-                :titleItems="titleItems" :clientstatusItems="clientstatusItems" :genderItems="genderItems" 
-                :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems" :institutionItems="institutionItems" 
-                :entityItems="entityItems" :employmentItems="employmentItems" />
+                <ClientDataMixin :client="singleRelation" :typeItems="typeItems" :titleItems="titleItems"
+                    :clientstatusItems="clientstatusItems" :genderItems="genderItems"
+                    :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
+                    :institutionItems="institutionItems" :entityItems="entityItems"
+                    :employmentItems="employmentItems" />
                 <v-card-actions class="mx-4 my-4">
-                <v-spacer></v-spacer>
-                <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingleRelation = false"
-                    rounded>Close</v-btn>
-                <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="confirmSingleRelation"
-                    rounded>Confirm</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
+                        @click="dialogSingleRelation = false" rounded>Close</v-btn>
+                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="confirmSingleRelation"
+                        rounded>Confirm</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
-        <!-- Dialog for viewing multiple filtered client details -->
-        <v-dialog v-model="dialogMultipleRelation" transition="dialog-bottom-transition" width="1200px" persistent>
+        <!-- Dialog for viewing multiple contacts -->
+        <v-dialog v-model="dialogMultipleRelation" transition="dialog-bottom-transition" width="700px" persistent>
             <v-card>
                 <v-card-title>
-                <span class="headline">Relations Basic Info</span>
+                    <span class="headline">Relations Basic Info</span>
                 </v-card-title>
                 <v-card-text>
-                <v-container>
-                    <v-data-table :headers="headers" :items="multipleRelation" item-key="cid" class="elevation-1">
-                    <template v-slot:loading>
-                        <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-                    </template>
-                    <template v-slot:item.action="{ item }">
-                        <div class="text-center">
-                        <v-btn @click="viewItem(item)" class="bg-check" prepend-icon="mdi-eye-outline"
-                            rounded>Select</v-btn>
-                        </div>
-                    </template>
-                    </v-data-table>
-                </v-container>
+                    <v-container>
+                        <v-data-table :headers="headers" :items="multipleRelation" item-key="cid" class="elevation-1">
+                            <template v-slot:loading>
+                                <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+                            </template>
+                            <template v-slot:item.action="{ item }">
+                                <v-btn @click="selectFrmMltplRltn(item)" class="bg-check"
+                                    prepend-icon="mdi-eye-outline" rounded>Select</v-btn>
+                            </template>
+                        </v-data-table>
+                    </v-container>
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
-                <v-spacer></v-spacer>
-                <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogMultipleRelation = false"
-                    rounded>Close</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
+                        @click="dialogMultipleRelation = false" rounded>Close</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -631,9 +636,8 @@ export default {
                 }));
                 if (myRelation.length === 1) {
                     this.singleRelation = myRelation[0];
-                    this.rel_cid = this.singleRelation.cid;
-                    this.relationship = this.singleRelation.relationship;
-                    this.rel_display_name = this.singleRelation.display_name;
+                    // this.rel_cid = this.singleRelation.cid;
+                    // this.rel_display_name = this.singleRelation.display_name;
                     this.dialogSingleRelation = true;
                     this.skeletonLoader = true
                     setTimeout(() => {
@@ -650,6 +654,27 @@ export default {
                 this.showSnackbar('An error occurred while searching!', 'error');
             } finally {
                 this.validatingRelation = false;
+            }
+        },
+        async selectFrmMltplRltn(infoFrmMltplRltn) {
+            try {
+                const response = await apiClient.get('/client_info', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    },
+                    params: { search: infoFrmMltplRltn.cid },
+                });
+                const myRelation = response.data[0];
+                if (myRelation) {
+                    this.rel_cid = myRelation.cid;
+                    this.rel_display_name = myRelation.display_name;
+                    this.searchInfoDialog = false;
+                    this.dialogMultipleRelation = false;
+                } else {
+                    this.showSnackbar('No additional details found!', 'info');
+                }
+            } catch (error) {
+                this.showSnackbar('An error occurred while selecting the item!', 'error');
             }
         },
         async submitForm() {
