@@ -122,8 +122,8 @@ export default {
         this.type, this.title, this.client_status, this.first_name, this.middle_name,
         this.last_name, this.display_name, this.staff_or_not, this.gender, this.civil_status,
         this.birthdate, this.mobile1, this.email, this.nationality, this.address_line1,
-        this.address_line2, this.address_line3, this.postal_code, this.address_type, 
-        this.institution, this.entity, this.employment, this.image_file,
+        this.address_line2, this.address_line3, this.postal_code,
+        this.address_type, this.institution, this.entity, this.employment, this.image_file,
         this.message_id, this.token
       ].every(field => !!field);
     }

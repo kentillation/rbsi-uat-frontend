@@ -48,7 +48,6 @@ export default {
     this.fetchItems('/institution', 'institutionItems');
     this.fetchItems('/entity', 'entityItems');
     this.fetchItems('/employment', 'employmentItems');
-
   },
   methods: {
     toEditClientInfo() {
