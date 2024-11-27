@@ -80,7 +80,7 @@ export default {
         color: ""
       },
       to_HomePage: false,
-      confirm_identity_dialog: false,
+      confirmIdentityDialog: false,
     };
   },
   watch: {

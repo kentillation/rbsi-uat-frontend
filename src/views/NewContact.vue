@@ -261,7 +261,7 @@
         </v-form>
 
         <!-- Dialog for identity submission -->
-        <v-dialog v-model="confirm_identity_dialog" max-width="600px">
+        <v-dialog v-model="confirmIdentityDialog" max-width="600px">
             <v-card>
                 <v-card-title class="headline">Confirmation</v-card-title>
                 <v-card-text>
@@ -271,7 +271,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3 mb-4" prepend-icon="mdi-close-circle"
-                        @click="confirm_identity_dialog = false" rounded>Check again</v-btn>
+                        @click="confirmIdentityDialog = false" rounded>Check again</v-btn>
                     <v-btn class="bg-teal-darken-3 px-3 me-4 mb-4" prepend-icon="mdi-check" @click="confirmCheck"
                         rounded>Confirm</v-btn>
                 </v-card-actions>
@@ -473,7 +473,7 @@
         </v-dialog>
 
         <!-- Dialog for viewing multiple contacts -->
-        <v-dialog v-model="dialogMultipleRelation" transition="dialog-bottom-transition" width="700px" persistent>
+        <v-dialog v-model="multipleRltnDialog" transition="dialog-bottom-transition" width="700px" persistent>
             <v-card>
                 <v-card-title>
                     <span class="headline">Relations Basic Info</span>
@@ -485,8 +485,10 @@
                                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
                             </template>
                             <template v-slot:item.action="{ item }">
-                                <v-btn @click="selectFrmMltplRltn(item)" class="bg-check" prepend-icon="mdi-eye-outline"
+                                <v-btn @click="selectFrmMltplRltn(item)" class="bg-teal-darken-4"
                                     rounded>Select</v-btn>
+                                <v-btn @click="viewFrmMltplRltn(item)" class="bg-teal-darken-4 ms-2 ps-6" prepend-icon="mdi-eye-outline"
+                                    rounded></v-btn>
                             </template>
                         </v-data-table>
                     </v-container>
@@ -558,7 +560,7 @@ export default {
             validatingRelation: false,
             singleRelation: null,
             multipleRelation: [],
-            dialogMultipleRelation: false,
+            multipleRltnDialog: false,
             confirmDialog: false,
         }
     },
@@ -583,10 +585,10 @@ export default {
             this.checkIdentity();
         },
         openConfirmIdentityDialog() {
-            this.confirm_identity_dialog = true;
+            this.confirmIdentityDialog = true;
         },
         confirmCheck() {
-            this.confirm_identity_dialog = false;
+            this.confirmIdentityDialog = false;
             this.checkWatchlist();
         },
         searchRltdCntct() {
@@ -608,6 +610,7 @@ export default {
                 this.rel_display_name = this.singleRelation.display_name;
                 this.singleRltnDialog = false;
                 this.searchRltdDialog = false;
+                this.multipleRltnDialog = false;
                 this.showSnackbar('Related contact has been added successfully!', 'success');
             } else {
                 this.showSnackbar('No related contact selected!', 'warning');
@@ -615,7 +618,11 @@ export default {
             this.singleRltnDialog = false;
         },
         closeMltplRltnDialog() {
-            this.dialogMultipleRelation = false;
+            this.multipleRltnDialog = false;
+        },
+        viewFrmMltplRltn (item) {
+            this.singleRelation = item; // Set the selected item
+            this.singleRltnDialog = true; // Open the dialog
         },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
@@ -629,7 +636,7 @@ export default {
                 if (isOnWatchlist) {
                     this.showSnackbar('Name is on the watchlist.', 'error');
                 } else {
-                    this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
+                    this.showSnackbar('Name is NOT on the watchlist. You can now proceed!', 'success');
                 }
             } catch (error) {
                 this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
@@ -650,8 +657,6 @@ export default {
                 }));
                 if (myRelation.length === 1) {
                     this.singleRelation = myRelation[0];
-                    // this.rel_cid = this.singleRelation.cid;
-                    // this.rel_display_name = this.singleRelation.display_name;
                     this.singleRltnDialog = true;
                     this.skeletonLoader = true;
                     setTimeout(() => {
@@ -660,7 +665,7 @@ export default {
                     }, 1000)
                 } else if (myRelation.length > 1) {
                     this.multipleRelation = myRelation;
-                    this.dialogMultipleRelation = true;
+                    this.multipleRltnDialog = true;
                 } else {
                     this.showSnackbar('No record found!', 'error');
                 }
@@ -670,7 +675,6 @@ export default {
                 this.validatingRelation = false;
             }
         },
-
         async selectFrmMltplRltn(infoFrmMltplRltn) {
             try {
                 const response = await apiClient.get('/client_info', {
@@ -684,7 +688,8 @@ export default {
                     this.rel_cid = myRelation.cid;
                     this.rel_display_name = myRelation.display_name;
                     this.searchRltdDialog = false;
-                    this.dialogMultipleRelation = false;
+                    this.multipleRltnDialog = false;
+                    this.showSnackbar('Related contact has been added successfully!', 'success');
                 } else {
                     this.showSnackbar('No additional details found!', 'info');
                 }
@@ -692,7 +697,6 @@ export default {
                 this.showSnackbar('An error occurred while selecting the item!', 'error');
             }
         },
-
         async submitForm() {
             this.validating = true;
             this.confirmDialog = true;

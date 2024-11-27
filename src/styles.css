@@ -1,3 +1,6 @@
+.v-btn--size-default, .v-icon {
+  min-width: 0 !important;
+}
 .v-data-table {
   max-width: 100%;
 }
