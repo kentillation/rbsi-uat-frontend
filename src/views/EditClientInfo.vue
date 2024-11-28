@@ -131,10 +131,6 @@
                           clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
-                        <v-text-field v-model="address_line4" :rules="[addressline4Rule]" label="Province"
-                          clearable></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
                         <v-text-field v-model="postal_code" :rules="[postalcodeRule]" label="Postal Code"
                           clearable></v-text-field>
                       </v-col>
@@ -188,7 +184,7 @@
     </v-form>
 
     <!-- Check Identiy Dialog -->
-    <v-dialog v-model="confirm_identity_dialog" max-width="600px">
+    <v-dialog v-model="confirmIdentityDialog" max-width="600px">
       <v-card>
         <v-card-title class="headline">Confirmation</v-card-title>
         <v-card-text>
@@ -198,7 +194,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3 mb-4" prepend-icon="mdi-close-circle"
-            @click="confirm_identity_dialog = false" rounded>Check again</v-btn>
+            @click="confirmIdentityDialog = false" rounded>Check again</v-btn>
           <v-btn class="bg-teal-darken-3 px-3 me-4 mb-4" prepend-icon="mdi-check" @click="confirmCheck"
             rounded>Confirm</v-btn>
         </v-card-actions>
@@ -206,7 +202,7 @@
     </v-dialog>
 
     <!-- Confirmation Dialog -->
-    <v-dialog v-model="dialog" transition="dialog-bottom-transition" width="1000px" persistent>
+    <v-dialog v-model="confirmDialog" transition="dialog-bottom-transition" width="1000px" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">Confirm Submission</span>
@@ -277,10 +273,6 @@
                 </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Address Line 4: <br /></span><strong>{{ address_line4 }}</strong>
-                </p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Postal Code: <br /></span><strong>{{ postal_code }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
@@ -311,7 +303,7 @@
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="dialog = false"
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" @click="closeConfirmDialog"
             rounded>Cancel</v-btn>
           <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" @click="submitForm" rounded>Save</v-btn>
         </v-card-actions>
@@ -330,25 +322,24 @@
 
 <script>
 import apiClient from '../axios';
-import watchlistData from '@/temp/watchlist.json';
-import formMixins from '@/mixins/formMixins.js';
+import FormDataMixin from '@/components/FormDataMixin.vue';
 
-export default {
-  mixins: [formMixins],
+export default { 
+  mixins: [FormDataMixin],
   created() {
     this.fetchCID_LastName();
   },
   computed: {
     isStaff: {
       get() {
-        return this.staff_or_not === 1;
+        return this.staff_or_not === 2;
       },
       set(value) {
         this.staff_or_not = value ? 1 : 2;
       },
     },
     staffLabel() {
-      return this.staff_or_not === 1 ? 'Staff' : 'Not a Staff';
+      return this.staff_or_not === 1 ? 'Yes' : 'No';
     },
     checkboxColor() {
       return this.staff_or_not === 1 ? 'primary' : 'secondary';
@@ -359,29 +350,14 @@ export default {
       this.$router.push({ name: 'ClientInfo' });
     },
     openConfirmIdentityDialog() {
-      this.confirm_identity_dialog = true;
+      this.confirmIdentityDialog = true;
     },
     confirmCheck() {
-      this.confirm_identity_dialog = false;
+      this.confirmIdentityDialog = false;
       this.checkWatchlist();
     },
-    async checkWatchlist() {
-      if (this.isIdentityCheckDisabled) return;
-      try {
-        const data = watchlistData;
-        const isOnWatchlist = data.watchlist.some(item =>
-          item.first_name === this.first_name &&
-          item.middle_name === this.middle_name &&
-          item.last_name === this.last_name
-        );
-        if (isOnWatchlist) {
-          this.showSnackbar('Name is on the watchlist.', 'error');
-        } else {
-          this.showSnackbar('Name is not on the watchlist. You can now proceed!', 'success');
-        }
-      } catch (error) {
-        this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
-      }
+    closeConfirmDialog() {
+      this.confirmDialog = false;
     },
     async fetchClientData(cid, last_name) {
       this.validating = true;
@@ -409,8 +385,16 @@ export default {
     onRefresh() {
       this.fetchCID_LastName();
     },
+    showConfirmDialog() {
+      if (this.isFormValid) this.confirmDialog = true;
+      this.skeletonLoader = true;
+      this.imageCard = false;
+      setTimeout(() => {
+        this.skeletonLoader = false;
+      }, 1000);
+    },
     async submitForm() {
-      this.dialog = false;
+      this.confirmDialog = false;
       this.validating = true;
       this.to_HomePage = true
       try {
@@ -436,13 +420,16 @@ export default {
         }
       }
       try {
-        await apiClient.post(`/update_client_info/${this.cid}`, formData, {
+        const response = await apiClient.post(`/update_client_info/${this.cid}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
           },
         });
-        this.showSnackbar('Client information updated successfully', 'success');
+        if (response.status === 200) {
+          this.showSnackbar('New client has been saved successfully.', 'success');
+          this.confirmDialog = false;
+        }
       } catch (error) {
         this.showSnackbar('Error updating client information.', 'error');
       } finally {

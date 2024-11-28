@@ -265,10 +265,10 @@ export default {
     },
     showConfirmDialog() {
       if (this.isFormValid) this.confirmDialog = true;
-      this.skeletonLoader1 = true;
+      this.skeletonLoader = true;
       this.imageCard = false;
       setTimeout(() => {
-        this.skeletonLoader1 = false;
+        this.skeletonLoader = false;
         this.imageCard = true;
         this.imageSource = URL.createObjectURL(this.image_file);
       }, 1000);

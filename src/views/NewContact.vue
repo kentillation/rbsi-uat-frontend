@@ -288,7 +288,7 @@
                         <div class="text-center">
                             <v-container class="skeleton-loader">
                                 <p>
-                                    <v-skeleton-loader v-if="skeletonLoader1" type="image" width="240" height="248"
+                                    <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
                                         style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
                                     <img v-if="imgCard" :src="imgSrc" width="241"
                                         style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" />
@@ -511,32 +511,26 @@
 import apiClient from '../axios';
 import watchlistData from '@/temp/watchlist.json';
 import { debounce } from 'lodash';
-import SomeDataMixin from '@/components/SomeDataMixin';
+import FormDataMixin from '@/components/FormDataMixin.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
-    mixins: [SomeDataMixin],
+    mixins: [FormDataMixin],
     components: {
         ClientDataMixin
     },
     data() {
         return {
             search_relation_info: "",
-            rel_cid: "",
-            relationship: "",
-            rel_display_name: "",
-            message_id: "",
-            token: "",
             imgCard: "",
             imgSrc: "",
-            skeletonLoader1: false,
+            skeletonLoader: false,
             searchRltdDialog: false,
             singleRltnDialog: false,
             validatingRelation: false,
             singleRelation: null,
             multipleRelation: [],
             multipleRltnDialog: false,
-            confirmDialog: false,
         }
     },
     created() {
@@ -556,9 +550,6 @@ export default {
         },
     },
     computed: {
-        isIdentityCheckDisabled() {
-            return !this.first_name || !this.middle_name || !this.last_name;
-        },
         searchRelationValid() {
             return this.search_relation_info.trim() !== '';
         },
@@ -697,9 +688,19 @@ export default {
                 this.imageSource = "";
             }
         },
+        showConfirmDialog() {
+            if (this.isFormValid) this.confirmDialog = true;
+            this.skeletonLoader = true;
+            this.imageCard = false;
+            setTimeout(() => {
+                this.skeletonLoader = false;
+                this.imageCard = true;
+                this.imageSource = URL.createObjectURL(this.image_file);
+            }, 1000);
+        },
         async submitForm() {
             this.validating = true;
-            this.confirmDialog = true;
+            // this.confirmDialog = true;
             try {
                 if (this.$refs.form.validate()) {
                     const staffValue = this.staff_or_not ? 1 : 2;
@@ -709,7 +710,8 @@ export default {
                         'display_name', 'suffix', 'initial', 'gender', 'civil_status', 'birthdate',
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'postal_code', 'address_type', 'telephone', 'fax', 'institution',
-                        'entity', 'employment', 'image_file', 'message_id', 'token'
+                        'entity', 'employment', 'image_file', 'rel_cid', 'rel_display_name', 'relationship', 
+                        'message_id', 'token'
                     ];
                     // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
