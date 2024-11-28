@@ -15,9 +15,9 @@
                             <v-container>
                                 <div class="d-flex align-items-center justify-space-between">
                                     <h3 class="mb-4">Basic Information</h3>
-                                    <v-btn class="bg-teal-darken-3 mb-3" :disabled="isIdentityCheckDisabled"
-                                        @click="openConfirmIdentityDialog" prepend-icon="mdi-magnify" rounded><span
-                                            class="to-hide">Check&nbsp;</span>Identity</v-btn>
+                                    <v-btn :disabled="isIdentityCheckDisabled" @click="openConfirmIdentityDialog" prepend-icon="mdi-magnify" variant="tonal" class="bg-teal-darken-3 mb-3 to-hide" rounded>
+                                        <span>Check&nbsp;</span>Identity
+                                    </v-btn>
                                 </div>
                                 <v-row justify="center">
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
@@ -437,9 +437,8 @@
                     <div class="text-center w-100 mt-10">
                         <v-text-field v-model="search_relation_info" label="Search CID or last name..."
                             @keyup.enter="searchRelationInfo"></v-text-field>
-                        <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
-                            :disabled="!searchRelationValid || validatingRelation" @click="searchRelationInfo"
-                            rounded>Search</v-btn>
+                        <v-btn :disabled="!searchRelationValid || validatingRelation" @click="searchRelationInfo"
+                            prepend-icon="mdi-magnify" variant="tonal" class="bg-teal-darken-4 ms-2" size="large" rounded>Search</v-btn>
                     </div>
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
@@ -457,7 +456,7 @@
                     <span class="headline">Relation Basic Info</span>
                 </v-card-title>
                 <ClientDataMixin :client="singleRelation" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
-                    :imageSrc="imageSrc" :typeItems="typeItems" :titleItems="titleItems"
+                    :imageSource="imageSource" :typeItems="typeItems" :titleItems="titleItems"
                     :clientstatusItems="clientstatusItems" :genderItems="genderItems"
                     :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
                     :institutionItems="institutionItems" :entityItems="entityItems"
@@ -500,7 +499,7 @@
             </v-card>
         </v-dialog>
 
-        <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
+        <v-snackbar v-model="snackbar.visible" :color="snackbar.color">
             <div class="d-flex align-items-center justify-space-between">
                 {{ snackbar.message }}
             </div>
@@ -512,11 +511,11 @@
 import apiClient from '../axios';
 import watchlistData from '@/temp/watchlist.json';
 import { debounce } from 'lodash';
-import formMixins from '@/mixins/formMixins';
+import SomeDataMixin from '@/components/SomeDataMixin';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
-    mixins: [formMixins],
+    mixins: [SomeDataMixin],
     components: {
         ClientDataMixin
     },
@@ -528,8 +527,8 @@ export default {
             rel_display_name: "",
             message_id: "",
             token: "",
-            imgCard: Boolean,
-            imgSrc: String,
+            imgCard: "",
+            imgSrc: "",
             skeletonLoader1: false,
             searchRltdDialog: false,
             singleRltnDialog: false,
@@ -692,10 +691,10 @@ export default {
                     responseType: 'blob',
                 });
                 const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                this.imageSrc = URL.createObjectURL(blob);
+                this.imageSource = URL.createObjectURL(blob);
             } catch (error) {
                 console.error('Error fetching client image:', error);
-                this.imageSrc = '';
+                this.imageSource = "";
             }
         },
         async submitForm() {

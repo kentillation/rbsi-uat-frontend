@@ -1,13 +1,15 @@
-
+<template>
+    <v-container></v-container>
+</template>
+<script>
 import apiClient from '../axios';
-
 export default {
   data() {
     return {
       loading: true,
       skeletonLoader: false,
       imageCard: false,
-      imageSrc: '',
+      imageSource: '',
       search_item: '',
       staff_or_not: 1,
       headers: [
@@ -84,10 +86,10 @@ export default {
           responseType: 'blob',
           });
           const blob = new Blob([response.data], { type: response.headers['content-type'] });
-          this.imageSrc = URL.createObjectURL(blob);
+          this.imageSource = URL.createObjectURL(blob);
       } catch (error) {
           console.error('Error fetching client image:', error);
-          this.imageSrc = '';
+          this.imageSource = '';
       }
     },
     async fetchItems(endpoint, key) {
@@ -118,3 +120,5 @@ export default {
     },
   },
 };
+
+</script>

@@ -24,7 +24,7 @@
           <span class="headline">Client Details</span>
         </v-card-title>
         <ClientDataMixin :client="selectedClient" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
-          :imageSrc="imageSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
+          :imageSource="imageSource" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
           :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
           :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" />
         <v-card-actions class="mx-4 my-4">
@@ -77,12 +77,12 @@
 
 <script>
 import apiClient from '../axios';
-import dataMixins from '@/mixins/dataMixins';
+import SomeDataMixin from '@/components/SomeDataMixin';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
   name: 'ClientInfo',
-  mixins: [dataMixins],
+  mixins: [SomeDataMixin],
   components: {
     ClientDataMixin
   },

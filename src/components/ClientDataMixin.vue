@@ -4,7 +4,7 @@
       <v-container class="skeleton-loader">
         <p>
           <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248" style="border: 1px solid #ccc; border-radius: 10px;"></v-skeleton-loader>
-          <img v-if="imageCard" :src="imageSrc" width="241" style="border: 1px solid #ccc; border-radius: 10px;" alt="Client Image" />
+          <img v-if="imageCard" :src="imageSource" width="241" style="border: 1px solid #ccc; border-radius: 10px;" alt="Client Image" />
         </p>
       </v-container>
       <h3 class="mb-7"><span class="text-grey-lighten-1">CID: </span>{{ client?.cid }}</h3>
@@ -24,7 +24,7 @@ export default {
     client: Object,
     skeletonLoader: Boolean,
     imageCard: Boolean,
-    imageSrc: String,
+    imageSource: String,
     typeItems: Array,
     titleItems: Array,
     clientstatusItems: Array,

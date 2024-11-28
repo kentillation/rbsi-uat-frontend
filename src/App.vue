@@ -15,9 +15,9 @@
         <v-list density="compact" nav>
           <v-list-subheader class="ms-5" size="30">Client</v-list-subheader>
           <v-list-item prepend-icon="mdi-information-outline" @click="client_info">Information</v-list-item>
-          <v-list-item prepend-icon="mdi-plus-circle-outline" @click="new_contact">Add_New</v-list-item>
+          <v-list-item prepend-icon="mdi-plus-circle-outline" @click="new_contact">Add New</v-list-item>
           <v-list-subheader class="ms-5" size="30">Reports</v-list-subheader>
-          <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients">Clients_Masterlist</v-list-item>
+          <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients">Masterlist</v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list density="compact" nav>

@@ -6,7 +6,7 @@ export default {
     return {
       confirmDialog: false,
       imageCard: false,
-      imageSrc: "",
+      imageSource: "",
       type: "",
       title: "",
       client_status: "",
@@ -270,7 +270,7 @@ export default {
       setTimeout(() => {
         this.skeletonLoader1 = false;
         this.imageCard = true;
-        this.imageSrc = URL.createObjectURL(this.image_file);
+        this.imageSource = URL.createObjectURL(this.image_file);
       }, 1000);
     },
   },
