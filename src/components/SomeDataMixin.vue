@@ -11,7 +11,7 @@ export default {
       imageCard: false,
       imageSource: '',
       search_item: '',
-      staff_or_not: 1,
+      staff_or_not: 2,
       headers: [
         { title: 'CID', value: 'cid', sortable: false },
         { title: 'Last Name', value: 'last_name', sortable: false },

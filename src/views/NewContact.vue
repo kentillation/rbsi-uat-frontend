@@ -333,8 +333,8 @@
                                     getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'Yes' :
-                                    'No' }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'No' :
+                                    'Yes' }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender,
@@ -703,7 +703,7 @@ export default {
             // this.confirmDialog = true;
             try {
                 if (this.$refs.form.validate()) {
-                    const staffValue = this.staff_or_not ? 1 : 2;
+                    const staffValue = this.staff_or_not ? 2 : 1;
                     const formData = new FormData();
                     const fields = [
                         'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
@@ -718,7 +718,11 @@ export default {
                     formData.append('birthdate', formattedBirthdate);
                     fields.forEach(field => {
                         if (field !== 'birthdate') {
-                            formData.append(field, this[field]);
+                            if (field === 'staff_or_not') {
+                                formData.append(field, staffValue);
+                            } else {
+                                formData.append(field, this[field]);
+                            }
                         }
                     });
                     if (this.image_file) {
