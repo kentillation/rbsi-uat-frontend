@@ -35,7 +35,7 @@ export default {
             nationality: 'Filipino',
             address_line1: "",
             address_line2: "",
-            address_line3: "",
+            address_line3: "Negros Island Region",
             postal_code: "",
             address_type: "",
             telephone: "",
@@ -60,12 +60,26 @@ export default {
             token: "",
             headers: [
                 { title: 'CID', value: 'cid', sortable: false },
-                // { title: 'Last Name', value: 'last_name', sortable: false },
-                // { title: 'First Name', value: 'first_name', sortable: false },
-                // { title: 'Middle Name', value: 'middle_name', sortable: false },
                 { title: 'Display Name', value: 'display_name', sortable: false },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
+            titleToGenderMap: {
+                'Mr.': 'Male',
+                'Fr.': 'Male',
+                'Msg.': 'Male',
+                'Ms.': 'Female',
+                'Dr.': 'Prefer not to say',
+                'Atty.': 'Prefer not to say',
+                'Engr.': 'Prefer not to say',
+                '-': 'Prefer not to say',
+            },
+            cityToPostalCodeMap: {
+                'Sagay': '6122',
+                'Cadiz': '6121',
+                'Escalante': '6124',
+                'Bacolod': '6100',
+                'Talisay': '6115'
+            },
             suffixesItems: [],
             typeItems: [],
             titleItems: [],
@@ -97,7 +111,7 @@ export default {
             institutionRule: (v) => !!v || 'Institution is required',
             entityRule: (v) => !!v || 'Entity is required',
             employmentRule: (v) => !!v || 'Employment is required',
-            imagefileRule: (v) => !!v || 'Please select an image file',
+            imagefileRule: (v) => !!v || 'Please select an image',
             message_idRule: (v) => !!v || 'Message ID is required',
             tokenRule: (v) => !!v || 'Token is required',
             validating: false,
@@ -118,7 +132,27 @@ export default {
     watch: {
         displayName(newVal) {
             this.display_name = newVal;
-        }
+        },
+        title(newGenderId) {
+            const selectedTitle = this.titleItems.find(item => item.id === newGenderId);
+            if (selectedTitle) {
+                const matchingGender = this.titleToGenderMap[selectedTitle.title];
+                if (matchingGender) {
+                const genderItem = this.genderItems.find(item => item.gender === matchingGender);
+                if (genderItem) {
+                    this.gender = genderItem.id;
+                }
+                }
+            }
+        },
+        address_line2(newCity) {
+            const city = newCity.trim();
+            if (this.cityToPostalCodeMap[city]) {
+                this.postal_code = this.cityToPostalCodeMap[city];
+            } else {
+                this.postal_code = '';
+            }
+        },
     },
     mounted() {
         this.fetchSuffixesItems();

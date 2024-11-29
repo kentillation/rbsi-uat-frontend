@@ -261,7 +261,7 @@
         </v-form>
 
         <!-- Dialog for identity submission -->
-        <v-dialog v-model="confirmIdentityDialog" max-width="600px">
+        <v-dialog v-model="confirmIdentityDialog" max-width="700px">
             <v-card>
                 <v-card-title class="headline">Confirmation</v-card-title>
                 <v-card-text>
@@ -430,7 +430,7 @@
         </v-dialog>
 
         <!-- Dialog for searching realted contact -->
-        <v-dialog v-model="searchRltdDialog" max-width="500px">
+        <v-dialog v-model="searchRltdDialog" max-width="700px">
             <v-card>
                 <v-card-title>
                     <span class="headline">Related Contacts</span>
