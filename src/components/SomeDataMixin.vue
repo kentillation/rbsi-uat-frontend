@@ -9,6 +9,7 @@ export default {
       loading: true,
       skeletonLoader: false,
       imageCard: false,
+      image_file: null,
       imageSource: '',
       search_item: '',
       staff_or_not: 2,
@@ -32,6 +33,7 @@ export default {
       institutionItems: [],
       entityItems: [],
       employmentItems: [],
+      relationshipItems: [],
     };
   },
   created() {
@@ -50,6 +52,7 @@ export default {
     this.fetchItems('/institution', 'institutionItems');
     this.fetchItems('/entity', 'entityItems');
     this.fetchItems('/employment', 'employmentItems');
+    this.fetchItems('/relationship', 'relationshipItems');
   },
   methods: {
     toEditClientInfo() {

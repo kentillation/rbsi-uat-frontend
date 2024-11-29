@@ -34,6 +34,7 @@ export default {
     institutionItems: Array,
     entityItems: Array,
     employmentItems: Array,
+    relationshipItems: Array,
   },
   computed: {
     clientFields() {
@@ -64,10 +65,11 @@ export default {
         { label: "Institution", value: this.getTitle(this.client?.institution, this.institutionItems, "institution") },
         { label: "Entity", value: this.getTitle(this.client?.entity, this.entityItems, "entity") },
         { label: "Employment", value: this.getTitle(this.client?.employment, this.employmentItems, "employment") },
+        { label: "Relationship", value: this.getTitle(this.client?.relationship, this.relationshipItems, "relationship") },
       ];
     },
     staffLabel() {
-      return this.client?.staff_or_not === 1 ? 'Yes' : 'No';
+      return this.client?.staff_or_not === 2 ? 'No' : 'Yes';
     },
   },
   methods: {

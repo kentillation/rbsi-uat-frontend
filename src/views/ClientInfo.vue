@@ -26,7 +26,8 @@
         <ClientDataMixin :client="selectedClient" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
           :imageSource="imageSource" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
           :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
-          :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" />
+          :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" 
+          :relationshipItems="relationshipItems" />
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"

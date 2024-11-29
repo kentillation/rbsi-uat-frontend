@@ -19,7 +19,7 @@ export default {
             middle_name: "",
             last_name: "",
             display_name: "",
-            staff_or_not: 2, //May issues
+            staff_or_not: 2, //May issue
             gender: "",
             civil_status: "",
             initial: "",
@@ -76,6 +76,7 @@ export default {
             institutionItems: [],
             entityItems: [],
             employmentItems: [],
+            relationshipItems: [],
             typeRule: (v) => !!v || 'Type is required',
             titleRule: (v) => !!v || 'Title is required',
             clientstatusRule: (v) => !!v || 'Client status is required',
@@ -96,7 +97,7 @@ export default {
             institutionRule: (v) => !!v || 'Institution is required',
             entityRule: (v) => !!v || 'Entity is required',
             employmentRule: (v) => !!v || 'Employment is required',
-            imagefileRule: (v) => !!v || 'Image file is required',
+            imagefileRule: (v) => !!v || 'Please select an image file',
             message_idRule: (v) => !!v || 'Message ID is required',
             tokenRule: (v) => !!v || 'Token is required',
             validating: false,
@@ -130,6 +131,7 @@ export default {
         this.fetchEntityItems();
         this.fetchEmploymentItems();
         this.fetchAddressTypeItems();
+        this.fetchRelation();
     },
     computed: {
         isIdentityCheckDisabled() {
@@ -215,6 +217,9 @@ export default {
         },
         async fetchEmploymentItems() {
             this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
+        },
+        async fetchRelation() {
+            this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
         },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
