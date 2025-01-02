@@ -162,9 +162,9 @@
                                                     item-value="id" variant="underlined"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-file-input v-model="image_file" :rules="[imagefileRule]"
+                                                <v-file-input v-model="image_file" @change="previewImage" :rules="[imagefileRule]"
                                                     accept="image/*" label="Image file" append-inner-icon="mdi-camera"
-                                                    prepend-icon="" variant="underlined" chips show-size>
+                                                    prepend-icon="" variant="underlined" chips show-size >
                                                 </v-file-input>
                                             </v-col>
                                         </v-row>
@@ -216,15 +216,16 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-text-field v-model="rel_cid" label="Relation CID"
-                                                    variant="underlined" clearable></v-text-field>
+                                                    variant="underlined" disabled></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="rel_display_name" label="Name"
-                                                    variant="underlined" clearable></v-text-field>
+                                                    variant="underlined" disabled></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="relationship" label="Relationship"
-                                                    variant="underlined" clearable></v-text-field>
+                                                <v-autocomplete v-model="relationship"
+                                                    label="Relationship" :items="relationshipItems" item-title="relationship"
+                                                    item-value="id" variant="underlined"></v-autocomplete>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -260,7 +261,7 @@
         </v-form>
 
         <!-- Dialog for identity submission -->
-        <v-dialog v-model="confirmIdentityDialog" max-width="600px">
+        <v-dialog v-model="confirmIdentityDialog" max-width="700px">
             <v-card>
                 <v-card-title class="headline">Confirmation</v-card-title>
                 <v-card-text>
@@ -290,7 +291,7 @@
                                 <p>
                                     <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
                                         style="border: 1px solid #ccc ;border-radius: 10px;"></v-skeleton-loader>
-                                    <img v-if="imgCard" :src="imgSrc" width="241"
+                                    <img v-if="imgSrc" :src="imgSrc" width="241"
                                         style="border: 1px solid #ccc ;border-radius: 10px;" alt="Client Image" />
                                 </p>
                             </v-container>
@@ -410,7 +411,8 @@
                                     rel_display_name }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Relationship: </span><strong>{{ relationship
+                                <p><span class="text-grey-lighten-1">Relationship: </span><strong>{{ getTitle(relationship,
+                                    relationshipItems, 'relationship')
                                         }}</strong> </p>
                             </v-col>
                         </v-row>
@@ -427,7 +429,7 @@
         </v-dialog>
 
         <!-- Dialog for searching realted contact -->
-        <v-dialog v-model="searchRltdDialog" max-width="500px">
+        <v-dialog v-model="searchRltdDialog" max-width="700px">
             <v-card>
                 <v-card-title>
                     <span class="headline">Related Contacts</span>
@@ -459,7 +461,7 @@
                     :clientstatusItems="clientstatusItems" :genderItems="genderItems"
                     :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
                     :institutionItems="institutionItems" :entityItems="entityItems"
-                    :employmentItems="employmentItems" />
+                    :employmentItems="employmentItems" :relationshipItems="relationshipItems" />
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
@@ -521,8 +523,7 @@ export default {
     data() {
         return {
             search_relation_info: "",
-            imgCard: "",
-            imgSrc: "",
+            imgSrc: null,
             skeletonLoader: false,
             searchRltdDialog: false,
             singleRltnDialog: false,
@@ -599,6 +600,17 @@ export default {
         viewFrmMltplRltn(item) {
             this.singleRelation = item; // Set the selected item
             this.singleRltnDialog = true; // Open the dialog
+        },
+        previewImage() {
+            if (this.image_file && this.image_file instanceof File) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                this.imgSrc = e.target.result;
+                };
+                reader.readAsDataURL(this.image_file);
+            } else {
+                this.imgSrc = null;
+            }
         },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
@@ -693,19 +705,17 @@ export default {
         showConfirmDialog() {
             if (this.isFormValid) this.confirmDialog = true;
             this.skeletonLoader = true;
-            this.imageCard = false;
+            this.imgSrc = false;
             setTimeout(() => {
                 this.skeletonLoader = false;
-                this.imageCard = true;
-                this.imageSource = URL.createObjectURL(this.image_file);
+                this.imgSrc = true;
+                this.imgSrc = URL.createObjectURL(this.image_file);
             }, 1000);
         },
         async submitForm() {
             this.validating = true;
-            // this.confirmDialog = true;
             try {
                 if (this.$refs.form.validate()) {
-                    const staffValue = this.staff_or_not ? 2 : 1;
                     const formData = new FormData();
                     const fields = [
                         'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
@@ -721,17 +731,13 @@ export default {
                     formData.append('birthdate', formattedBirthdate);
                     fields.forEach(field => {
                         if (field !== 'birthdate') {
-                            if (field === 'staff_or_not') {
-                                formData.append(field, staffValue);
-                            } else {
-                                formData.append(field, this[field]);
-                            }
+                            formData.append(field, this[field]);
                         }
                     });
                     if (this.image_file) {
                         formData.append('image_file', this.image_file);
                     }
-                    formData.append('staff_or_not', staffValue);
+                    formData.append('staff_or_not', Number(this.staff_or_not));
                     const response = await apiClient.post('/new_client_info', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
