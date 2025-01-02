@@ -67,7 +67,7 @@ export default {
       ];
     },
     staffLabel() {
-      return this.client?.staff_or_not === 1 ? 'Yes' : 'No';
+      return this.client?.staff_or_not === 2 ? 'No' : 'Yes';
     },
   },
   methods: {

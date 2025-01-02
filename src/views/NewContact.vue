@@ -333,8 +333,7 @@
                                     getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staff_or_not ? 'No' :
-                                    'Yes' }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staffLabel }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender,
@@ -553,6 +552,9 @@ export default {
         searchRelationValid() {
             return this.search_relation_info.trim() !== '';
         },
+        staffLabel() {
+            return this.staff_or_not === 2 ? 'No' : 'Yes';
+        },
     },
     methods: {
         checkIdentityWebhooks() {
@@ -710,7 +712,8 @@ export default {
                         'display_name', 'suffix', 'initial', 'gender', 'civil_status', 'birthdate',
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'postal_code', 'address_type', 'telephone', 'fax', 'institution',
-                        'entity', 'employment', 'image_file', 'rel_cid', 'rel_display_name', 'relationship', 
+                        'entity', 'employment', 'image_file', 'relationship', 
+                        // 'rel_cid', 'rel_display_name',
                         'message_id', 'token'
                     ];
                     // CHANGE TO PH TIMEZONE

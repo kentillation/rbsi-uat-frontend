@@ -19,7 +19,7 @@ export default {
             middle_name: "",
             last_name: "",
             display_name: "",
-            staff_or_not: 2, //May issues
+            staff_or_not: 2,
             gender: "",
             civil_status: "",
             initial: "",
