@@ -723,8 +723,7 @@ export default {
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'postal_code', 'address_type', 'telephone', 'fax', 'institution',
                         'entity', 'employment', 'image_file', 'relationship', 
-                        // 'rel_cid', 'rel_display_name',
-                        'message_id', 'token'
+                        'rel_cid', 'rel_display_name', 'message_id', 'token'
                     ];
                     // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
