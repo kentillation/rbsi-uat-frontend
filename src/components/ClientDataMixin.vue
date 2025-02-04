@@ -3,8 +3,10 @@
     <div class="text-center">
       <v-container class="skeleton-loader">
         <p>
-          <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248" style="border: 1px solid #ccc; border-radius: 10px;"></v-skeleton-loader>
-          <img v-if="imageCard" :src="imageSource" width="241" style="border: 1px solid #ccc; border-radius: 10px;" alt="Client Image" />
+          <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
+            style="border: 1px solid #ccc; border-radius: 10px;"></v-skeleton-loader>
+          <img v-if="imageCard" :src="imageSource" width="241" style="border: 1px solid #ccc; border-radius: 10px;"
+            alt="Client Image" />
         </p>
       </v-container>
       <h3 class="mb-7"><span class="text-grey-lighten-1">CID: </span>{{ client?.cid }}</h3>
@@ -18,23 +20,31 @@
 </template>
 
 <script>
+import apiClient from '../axios';
 export default {
   name: "ClientDetails",
+  data() {
+    return {
+      // skeletonLoader: false,
+      // imageCard: false,
+      // imageSource: null,
+      typeItems: [],
+      titleItems: [],
+      clientstatusItems: [],
+      genderItems: [],
+      civilstatusItems: [],
+      addresstypeItems: [],
+      institutionItems: [],
+      entityItems: [],
+      employmentItems: [],
+      relationshipItems: [],
+    }
+  },
   props: {
     client: Object,
     skeletonLoader: Boolean,
     imageCard: Boolean,
     imageSource: String,
-    typeItems: Array,
-    titleItems: Array,
-    clientstatusItems: Array,
-    genderItems: Array,
-    civilstatusItems: Array,
-    addresstypeItems: Array,
-    institutionItems: Array,
-    entityItems: Array,
-    employmentItems: Array,
-    relationshipItems: Array,
   },
   computed: {
     clientFields() {
@@ -72,7 +82,65 @@ export default {
       return this.client?.staff_or_not === 2 ? 'No' : 'Yes';
     },
   },
+  mounted() {
+    this.fetchSuffixesItems();
+    this.fetchTypesItems();
+    this.fetchTitlesItems();
+    this.fetchClientStatusItems();
+    this.fetchGenderItems();
+    this.fetchCivil_StatusItems();
+    this.fetchUndefItems();
+    this.fetchEntityItems();
+    this.fetchEmploymentItems();
+    this.fetchAddressTypeItems();
+    this.fetchRelation();
+  },
   methods: {
+    async fetchItems(endpoint, targetArray, errorMessage) {
+      try {
+        const response = await apiClient.get(endpoint, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+        });
+        this[targetArray] = response.data;
+      } catch (error) {
+        this.showSnackbar(errorMessage, 'error');
+      }
+    },
+    async fetchSuffixesItems() {
+      this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
+    },
+    async fetchTypesItems() {
+      this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
+    },
+    async fetchTitlesItems() {
+      this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
+    },
+    async fetchClientStatusItems() {
+      this.fetchItems('/client_status', 'clientstatusItems', 'Failed to fetch client status');
+    },
+    async fetchGenderItems() {
+      this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
+    },
+    async fetchCivil_StatusItems() {
+      this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
+    },
+    async fetchAddressTypeItems() {
+      this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
+    },
+    async fetchUndefItems() {
+      this.fetchItems('/institution', 'institutionItems', 'Failed to fetch institution codes');
+    },
+    async fetchEntityItems() {
+      this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
+    },
+    async fetchEmploymentItems() {
+      this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
+    },
+    async fetchRelation() {
+      this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
+    },
     getTitle(id, items, titleKey) {
       const item = items.find(item => String(item.id) === String(id));
       return item ? item[titleKey] : "Unknown";
