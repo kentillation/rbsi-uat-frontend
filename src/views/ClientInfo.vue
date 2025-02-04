@@ -78,12 +78,10 @@
 
 <script>
 import apiClient from '../axios';
-// import SomeDataMixin from '@/components/SomeDataMixin';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
   name: 'ClientInfo',
-  // mixins: [SomeDataMixin],
   components: {
     ClientDataMixin
   },
