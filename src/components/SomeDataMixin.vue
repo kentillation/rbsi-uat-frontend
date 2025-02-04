@@ -7,11 +7,11 @@ export default {
   data() {
     return {
       loading: true,
-      skeletonLoader: false,
-      imageCard: false,
+      skltnLdr: false,
+      imgCrd: false,
       image_file: null,
-      imageSource: '',
-      search_item: '',
+      imgSrc: '',
+      search_item_CI: '',
       staff_or_not: 2,
       headers: [
         { title: 'CID', value: 'cid', sortable: false },
@@ -73,11 +73,11 @@ export default {
           updated_at: this.formatDate(item.updated_at)
       };
       this.dialogSingle = true;
-      this.skeletonLoader = true
-      this.imageCard = false
+      this.skltnLdr = true
+      this.imgCrd = false
       setTimeout(() => {
-          this.skeletonLoader = false
-          this.imageCard = true
+          this.skltnLdr = false
+          this.imgCrd = true
       }, 1000)
     },
     async fetchClientImage(imageFileName) {
@@ -89,10 +89,10 @@ export default {
           responseType: 'blob',
           });
           const blob = new Blob([response.data], { type: response.headers['content-type'] });
-          this.imageSource = URL.createObjectURL(blob);
+          this.imgSrc = URL.createObjectURL(blob);
       } catch (error) {
           console.error('Error fetching client image:', error);
-          this.imageSource = '';
+          this.imgSrc = '';
       }
     },
     async fetchItems(endpoint, key) {
