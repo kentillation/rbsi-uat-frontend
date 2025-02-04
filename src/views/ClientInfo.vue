@@ -67,23 +67,20 @@
       </v-card>
     </v-dialog>
 
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-      <div class="d-flex align-items-center">
-        <span><v-icon icon="mdi-information-outline"></v-icon></span>
-        <span>&nbsp; {{ snackbar.message }}</span>
-      </div>
-    </v-snackbar>
+    <Snackbar ref="snackbarRef" />
   </v-container>
 </template>
 
 <script>
 import apiClient from '../axios';
+import Snackbar from '@/components/Snackbar.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
   name: 'ClientInfo',
   components: {
-    ClientDataMixin
+    ClientDataMixin,
+    Snackbar
   },
   data() {
     return {
@@ -120,11 +117,11 @@ export default {
       multipleClients: [],
       dialogSingle: false,
       dialogMultiple: false,
-      snackbar: {
-        visible: false,
-        message: '',
-        color: ''
-      },
+      // snackbar: {
+      //   visible: false,
+      //   message: '',
+      //   color: ''
+      // },
     };
   },
   created() {
@@ -194,10 +191,10 @@ export default {
           this.multipleClients = clients;
           this.dialogMultiple = true;
         } else {
-          this.showSnackbar('No record found!', 'error');
+          this.$refs.snackbarRef.showSnackbar("No record found!", "error");
         }
       } catch (error) {
-        this.showSnackbar('An error occurred while searching for clients', 'error');
+        this.$refs.snackbarRef.showSnackbar("An error occurred while searching for clients", "error");
       } finally {
         this.validating = false;
       }
@@ -251,7 +248,7 @@ export default {
         });
         this[key] = response.data;
       } catch (error) {
-        this.showSnackbar(`Failed to fetch ${key}`, 'error');
+        this.$refs.snackbarRef.showSnackbar(`Failed to fetch ${key}`, "error");
       }
     },
     formatDate(date) {
@@ -262,11 +259,6 @@ export default {
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
-    },
-    showSnackbar(message, color) {
-      this.snackbar.message = message;
-      this.snackbar.color = color;
-      this.snackbar.visible = true;
     },
   },
 };
