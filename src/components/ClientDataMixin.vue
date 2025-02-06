@@ -25,9 +25,6 @@ export default {
   name: "ClientDetails",
   data() {
     return {
-      // skeletonLoader: false,
-      // imageCard: false,
-      // imageSource: null,
       typeItems: [],
       titleItems: [],
       clientstatusItems: [],
@@ -37,7 +34,6 @@ export default {
       institutionItems: [],
       entityItems: [],
       employmentItems: [],
-      relationshipItems: [],
     }
   },
   props: {
@@ -65,9 +61,9 @@ export default {
         { label: "Gender", value: this.getTitle(this.client?.gender, this.genderItems, "gender") },
         { label: "Civil Status", value: this.getTitle(this.client?.civil_status, this.civilstatusItems, "civil_status") },
         { label: "Birthdate", value: this.client?.birthdate ? this.formatDate(this.client?.birthdate) : "N/A" },
-        { label: "Barangay", value: this.client?.address_line1 }, //
-        { label: "City", value: this.client?.address_line2 }, //
-        { label: "Province", value: this.client?.address_line3 }, //
+        { label: "Barangay", value: this.client?.line1 }, //
+        { label: "City", value: this.client?.line2 }, //
+        { label: "Province", value: this.client?.line3 }, //
         { label: "Address Type", value: this.getTitle(this.client?.address_type, this.addresstypeItems, "address_type") }, //
         { label: "Telephone", value: this.client?.telephone }, //
         { label: "Fax", value: this.client?.fax }, //
@@ -75,7 +71,6 @@ export default {
         { label: "Institution", value: this.getTitle(this.client?.institution, this.institutionItems, "institution") },
         { label: "Entity", value: this.getTitle(this.client?.entity, this.entityItems, "entity") },
         { label: "Employment", value: this.getTitle(this.client?.employment, this.employmentItems, "employment") },
-        { label: "Relationship", value: this.getTitle(this.client?.relationship, this.relationshipItems, "relationship") },
       ];
     },
     staffLabel() {
@@ -93,7 +88,6 @@ export default {
     this.fetchEntityItems();
     this.fetchEmploymentItems();
     this.fetchAddressTypeItems();
-    this.fetchRelation();
   },
   methods: {
     async fetchItems(endpoint, targetArray, errorMessage) {
@@ -137,9 +131,6 @@ export default {
     },
     async fetchEmploymentItems() {
       this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
-    },
-    async fetchRelation() {
-      this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
     },
     getTitle(id, items, titleKey) {
       const item = items.find(item => String(item.id) === String(id));

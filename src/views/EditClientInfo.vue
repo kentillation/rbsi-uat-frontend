@@ -50,7 +50,7 @@
                       disabled></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-checkbox v-model="isStaff" :label="staffLabel" :color="checkboxColor"></v-checkbox>
+                    <v-checkbox v-model="staff_or_not" :color="checkboxColor" label="Staff"></v-checkbox>
                   </v-col>
                 </v-row>
               </v-container>
@@ -269,7 +269,7 @@
                 </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Address Line 3: <br /></span><strong>{{ address_line1 }}</strong>
+                <p><span class="text-grey-lighten-1">Address Line 3: <br /></span><strong>{{ address_line3 }}</strong>
                 </p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
@@ -330,17 +330,23 @@ export default {
     this.fetchCID_LastName();
   },
   computed: {
-    isStaff: {
-      get() {
+    staffLabel: {
+      // return this.staff_or_not === 2 ? 'No' : 'Yes';
+        get() {
         return this.staff_or_not === 2;
       },
       set(value) {
-        this.staff_or_not = value ? 1 : 2;
+        this.staff_or_not = value ? 2 : 1;
       },
     },
-    staffLabel() {
-      return this.staff_or_not === 1 ? 'Yes' : 'No';
-    },
+    // isStaff: {
+    //   get() {
+    //     return this.staff_or_not === 2;
+    //   },
+    //   set(value) {
+    //     this.staff_or_not = value ? 1 : 2;
+    //   },
+    // },
     checkboxColor() {
       return this.staff_or_not === 1 ? 'primary' : 'secondary';
     },
@@ -417,6 +423,7 @@ export default {
           key !== 'validating'
         ) {
           formData.append(key, this[key]);
+          formData.append('staff_or_not', Number(this.staff_or_not));
         }
       }
       try {

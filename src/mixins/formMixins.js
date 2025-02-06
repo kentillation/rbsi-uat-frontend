@@ -245,7 +245,7 @@ export default {
             message = 'Invalid input!';
             break;
           case 429:
-            message = 'Too many API requests. Please refresh the page!';
+            message = 'Too many API requests!';
             break;
           case 409:
             message = 'Contact already exist!';

@@ -24,11 +24,12 @@
           <span class="headline">Client Details</span>
         </v-card-title>
         <ClientDataMixin :client="selectedClient" :skeletonLoader="skltnLdr" :imageCard="imgCrd"
-          :imageSource="imgSrc" :typeItems="typItms" :titleItems="ttlItms" :clientstatusItems="clntsttsItms"
-          :genderItems="gndrItms" :civilstatusItems="cvlsttsItms" :addresstypeItems="addresstypItms"
-          :institutionItems="instttnItms" :entityItems="enttyItms" :employmentItems="emplymntItms" 
-          :relationshipItems="rltnshpItms" />
+          :imageSource="imgSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
+          :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
+          :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" />
         <v-card-actions class="mx-4 my-4">
+          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="closeDialogs"
+            rounded>View Account</v-btn>
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
             rounded>Close</v-btn>
@@ -113,15 +114,9 @@ export default {
       institutionItems: [],
       entityItems: [],
       employmentItems: [],
-      relationshipItems: [],
       multipleClients: [],
       dialogSingle: false,
       dialogMultiple: false,
-      // snackbar: {
-      //   visible: false,
-      //   message: '',
-      //   color: ''
-      // },
     };
   },
   created() {
@@ -155,7 +150,6 @@ export default {
     this.fetchItems('/institution', 'institutionItems');
     this.fetchItems('/entity', 'entityItems');
     this.fetchItems('/employment', 'employmentItems');
-    this.fetchItems('/relationship', 'relationshipItems');
   },
   methods: {
     toNewContact() {
@@ -259,6 +253,10 @@ export default {
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
+    },
+    closeDialogs() {
+      this.dialogSingle  = false;
+      this.dialogMultiple  = false;
     },
   },
 };

@@ -35,7 +35,7 @@ export default {
             nationality: 'Filipino',
             address_line1: "",
             address_line2: "",
-            address_line3: "Negros Island Region",
+            address_line3: "",
             postal_code: "",
             address_type: "",
             telephone: "",
