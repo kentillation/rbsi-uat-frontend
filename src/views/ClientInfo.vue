@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-container>
-    <h1>Client Info</h1>
+    <h1>Client Information</h1>
     <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
       rounded>
       <div class="d-flex justify-end w-100">
@@ -28,7 +28,7 @@
           :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
           :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" />
         <v-card-actions class="mx-4 my-4">
-          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="closeDialogs"
+          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccount"
             rounded>View Account</v-btn>
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
@@ -204,6 +204,16 @@ export default {
           });
       }
     },
+    toClientAccount() {
+      if (this.selectedClient) {
+          this.$router.push({
+          name: 'ClientAccount',
+          params: {
+              cid: this.selectedClient.cid,
+          },
+          });
+      }
+    },
     viewItem(item) {
       this.selectedClient = {
           ...item,
@@ -253,10 +263,6 @@ export default {
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
-    },
-    closeDialogs() {
-      this.dialogSingle  = false;
-      this.dialogMultiple  = false;
     },
   },
 };

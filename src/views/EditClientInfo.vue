@@ -352,6 +352,9 @@ export default {
     },
   },
   methods: {
+    goBack() {
+        this.$router.go(-1);
+    },
     toClientInfo() {
       this.$router.push({ name: 'ClientInfo' });
     },

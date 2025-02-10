@@ -5,7 +5,6 @@ import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
 import ClientInfo from '../views/ClientInfo.vue';
 import AllClients from '../views/AllClients.vue';
-// import EditClientInfo from '../views/EditClientInfo.vue';
 
 const routes = [
     { path: '/', name: 'Login', component: Login },
@@ -19,6 +18,12 @@ const routes = [
         name: 'EditClientInfo', 
         // component: EditClientInfo,
         component: () => import('../views/EditClientInfo.vue'),
+        meta: { requiresAuth: true } 
+    },
+    { 
+        path: '/client_account/:cid', 
+        name: 'ClientAccount', 
+        component: () => import('../views/ClientAccount.vue'),
         meta: { requiresAuth: true } 
     },
 
