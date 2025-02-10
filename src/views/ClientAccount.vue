@@ -4,7 +4,7 @@
       <v-icon @click="goBack" class="mt-2 me-3" size="x-large" icon="mdi-chevron-double-left" title="Back"></v-icon>
       <h1>Client Accounts</h1>
     </div>
-    <v-data-table :headers="headers" :items="formattedAccountList" :loading="loading" class="elevation-1">
+    <v-data-table :headers="headers" :items="account_list" :loading="loading" class="elevation-1">
       <template v-slot:loading>
         <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
       </template>
@@ -18,7 +18,7 @@
       <template v-slot:item="{ item }">
         <tr>
           <td>{{ formatAcc(item.acc) }}</td>
-          <td>{{ getTitle(item.appType, apptypeItems, "appType") }}</td>
+          <td>{{ getTitle(item.app_type, this.apptypeItems, "app_type") }}</td>
           <td>{{ item.relType }}</td>
           <td>{{ item.accStatus }}</td>
           <td>{{ item.prType }}</td>
@@ -57,23 +57,15 @@ export default {
       ],
     };
   },
-  mounted() {
+  mounted () {
     this.fetchAppTypesItems();
   },
   created() {
     this.fetchCID_LastName();
   },
-  computed: {
-    formattedAccountList() {
-      return this.account_list.map(item => ({
-        ...item,
-        appType: this.getTitle(item.appType, this.apptypeItems, "app_type"),
-      }));
-    }
-  },
   methods: {
     goBack() {
-      this.$router.go(-1);
+        this.$router.go(-1);
     },
     async fetchItems(endpoint, targetArray, errorMessage) {
       try {
@@ -102,15 +94,15 @@ export default {
           },
         });
 
+        console.log("API Response:", response.data); // Debugging log
+
         if (response.data && response.data.data && Array.isArray(response.data.data.accs)) {
-          this.account_list = response.data.data.accs.map(acc => ({
-            ...acc,
-            appType: this.getTitle(acc.appType, this.apptypeItems, "app_type"),
-          }));
+          this.account_list = response.data.data.accs;
         } else {
-          this.account_list = []; // Fallback to prevent errors
+          this.account_list = []; // Prevents errors if the structure changes
         }
       } catch (error) {
+        console.error("Error fetching accounts:", error); // Debugging log
         this.$refs.snackbarRef.showSnackbar("No accounts found.", "error");
       } finally {
         this.loading = false;
