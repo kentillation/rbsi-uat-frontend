@@ -1,11 +1,10 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-container>
     <div class="d-flex align-items-center">
       <v-icon @click="goBack" class="mt-2 me-3" size="x-large" icon="mdi-chevron-double-left" title="Back"></v-icon>
       <h1>Client Accounts</h1>
     </div>
-    <v-data-table :headers="headers" :items="account_list" :loading="loading" class="elevation-1">
+    <v-data-table :headers="headers" :items="formattedAccountList" :loading="loading" class="elevation-1">
       <template v-slot:loading>
         <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
       </template>
@@ -19,7 +18,7 @@
       <template v-slot:item="{ item }">
         <tr>
           <td>{{ formatAcc(item.acc) }}</td>
-          <td>{{ item.appType }}</td>
+          <td>{{ getTitle(item.appType, apptypeItems, "appType") }}</td>
           <td>{{ item.relType }}</td>
           <td>{{ item.accStatus }}</td>
           <td>{{ item.prType }}</td>
@@ -45,10 +44,11 @@ export default {
   data() {
     return {
       account_list: [],
+      apptypeItems: [],
       loading: true,
       headers: [
         { title: 'Account No.', value: 'acc', sortable: false },
-        { title: 'Application Type', value: 'appType', sortable: false },
+        { title: 'Application Type', value: 'app_type', sortable: false }, // Fixed
         { title: 'Rel Type', value: 'relType', sortable: false },
         { title: 'Status', value: 'accStatus', sortable: false },
         { title: 'Product Type', value: 'prType', sortable: true },
@@ -57,12 +57,42 @@ export default {
       ],
     };
   },
+  mounted() {
+    this.fetchAppTypesItems();
+  },
   created() {
     this.fetchCID_LastName();
   },
+  computed: {
+    formattedAccountList() {
+      return this.account_list.map(item => ({
+        ...item,
+        appType: this.getTitle(item.appType, this.apptypeItems, "app_type"),
+      }));
+    }
+  },
   methods: {
     goBack() {
-        this.$router.go(-1);
+      this.$router.go(-1);
+    },
+    async fetchItems(endpoint, targetArray, errorMessage) {
+      try {
+        const response = await apiClient.get(endpoint, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+        });
+        this[targetArray] = response.data;
+      } catch (error) {
+        this.showSnackbar(errorMessage, 'error');
+      }
+    },
+    async fetchAppTypesItems() {
+      this.fetchItems('/app_types', 'apptypeItems', 'Failed to fetch app types');
+    },
+    getTitle(id, items, titleKey) {
+      const item = items.find(item => String(item.id) === String(id));
+      return item ? item[titleKey] : "Unknown";
     },
     async fetchClientAccount(cid) {
       try {
@@ -71,8 +101,12 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
           },
         });
+
         if (response.data && response.data.data && Array.isArray(response.data.data.accs)) {
-          this.account_list = response.data.data.accs;
+          this.account_list = response.data.data.accs.map(acc => ({
+            ...acc,
+            appType: this.getTitle(acc.appType, this.apptypeItems, "app_type"),
+          }));
         } else {
           this.account_list = []; // Fallback to prevent errors
         }
@@ -89,18 +123,19 @@ export default {
       }
     },
     onRefresh() {
-      this.loading = true
+      this.loading = true;
       setTimeout(() => {
-        this.loading = false
-        this.fetchCID_LastName()
-      }, 2000)
+        this.loading = false;
+        this.fetchCID_LastName();
+      }, 2000);
     },
     formatAcc(acc) {
-      if (!acc || typeof acc !== "string") return acc;
-      return acc.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
+      if (!acc) return acc;
+      const accStr = String(acc); // Ensure it's a string
+      return accStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
     },
     formatCurrency(value) {
-      if (!value) return "0.00";
+      if (!value || isNaN(value)) return "0.00";
       return Number(value).toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
