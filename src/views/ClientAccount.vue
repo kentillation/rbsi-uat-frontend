@@ -10,15 +10,15 @@
       </template>
       <template v-slot:top>
         <v-toolbar flat>
-          <div class="text-right">
-            <v-btn append-icon="mdi-refresh" class="ms-3 pe-7" variant="outlined" @click="onRefresh"></v-btn>
+          <div class="d-flex justify-end w-100">
+            <v-btn append-icon="mdi-refresh" class="me-3 pe-7" variant="outlined" @click="onRefresh"></v-btn>
           </div>
         </v-toolbar>
       </template>
       <template v-slot:item="{ item }">
         <tr>
           <td>{{ formatAcc(item.acc) }}</td>
-          <td>{{ getTitle(item.app_type, this.apptypeItems, "app_type") }}</td>
+          <td>{{ getTitle(item.appType, this.apptypeItems, "app_type") }}</td>
           <td>{{ item.relType }}</td>
           <td>{{ item.accStatus }}</td>
           <td>{{ item.prType }}</td>

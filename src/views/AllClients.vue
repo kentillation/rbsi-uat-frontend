@@ -54,6 +54,8 @@
                     :relationshipItems="rltnshpItms" />
 
                 <v-card-actions class="mx-4 my-4">
+                    <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccount"
+                        rounded>View Account</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
                         @click="dialogSingle = false" rounded>Close</v-btn>
@@ -148,6 +150,16 @@ export default {
         },
     },
     methods: {
+        toClientAccount() {
+            if (this.selectedClient) {
+                this.$router.push({
+                name: 'ClientAccount',
+                params: {
+                    cid: this.selectedClient.cid,
+                },
+                });
+            }
+        },
         toEditClientInfo() {
             if (this.selectedClient) {
                 this.$router.push({
