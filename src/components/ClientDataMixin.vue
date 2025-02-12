@@ -16,13 +16,18 @@
         <p><span class="text-grey-lighten-1">{{ field.label }}: </span>{{ field.value }}</p>
       </v-col>
     </v-row>
+    <Snackbar ref="snackbarRef" />
   </v-container>
 </template>
 
 <script>
 import apiClient from '../axios';
+import Snackbar from '@/components/Snackbar.vue';
 export default {
   name: "ClientDetails",
+  components: {
+    Snackbar
+  },
   data() {
     return {
       typeItems: [],
@@ -99,7 +104,7 @@ export default {
         });
         this[targetArray] = response.data;
       } catch (error) {
-        this.showSnackbar(errorMessage, 'error');
+        this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
       }
     },
     async fetchSuffixesItems() {

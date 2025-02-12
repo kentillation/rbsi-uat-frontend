@@ -231,24 +231,6 @@
                                     </v-container>
                                 </v-card>
                             </v-col>
-                            <!-- Authentication -->
-                            <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                                <v-card border="opacity-50 sm" class="mb-5">
-                                    <v-container>
-                                        <h3 class="mb-4">Authentication Codes</h3>
-                                        <v-row>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="message_id" :rules="[message_idRule]"
-                                                    label="Message ID" variant="underlined" clearable></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="token" :rules="[tokenRule]" label="Token"
-                                                    variant="underlined" clearable></v-text-field>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card>
-                            </v-col>
                         </v-row>
                     </v-card-text>
                 </v-card>
@@ -723,7 +705,7 @@ export default {
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'postal_code', 'address_type', 'telephone', 'fax', 'institution',
                         'entity', 'employment', 'image_file', 'relationship', 
-                        'rel_cid', 'rel_display_name', 'message_id', 'token'
+                        'rel_cid', 'rel_display_name'
                     ];
                     // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';

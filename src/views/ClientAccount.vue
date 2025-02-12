@@ -76,7 +76,7 @@ export default {
         });
         this[targetArray] = response.data;
       } catch (error) {
-        this.showSnackbar(errorMessage, 'error');
+        this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
       }
     },
     async fetchAppTypesItems() {

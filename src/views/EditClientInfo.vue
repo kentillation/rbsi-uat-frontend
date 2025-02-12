@@ -413,7 +413,7 @@ export default {
           return;
         }
       } catch (error) {
-        this.showSnackbar('Error during identity check. Please try again.', 'error');
+        this.$refs.snackbarRef.showSnackbar('Error during identity check. Please try again.', 'error');
         this.validating = false;
         return;
       }
@@ -437,11 +437,11 @@ export default {
           },
         });
         if (response.status === 200) {
-          this.showSnackbar('New client has been saved successfully.', 'success');
+          this.$refs.snackbarRef.showSnackbar('New client has been saved successfully.', 'success');
           this.confirmDialog = false;
         }
       } catch (error) {
-        this.showSnackbar('Error updating client information.', 'error');
+        this.$refs.snackbarRef.showSnackbar('Error updating client information.', 'error');
       } finally {
         this.validating = false;
       }

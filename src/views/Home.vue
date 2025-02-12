@@ -98,16 +98,16 @@
             </v-card>
         </v-sheet>
 
-        <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-            <div class="d-flex align-items-center justify-content-center">
-                {{ snackbar.message }}
-            </div>
-        </v-snackbar>
+        <Snackbar ref="snackbarRef" />
     </v-container>
 </template>
 
 <script>
+import Snackbar from '@/components/Snackbar.vue';
 export default {
+    components: {
+        Snackbar
+    },
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Home',
     data() {
@@ -132,11 +132,6 @@ export default {
     methods: {
         toAllClients() {
             this.$router.push({ name: 'AllClients' });
-        },
-        showSnackbar(message, color) {
-            this.snackbar.message = message;
-            this.snackbar.color = color;
-            this.snackbar.visible = true;
         },
         handleAltTab(event) {
             if (event.altKey && event.key === 'Tab') {

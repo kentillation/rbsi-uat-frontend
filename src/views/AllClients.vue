@@ -55,7 +55,7 @@
 
                 <v-card-actions class="mx-4 my-4">
                     <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccount"
-                        rounded>View Account</v-btn>
+                        rounded>List of Accounts</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
                         @click="dialogSingle = false" rounded>Close</v-btn>
@@ -209,11 +209,11 @@ export default {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
         },
-        showSnackbar(message, color) {
-            this.snackbar.message = message;
-            this.snackbar.color = color;
-            this.snackbar.visible = true;
-        },
+        // showSnackbar(message, color) {
+        //     this.snackbar.message = message;
+        //     this.snackbar.color = color;
+        //     this.snackbar.visible = true;
+        // },
         async fetchClientInfo() {
             try {
                 const response = await apiClient.get('/client_info', {

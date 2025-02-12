@@ -1,9 +1,15 @@
 <template>
-    <v-container></v-container>
+    <v-container>
+      <Snackbar ref="snackbarRef" />
+    </v-container>
 </template>
 <script>
 import apiClient from '../axios';
+import Snackbar from '@/components/Snackbar.vue';
 export default {
+  components: {
+    Snackbar
+  },
   data() {
     return {
       loading: true,
@@ -104,7 +110,7 @@ export default {
         });
         this[key] = response.data;
       } catch (error) {
-        this.showSnackbar(`Failed to fetch ${key}`, 'error');
+        this.$refs.snackbarRef.showSnackbar(`Failed to fetch ${key}`, 'error');
       }
     },
     formatDate(date) {
@@ -115,11 +121,6 @@ export default {
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
-    },
-    showSnackbar(message, color) {
-      this.snackbar.message = message;
-      this.snackbar.color = color;
-      this.snackbar.visible = true;
     },
   },
 };

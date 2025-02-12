@@ -1,12 +1,18 @@
 <template>
-    <v-container></v-container>
+    <v-container>
+        <Snackbar ref="snackbarRef" />
+    </v-container>
 </template>
 <script>
 
 import apiClient from '../axios';
 import watchlistData from '@/temp/watchlist.json';
+import Snackbar from '@/components/Snackbar.vue';
 
 export default {
+    components: {
+        Snackbar
+    },
     data() {
         return {
             confirmDialog: false,
@@ -56,8 +62,6 @@ export default {
             rel_cid: "",
             relationship: "",
             rel_display_name: "",
-            message_id: "",
-            token: "",
             headers: [
                 { title: 'CID', value: 'cid', sortable: false },
                 { title: 'Display Name', value: 'display_name', sortable: false },
@@ -112,8 +116,6 @@ export default {
             entityRule: (v) => !!v || 'Entity is required',
             employmentRule: (v) => !!v || 'Employment is required',
             imagefileRule: (v) => !!v || 'Please select an image',
-            message_idRule: (v) => !!v || 'Message ID is required',
-            tokenRule: (v) => !!v || 'Token is required',
             validating: false,
             snackbar: {
                 visible: false,
@@ -195,8 +197,7 @@ export default {
                 this.birthdate, this.address_line1, this.address_line2, this.address_line3,
                 this.postal_code, this.address_type,
                 this.institution, this.entity, this.employment,
-                this.image_file, this.mobile1, this.email, this.nationality,
-                this.message_id, this.token
+                this.image_file, this.mobile1, this.email, this.nationality
             ].every(field => !!field);
         }
     },
@@ -216,7 +217,7 @@ export default {
                 });
                 this[targetArray] = response.data;
             } catch (error) {
-                this.showSnackbar(errorMessage, 'error');
+                this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
             }
         },
         async fetchSuffixesItems() {
@@ -262,12 +263,12 @@ export default {
                 item.last_name === this.last_name
                 );
                 if (isOnWatchlist) {
-                this.showSnackbar('Name is on the watchlist.', 'error');
+                this.$refs.snackbarRef.showSnackbar('Name is on the watchlist.', 'error');
                 } else {
-                this.showSnackbar('Name is NOT on the watchlist. You can now proceed!', 'success');
+                this.$refs.snackbarRef.showSnackbar('Name is NOT on the watchlist. You can now proceed!', 'success');
                 }
             } catch (error) {
-                this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
+                this.$refs.snackbarRef.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
             }
         },
         async checkIdentity() {
@@ -283,10 +284,10 @@ export default {
                         params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
                     })
                 ]);
-                if (response1.data.exists) this.showSnackbar('Name already exists in MBWin database.', 'error');
-                if (response2.data.exists) this.showSnackbar('Name already exists in new database.', 'error');
+                if (response1.data.exists) this.$refs.snackbarRef.showSnackbar('Name already exists in MBWin database.', 'error');
+                if (response2.data.exists) this.$refs.snackbarRef.showSnackbar('Name already exists in new database.', 'error');
             } catch (error) {
-                this.showSnackbar('Error checking identity. Refresh the page!', 'error');
+                this.$refs.snackbarRef.showSnackbar('Error checking identity. Refresh the page!', 'error');
             }
         },
         getTitle(id, items, titleKey) {
@@ -328,7 +329,7 @@ export default {
             } else {
                 message = 'Request error. Please try again!';
             }
-            this.showSnackbar(message, 'error');
+            this.$refs.snackbarRef.showSnackbar(message, 'error');
         },
     },
 };
