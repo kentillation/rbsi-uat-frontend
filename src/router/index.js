@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import NewContact from '../views/NewContact.vue';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
+import NewContact from '../views/NewContact.vue';
 import ClientInfo from '../views/ClientInfo.vue';
 import AllClients from '../views/AllClients.vue';
 
@@ -14,9 +14,14 @@ const routes = [
     { path: '/all_clients', name: 'AllClients', component: AllClients, meta: { requiresAuth: true } },
     { path: '/new_contact', name: 'NewContact', component: NewContact, meta: { requiresAuth: true } },
     { 
+        path: '/new_account/:cid', 
+        name: 'NewAccount', 
+        component: () => import('../views/NewAccount.vue'),
+        meta: { requiresAuth: true } 
+    },
+    { 
         path: '/edit_client_info/:cid/:last_name', 
         name: 'EditClientInfo', 
-        // component: EditClientInfo,
         component: () => import('../views/EditClientInfo.vue'),
         meta: { requiresAuth: true } 
     },
@@ -26,7 +31,6 @@ const routes = [
         component: () => import('../views/ClientAccount.vue'),
         meta: { requiresAuth: true } 
     },
-
 ];
 
 const router = createRouter({

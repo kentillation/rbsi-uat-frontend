@@ -310,11 +310,7 @@
       </v-card>
     </v-dialog>
 
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-      <div class="d-flex align-items-center justify-space-between">
-        <span class="mt-1">{{ snackbar.message }}</span>
-      </div>
-    </v-snackbar>
+    <Snackbar ref="snackbarRef" />
 
   </v-container>
 </template>
@@ -323,9 +319,13 @@
 <script>
 import apiClient from '../axios';
 import FormDataMixin from '@/components/FormDataMixin.vue';
+import Snackbar from '@/components/Snackbar.vue';
 
 export default { 
   mixins: [FormDataMixin],
+  components: {
+    Snackbar
+  },
   created() {
     this.fetchCID_LastName();
   },
