@@ -4,6 +4,7 @@ import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
 import NewContact from '../views/NewContact.vue';
 import ClientInfo from '../views/ClientInfo.vue';
+import ClientAccount from '../views/ClientAccount.vue';
 import AllClients from '../views/AllClients.vue';
 
 const routes = [
@@ -11,6 +12,7 @@ const routes = [
     { path: '/register', name: 'Register', component: Register },
     { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: true } },
     { path: '/client_info', name: 'ClientInfo', component: ClientInfo, meta: { requiresAuth: true } },
+    { path: '/client_account', name: 'ClientAccount', component: ClientAccount, meta: { requiresAuth: true } },
     { path: '/all_clients', name: 'AllClients', component: AllClients, meta: { requiresAuth: true } },
     { path: '/new_contact', name: 'NewContact', component: NewContact, meta: { requiresAuth: true } },
     { 
@@ -26,9 +28,9 @@ const routes = [
         meta: { requiresAuth: true } 
     },
     { 
-        path: '/client_account/:cid', 
-        name: 'ClientAccount', 
-        component: () => import('../views/ClientAccount.vue'),
+        path: '/client_account_list/:cid', 
+        name: 'ClientAccountList', 
+        component: () => import('../views/ClientAccountList.vue'),
         meta: { requiresAuth: true } 
     },
 ];

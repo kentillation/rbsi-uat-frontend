@@ -28,7 +28,7 @@
           :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
           :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" />
         <v-card-actions class="mx-4 my-4">
-          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccount"
+          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccountList"
             rounded>List of Accounts</v-btn>
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
@@ -204,10 +204,10 @@ export default {
           });
       }
     },
-    toClientAccount() {
+    toClientAccountList() {
       if (this.selectedClient) {
           this.$router.push({
-          name: 'ClientAccount',
+          name: 'ClientAccountList',
           params: {
               cid: this.selectedClient.cid,
           },

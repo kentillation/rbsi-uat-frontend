@@ -1,32 +1,41 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-container>
-    <div class="d-flex align-items-center">
-      <v-icon @click="goBack" class="mt-2 me-3" size="x-large" icon="mdi-chevron-double-left" title="Back"></v-icon>
-      <h1>Client Accounts</h1>
-    </div>
-    <v-data-table :headers="headers" :items="account_list" :loading="loading" class="elevation-1">
-      <template v-slot:loading>
-        <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-      </template>
-      <template v-slot:top>
-        <v-toolbar flat>
-          <div class="d-flex justify-end w-100">
-            <v-btn append-icon="mdi-refresh" class="me-3 pe-7" variant="outlined" @click="onRefresh"></v-btn>
-          </div>
-        </v-toolbar>
-      </template>
-      <template v-slot:item="{ item }">
-        <tr>
-          <td>{{ formatAcc(item.acc) }}</td>
-          <td>{{ getTitle(item.appType, this.apptypeItems, "app_type") }}</td>
-          <td>{{ item.relType }}</td>
-          <td>{{ item.accStatus }}</td>
-          <td>{{ item.prType }}</td>
-          <td>₱ {{ formatCurrency(item.balAmt) }}</td>
-          <td>₱ {{ formatCurrency(item.availBalAmt) }}</td>
-        </tr>
-      </template>
-    </v-data-table>
+    <h1>Client Information</h1>
+    <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="200" width="100%"
+      rounded>
+      <div class="w-75 mt-10">
+        <v-text-field v-model="search_item_ACC" label="Search account..." @keyup.enter="searchAccount"
+          :loading="validating"></v-text-field>
+        <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
+          :disabled="!searchValid || validating" @click="searchAccount" rounded>
+          Search
+        </v-btn>
+      </div>
+    </v-sheet>
+
+    <!-- Dialog for viewing multiple filtered client details -->
+    <v-dialog v-model="dialogMultiple" transition="dialog-bottom-transition" width="1200px" persistent>
+      <v-card>
+        <v-card-title>
+          <span class="headline">Account Details</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-data-table :headers="headers" :items="clientAccounts" item-key="acc" class="elevation-1">
+              <template v-slot:loading>
+                <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+              </template>
+            </v-data-table>
+          </v-container>
+        </v-card-text>
+        <v-card-actions class="mx-4 my-4">
+          <v-spacer></v-spacer>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogMultiple = false"
+            rounded>Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <Snackbar ref="snackbarRef" />
   </v-container>
@@ -43,96 +52,98 @@ export default {
   },
   data() {
     return {
-      account_list: [],
-      apptypeItems: [],
+      validating: false,
+      singleClient: null,
       loading: true,
+      skltnLdr: false,
+      imgCrd: false,
+      image_file: null,
+      imgSrc: '',
+      search_item_ACC: '',
+      staff_or_not: 2,
       headers: [
-        { title: 'Account No.', value: 'acc', sortable: false },
-        { title: 'Application Type', value: 'app_type', sortable: false }, // Fixed
-        { title: 'Rel Type', value: 'relType', sortable: false },
-        { title: 'Status', value: 'accStatus', sortable: false },
-        { title: 'Product Type', value: 'prType', sortable: true },
-        { title: 'Balance Amount', value: 'balAmt', sortable: true },
-        { title: 'Available Balance Amount', value: 'availBalAmt', sortable: true },
+        { title: 'Outstanding Balance', value: 'balAmt', sortable: false },
+        { title: 'Available Balance', value: 'availBalAmt', sortable: false },
+        { title: 'Interest Rate', value: 'intRate', sortable: false },
+        { title: 'Interest Effective Date', value: 'intEffDate', sortable: true },
       ],
+      selectedClient: null,
+      appTypeItems: [],
+      dialogMultiple: false,
     };
   },
-  mounted () {
-    this.fetchAppTypesItems();
+  computed: {
+    searchValid() {
+      return this.search_item_ACC.trim() !== '';
+    },
   },
-  created() {
-    this.fetchCID_LastName();
+  mounted() {
+    this.fetchItems('/app_type', 'appTypeItems');
   },
   methods: {
-    goBack() {
-        this.$router.go(-1);
+    async searchAccount() {
+      if (!this.searchValid) return;
+      this.validating = true;
+      try {
+        const response = await apiClient.get('/accountEnquiry', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+          },
+          params: { search: this.search_item_ACC }
+        });
+        const clients = response.data.map(client => ({
+          ...client,
+          intEffDate: this.formatDate(client.intEffDate)
+        }));
+        if (clients.length === 1) {
+          this.singleClient = clients[0];
+          this.selectedClient = this.singleClient;
+          this.skltnLdr = true
+          this.imgCrd = false
+          setTimeout(() => {
+            this.loading = false;
+            this.skltnLdr = false
+            this.imgCrd = true
+          }, 1000)
+        } else if (clients.length > 1) {
+          this.clientAccounts = clients;
+          this.dialogMultiple = true;
+        } else {
+          this.$refs.snackbarRef.showSnackbar("No account found!", "error");
+        }
+      } catch (error) {
+        this.$refs.snackbarRef.showSnackbar("An error occurred while searching for account", "error");
+      } finally {
+        this.validating = false;
+      }
     },
-    async fetchItems(endpoint, targetArray, errorMessage) {
+    async fetchItems(endpoint, key) {
       try {
         const response = await apiClient.get(endpoint, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+          }
         });
-        this[targetArray] = response.data;
+        this[key] = response.data;
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
+        this.$refs.snackbarRef.showSnackbar(`Failed to fetch ${key}`, "error");
       }
     },
-    async fetchAppTypesItems() {
-      this.fetchItems('/app_types', 'apptypeItems', 'Failed to fetch app types');
-    },
-    getTitle(id, items, titleKey) {
-      const item = items.find(item => String(item.id) === String(id));
-      return item ? item[titleKey] : "Unknown";
-    },
-    async fetchClientAccount(cid) {
-      try {
-        const response = await apiClient.post(`/account_list/${cid}`, {}, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-          },
-        });
-
-        console.log("API Response:", response.data); // Debugging log
-
-        if (response.data && response.data.data && Array.isArray(response.data.data.accs)) {
-          this.account_list = response.data.data.accs;
-        } else {
-          this.account_list = []; // Prevents errors if the structure changes
-        }
-      } catch (error) {
-        console.error("Error fetching accounts:", error); // Debugging log
-        this.$refs.snackbarRef.showSnackbar("No accounts found.", "error");
-      } finally {
-        this.loading = false;
+    formatDate(date) {
+      if (!date) return 'Invalid date';
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) {
+          return 'Invalid date';
       }
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
     },
-    fetchCID_LastName() {
-      const { cid } = this.$route.params;
-      if (cid) {
-        this.fetchClientAccount(cid);
-      }
-    },
-    onRefresh() {
-      this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
-        this.fetchCID_LastName();
-      }, 2000);
-    },
-    formatAcc(acc) {
-      if (!acc) return acc;
-      const accStr = String(acc); // Ensure it's a string
-      return accStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
-    },
-    formatCurrency(value) {
-      if (!value || isNaN(value)) return "0.00";
-      return Number(value).toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    }
-  }
+  },
 };
 </script>
+
+<style scoped>
+.to-hide {
+  display: none;
+}
+</style>
