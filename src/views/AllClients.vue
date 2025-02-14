@@ -24,12 +24,12 @@
                 </v-toolbar>
             </template>
             <template v-slot:item="{ item }">
-                <tr :class="{ 'bg-teal-darken-1': !item.existsInMBWin }">
+                <!-- <tr :class="{ 'bg-teal-darken-1': !item.existsInMBWin }"> -->
+                <tr>
                     <td>{{ item.cid }}</td>
                     <td>{{ item.last_name }}</td>
                     <td>{{ item.first_name }}</td>
                     <td>{{ item.middle_name }}</td>
-                    <td>{{ item.display_name }}</td>
                     <td>{{ item.created_at }}</td>
                     <td>{{ item.updated_at }}</td>
                     <td class="text-center">
@@ -89,7 +89,6 @@ export default {
                 { title: 'Last Name', value: 'last_name', sortable: false },
                 { title: 'First Name', value: 'first_name', sortable: false },
                 { title: 'Middle Name', value: 'middle_name', sortable: false },
-                { title: 'Display Name', value: 'display_name', sortable: true },
                 { title: 'Created At', value: 'created_at', sortable: true },
                 { title: 'Updated At', value: 'updated_at', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }

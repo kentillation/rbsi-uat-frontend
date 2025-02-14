@@ -19,10 +19,10 @@
       <template v-slot:item="{ item }">
         <tr>
           <td>{{ formatAcc(item.acc) }}</td>
-          <td>{{ getTitle(item.appType, this.apptypeItems, "app_type") }}</td>
+          <td>{{ getTitle(item.appType, this.appTypeItems, "app_type") }}</td>
           <td>{{ item.relType }}</td>
           <td>{{ item.accStatus }}</td>
-          <td>{{ item.prType }}</td>
+          <td>{{ getTitle(item.prType, this.productTypeItems, "product_type") }}</td>
           <td>₱ {{ formatCurrency(item.balAmt) }}</td>
           <td>₱ {{ formatCurrency(item.availBalAmt) }}</td>
         </tr>
@@ -45,14 +45,15 @@ export default {
   data() {
     return {
       account_list: [],
-      apptypeItems: [],
+      appTypeItems: [],
+      productTypeItems: [],
       loading: true,
       headers: [
         { title: 'Account No.', value: 'acc', sortable: false },
         { title: 'Application Type', value: 'app_type', sortable: false }, // Fixed
         { title: 'Rel Type', value: 'relType', sortable: false },
         { title: 'Status', value: 'accStatus', sortable: false },
-        { title: 'Product Type', value: 'prType', sortable: true },
+        { title: 'Product Type', value: 'product_type', sortable: true },
         { title: 'Outstanding Balance', value: 'balAmt', sortable: true },
         { title: 'Available Balance', value: 'availBalAmt', sortable: true },
       ],
@@ -60,6 +61,7 @@ export default {
   },
   mounted () {
     this.fetchAppTypesItems();
+    this.fetchProductTypesItems();
   },
   created() {
     this.fetchCID_LastName();
@@ -99,7 +101,11 @@ export default {
       }
     },
     async fetchAppTypesItems() {
-      this.fetchItems('/app_type', 'apptypeItems', 'Failed to fetch app types');
+      this.fetchItems('/app_type', 'appTypeItems', 'Failed to fetch app types');
+    },
+    async fetchProductTypesItems() {
+      this.fetchItems('/product_type', 'productTypeItems', 'Failed to fetch product types');
+      console.log("Product Types:", this.productTypeItems);
     },
     getTitle(id, items, titleKey) {
       const item = items.find(item => String(item.id) === String(id));
@@ -112,9 +118,7 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
           },
         });
-
         console.log("API Response:", response.data); // Debugging log
-
         if (response.data && response.data.data && Array.isArray(response.data.data.accs)) {
           this.account_list = response.data.data.accs;
         } else {

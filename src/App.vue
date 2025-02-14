@@ -15,8 +15,7 @@
         <v-list density="compact" nav>
           <v-list-subheader class="ms-5" size="30">Client</v-list-subheader>
           <v-list-item prepend-icon="mdi-information-outline" @click="client_info">Information</v-list-item>
-          <v-list-item prepend-icon="mdi-information-outline" @click="client_account">Accounts</v-list-item>
-          <v-list-item prepend-icon="mdi-plus-circle-outline" @click="new_contact">New Contact</v-list-item>
+          <v-list-item prepend-icon="mdi-bank-outline" @click="client_account">Accounts</v-list-item>
           <v-list-subheader class="ms-5" size="30">Reports</v-list-subheader>
           <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients">Masterlist</v-list-item>
         </v-list>
@@ -65,13 +64,6 @@ export default {
         this.$router.push('/client_account');
       } catch (error) {
         console.error('Error in accessing client info:', error);
-      }
-    },
-    async new_contact() {
-      try {
-        this.$router.push('/new_contact');
-      } catch (error) {
-        console.error('Error in accessing new contact:', error);
       }
     },
     async all_clients() {

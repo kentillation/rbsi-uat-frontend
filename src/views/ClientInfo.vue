@@ -5,7 +5,7 @@
     <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
       rounded>
       <div class="d-flex justify-end w-100">
-        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">New</v-btn>
+        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">New Info</v-btn>
       </div>
       <div class="w-75 mt-10">
         <v-text-field v-model="search_item_CI" label="Search CID or last name..." @keyup.enter="searchClients"
@@ -138,18 +138,6 @@ export default {
     searchValid() {
       return this.search_item_CI.trim() !== '';
     },
-  },
-  mounted() {
-    this.fetchItems('/suffixes', 'suffixesItems');
-    this.fetchItems('/types', 'typeItems');
-    this.fetchItems('/titles', 'titleItems');
-    this.fetchItems('/client_status', 'clientstatusItems');
-    this.fetchItems('/genders', 'genderItems');
-    this.fetchItems('/civil_status', 'civilstatusItems');
-    this.fetchItems('/address_type', 'addresstypeItems');
-    this.fetchItems('/institution', 'institutionItems');
-    this.fetchItems('/entity', 'entityItems');
-    this.fetchItems('/employment', 'employmentItems');
   },
   methods: {
     toNewContact() {
