@@ -15,7 +15,9 @@
                             <v-container>
                                 <div class="d-flex align-items-center justify-space-between">
                                     <h3 class="mb-4">Basic Information</h3>
-                                    <v-btn :disabled="isIdentityCheckDisabled" @click="openConfirmIdentityDialog" prepend-icon="mdi-magnify" variant="tonal" class="bg-teal-darken-3 mb-3 to-hide" rounded>
+                                    <v-btn :disabled="isIdentityCheckDisabled" @click="openConfirmIdentityDialog"
+                                        prepend-icon="mdi-magnify" variant="tonal" class="bg-teal-darken-3 mb-3 to-hide"
+                                        rounded>
                                         <span>Check&nbsp;</span>Identity
                                     </v-btn>
                                 </div>
@@ -162,9 +164,10 @@
                                                     item-value="id" variant="underlined"></v-autocomplete>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-file-input v-model="image_file" @change="previewImage" :rules="[imagefileRule]"
-                                                    accept="image/*" label="Image file" append-inner-icon="mdi-camera"
-                                                    prepend-icon="" variant="underlined" chips show-size >
+                                                <v-file-input v-model="image_file" @change="previewImage"
+                                                    :rules="[imagefileRule]" accept="image/*" label="Image file"
+                                                    append-inner-icon="mdi-camera" prepend-icon="" variant="underlined"
+                                                    chips show-size>
                                                 </v-file-input>
                                             </v-col>
                                         </v-row>
@@ -223,9 +226,9 @@
                                                     variant="underlined" disabled></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-autocomplete v-model="relationship"
-                                                    label="Relationship" :items="relationshipItems" item-title="relationship"
-                                                    item-value="id" variant="underlined"></v-autocomplete>
+                                                <v-autocomplete v-model="relationship" label="Relationship"
+                                                    :items="relationshipItems" item-title="relationship" item-value="id"
+                                                    variant="underlined"></v-autocomplete>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -281,11 +284,11 @@
                         <v-row>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">First Name: </span><strong>{{ first_name
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong>
@@ -293,7 +296,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Suffix: </span><strong>{{
@@ -301,7 +304,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Initial (optional): </span><strong>{{ initial
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems,
@@ -316,7 +319,8 @@
                                     getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staffLabel }}</strong> </p>
+                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staffLabel }}</strong>
+                                </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Gender: </span><strong>{{ getTitle(gender,
@@ -328,37 +332,37 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Mobile 2 (optional): </span><strong>{{ mobile2
-                                        }}</strong></p>
+                                }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Email: </span><strong>{{ email }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Nationality: </span><strong>{{ nationality
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Barangay: </span><strong>{{ address_line1
-                                        }}</strong></p>
+                                }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">City/Municipality: </span><strong>{{ address_line2
-                                        }}</strong></p>
+                                }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Province: </span><strong>{{ address_line3
-                                        }}</strong></p>
+                                }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Type: </span><strong>{{
@@ -366,7 +370,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Telephone (optional): </span><strong>{{ telephone
-                                        }}</strong></p>
+                                }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Fax (optional): </span><strong>{{ fax }}</strong>
@@ -393,8 +397,9 @@
                                     rel_display_name }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Relationship: </span><strong>{{ getTitle(relationship,
-                                    relationshipItems, 'relationship')
+                                <p><span class="text-grey-lighten-1">Relationship: </span><strong>{{
+                                    getTitle(relationship,
+                                        relationshipItems, 'relationship')
                                         }}</strong> </p>
                             </v-col>
                         </v-row>
@@ -421,7 +426,8 @@
                         <v-text-field v-model="search_relation_info" label="Search CID or last name..."
                             @keyup.enter="searchRelationInfo"></v-text-field>
                         <v-btn :disabled="!searchRelationValid || validatingRelation" @click="searchRelationInfo"
-                            prepend-icon="mdi-magnify" variant="tonal" class="bg-teal-darken-4 ms-2" size="large" rounded>Search</v-btn>
+                            prepend-icon="mdi-magnify" variant="tonal" class="bg-teal-darken-4 ms-2" size="large"
+                            rounded>Search</v-btn>
                     </div>
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
@@ -442,8 +448,8 @@
                     :imageSource="imageSource" :typeItems="typeItems" :titleItems="titleItems"
                     :clientstatusItems="clientstatusItems" :genderItems="genderItems"
                     :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
-                    :institutionItems="institutionItems" :entityItems="entityItems"
-                    :employmentItems="employmentItems" :relationshipItems="relationshipItems" />
+                    :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems"
+                    :relationshipItems="relationshipItems" />
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
@@ -482,11 +488,7 @@
             </v-card>
         </v-dialog>
 
-        <v-snackbar v-model="snackbar.visible" :color="snackbar.color">
-            <div class="d-flex align-items-center justify-space-between">
-                {{ snackbar.message }}
-            </div>
-        </v-snackbar>
+        <Snackbar ref="snackbarRef" />
     </v-container>
 </template>
 
@@ -494,16 +496,19 @@
 import apiClient from '../axios';
 import watchlistData from '@/temp/watchlist.json';
 import { debounce } from 'lodash';
+import Snackbar from '@/components/Snackbar.vue';
 import FormDataMixin from '@/components/FormDataMixin.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
     mixins: [FormDataMixin],
     components: {
-        ClientDataMixin
+        ClientDataMixin,
+        Snackbar
     },
     data() {
         return {
+            cid: "",
             search_relation_info: "",
             imgSrc: null,
             skeletonLoader: false,
@@ -573,9 +578,9 @@ export default {
                 this.singleRltnDialog = false;
                 this.searchRltdDialog = false;
                 this.multipleRltnDialog = false;
-                this.showSnackbar('Related contact has been added successfully!', 'success');
+                this.$refs.snackbarRef.showSnackbar('Related contact has been added successfully!', 'success');
             } else {
-                this.showSnackbar('No related contact selected!', 'warning');
+                this.$refs.snackbarRef.showSnackbar('No related contact selected!', 'warning');
             }
             this.singleRltnDialog = false;
         },
@@ -590,7 +595,7 @@ export default {
             if (this.image_file && this.image_file instanceof File) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                this.imgSrc = e.target.result;
+                    this.imgSrc = e.target.result;
                 };
                 reader.readAsDataURL(this.image_file);
             } else {
@@ -607,12 +612,12 @@ export default {
                     item.last_name === this.last_name
                 );
                 if (isOnWatchlist) {
-                    this.showSnackbar('Name is on the watchlist.', 'error');
+                    this.$refs.snackbarRef.showSnackbar('Name is on the watchlist.', 'error');
                 } else {
-                    this.showSnackbar('Name is NOT on the watchlist. You can now proceed!', 'success');
+                    this.$refs.snackbarRef.showSnackbar('Name is NOT on the watchlist. You can now proceed!', 'success');
                 }
             } catch (error) {
-                this.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
+                this.$refs.snackbarRef.showSnackbar('Error checking watchlist. Refresh the page!', 'error');
             }
         },
         async searchRelationInfo() {
@@ -642,10 +647,10 @@ export default {
                     this.multipleRelation = myRelation;
                     this.multipleRltnDialog = true;
                 } else {
-                    this.showSnackbar('No record found!', 'error');
+                    this.$refs.snackbarRef.showSnackbar('No record found!', 'error');
                 }
             } catch (error) {
-                this.showSnackbar('An error occurred while searching!', 'error');
+                this.$refs.snackbarRef.showSnackbar('An error occurred while searching!', 'error');
             } finally {
                 this.validatingRelation = false;
             }
@@ -664,12 +669,12 @@ export default {
                     this.rel_display_name = myRelation.display_name;
                     this.searchRltdDialog = false;
                     this.multipleRltnDialog = false;
-                    this.showSnackbar('Related contact has been added successfully!', 'success');
+                    this.$refs.snackbarRef.showSnackbar('Related contact has been added successfully!', 'success');
                 } else {
-                    this.showSnackbar('No additional details found!', 'info');
+                    this.$refs.snackbarRef.showSnackbar('No additional details found!', 'info');
                 }
             } catch (error) {
-                this.showSnackbar('An error occurred while selecting the item!', 'error');
+                this.$refs.snackbarRef.showSnackbar('An error occurred while selecting the item!', 'error');
             }
         },
         async fetchClientImage(imageFileName) {
@@ -707,7 +712,7 @@ export default {
                         'display_name', 'suffix', 'initial', 'gender', 'civil_status', 'birthdate',
                         'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
                         'address_line3', 'postal_code', 'address_type', 'telephone', 'fax', 'institution',
-                        'entity', 'employment', 'image_file', 'relationship', 
+                        'entity', 'employment', 'image_file', 'relationship',
                         'rel_cid', 'rel_display_name'
                     ];
                     // CHANGE TO PH TIMEZONE
@@ -729,7 +734,24 @@ export default {
                         }
                     });
                     if (response.status === 200) {
-                        this.showSnackbar('New client has been saved successfully.', 'success');
+                        try {
+                            const mbwinResponse = await apiClient.get(`/get_mbwin_client_cid`, {
+                                headers: {
+                                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                                },
+                            });
+                            this.cid = mbwinResponse.data;
+                            this.$router.push({
+                                name: 'NewAccount',
+                                params: {
+                                    cid: this.cid,
+                                },
+                            });
+                        } catch (error) {
+                            console.error('Error fetching client CID:', error);
+                            this.imageSource = "";
+                        }
+                        this.$refs.snackbarRef.showSnackbar('New client has been saved successfully.', 'success');
                         this.confirmDialog = false;
                     }
                 }
@@ -738,7 +760,7 @@ export default {
             } finally {
                 this.validating = false;
             }
-        },
+        }
     },
 };
 

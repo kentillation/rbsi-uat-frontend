@@ -67,17 +67,41 @@
                                 </p>
                             </v-col>
                             <v-col cols="12">
-                                <p><span class="text-grey-lighten-1">Maturity date: </span><strong>{{ formattedMaturitydate
+                                <p><span class="text-grey-lighten-1">Maturity date: </span><strong>{{
+                                    formattedMaturitydate
                                         }}</strong> </p>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-container class="d-flex justify-end">
-                    <v-btn class="bg-red-darken-4 px-3 me-2" prepend-icon="mdi-close-circle" text @click="closeConfirmDialog"
+                    <v-btn :disabled="validatingData" @click="closeConfirmDialog" class="bg-red-darken-4 px-3 me-2" text
                         rounded>Check again</v-btn>
-                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm"
-                        rounded>Confirm</v-btn>
+                    <v-btn :disabled="validatingData" @click="submitForm" class="bg-teal-darken-3 px-3" rounded>
+                        <v-progress-circular v-if="validatingData" size="20" color="white" label="Loading..."
+                            indeterminate />
+                        <span v-else>Confirm</span>
+                    </v-btn>
+                </v-container>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="successDialog" max-width="500px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Created Account</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-container>
+                        <h3 class="text-teal-lighten-1">New account has been created successfully!</h3>
+                        <br>
+                        <h2>Account Number: {{ formatAcc(this.account_number) }}</h2>
+                    </v-container>
+                </v-card-text>
+                <v-container class="d-flex justify-end">
+                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
+                        rounded>Print</v-btn>
+                    <v-btn class="bg-red-darken-4 px-3 me-2" prepend-icon="mdi-close-circle" text
+                        @click="closeSuccessDialog" rounded>Close</v-btn>
                 </v-container>
             </v-card>
         </v-dialog>
@@ -97,6 +121,7 @@ export default {
     data() {
         return {
             cid: "",
+            account_number: "",
             app_type: null,
             product_type: null,
             ownership_type: null,
@@ -109,9 +134,11 @@ export default {
             prTypeRule: (v) => !!v || 'Product type is required',
             ownershipTypeRule: (v) => !!v || 'Ownership type is required',
             validating: false,
+            validatingData: false,
             skeletonLoader: false,
             loading: true,
             confirmDialog: false,
+            successDialog: false,
             timezone: 'Asia/Manila',
         };
     },
@@ -123,6 +150,13 @@ export default {
         this.fetchProductTypesItems();
         this.fetchOwnerTypesItems();
     },
+    // watch: {
+    //     account_number(newValue) {
+    //         if (newValue) {
+    //             this.successDialog = true;
+    //         }
+    //     },
+    // },
     computed: {
         formattedMaturitydate() {
             if (!this.maturity_date) return '';
@@ -219,39 +253,60 @@ export default {
         },
         async submitForm() {
             this.validating = true;
+            this.validatingData = true;
             try {
-                if (this.$refs.form.validate()) {
-                    const formData = new FormData();
-                    const fields = [ 'cid', 'app_type', 'product_type', 'ownership_type', 'maturity_date'];
-                    const formattedMaturitydate = this.maturity_date ? new Date(this.maturity_date).toISOString().split('T')[0] : '';
-                    formData.append('maturity_date', formattedMaturitydate);
-                    fields.forEach(field => {
-                        if (field !== 'maturity_date') {
-                            formData.append(field, this[field]);
-                        }
-                    });
-                    const response = await apiClient.post('/create_account', formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                        }
-                    });
-                    if (response.status === 200) {
-                        // this.showSnackbar('New account has been saved successfully.', 'success');
-                        // this.confirmDialog = false;
-                        this.$router.push({
-                            name: 'ClientAccount',
-                            params: {
-                                cid: this.cid,
-                            },
-                        });
+                if (!this.$refs.form.validate()) {
+                    this.validating = false;
+                    return;
+                }
+                const formData = new FormData();
+                const fields = ['cid', 'app_type', 'product_type', 'ownership_type', 'maturity_date'];
+                const formattedMaturityDate = this.maturity_date
+                    ? new Date(this.maturity_date).toISOString().split('T')[0]
+                    : '';
+                formData.append('maturity_date', formattedMaturityDate);
+                fields.forEach(field => {
+                    if (field !== 'maturity_date') {
+                        formData.append(field, this[field]);
+                    }
+                });
+                const response = await apiClient.post('/create_account', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                    }
+                });
+                this.account_number = response.data.data.acc;
+                if (response.status === 200) {
+                    try {
+                        setTimeout(() => {
+                            this.confirmDialog = false;
+                            this.validatingData = false;
+                            this.successDialog = true;
+                        }, 3000);
+                    } catch (error) {
+                        console.error('Error fetching client CID:', error);
+                        this.imageSource = "";
                     }
                 }
             } catch (error) {
                 this.handleFormError(error);
+                this.validating = false;
+                this.confirmDialog = false;
             } finally {
                 this.validating = false;
             }
+        },
+        formatAcc(account_number) {
+            if (!account_number) return account_number;
+            const account_numberStr = String(account_number);
+            return account_numberStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
+        },
+        closeSuccessDialog() {
+            this.successDialog = false;
+        },
+        printAccount() {
+            window.print();
         },
         handleFormError(error) {
             let message = 'An unknown error occurred.';

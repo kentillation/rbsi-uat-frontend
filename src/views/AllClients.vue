@@ -152,7 +152,7 @@ export default {
         toClientAccount() {
             if (this.selectedClient) {
                 this.$router.push({
-                name: 'ClientAccount',
+                name: 'ClientAccountList',
                 params: {
                     cid: this.selectedClient.cid,
                 },
