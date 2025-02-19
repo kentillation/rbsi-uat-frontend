@@ -13,6 +13,11 @@
                             <v-text-field v-model="cid" label="CID" outlined disabled></v-text-field>
                         </v-col>
                         <v-col cols="12" lg="6" md="6" sm="6" xs="12">
+                            <v-autocomplete v-model="ownership_type" :rules="[ownershipTypeRule]" label="Ownership type"
+                                :items="ownershipTypeItems" item-title="ownership_type"
+                                item-value="id"></v-autocomplete>
+                        </v-col>
+                        <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                             <v-autocomplete v-model="app_type" :rules="[appTypeRule]" label="Application type"
                                 :items="appTypeItems" item-title="app_type" item-value="id"></v-autocomplete>
                         </v-col>
@@ -21,9 +26,7 @@
                                 :items="productTypeItems" item-title="product_type" item-value="id"></v-autocomplete>
                         </v-col>
                         <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                            <v-autocomplete v-model="ownership_type" :rules="[ownershipTypeRule]" label="Ownership type"
-                                :items="ownershipTypeItems" item-title="ownership_type"
-                                item-value="id"></v-autocomplete>
+                            <v-text-field v-model="gl_code" label="GL Code" class="d-none" outlined></v-text-field>
                         </v-col>
                         <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                             <v-text-field variant="underlined" disabled>Maturity date: {{ formattedMaturitydate
@@ -126,10 +129,21 @@ export default {
             product_type: null,
             ownership_type: null,
             maturity_date: null,
+            gl_code: "",
             appTypeItems: [],
             productTypeItems: [],
             ownershipTypeItems: [],
             glCodeItems: [],
+            appTypeMap: {
+                '1': 'Regular Savings (Basic)',
+                '2': 'Current Account (Personal)',
+            },
+            productTypeMap: {
+                '1': '51',
+                '2': '51',
+                '3': '25',
+                '4': '25',
+            },
             appTypeRule: (v) => !!v || 'Application type is required',
             prTypeRule: (v) => !!v || 'Product type is required',
             ownershipTypeRule: (v) => !!v || 'Ownership type is required',
@@ -150,13 +164,41 @@ export default {
         this.fetchProductTypesItems();
         this.fetchOwnerTypesItems();
     },
-    // watch: {
-    //     account_number(newValue) {
-    //         if (newValue) {
-    //             this.successDialog = true;
-    //         }
-    //     },
-    // },
+    watch: {
+        ownership_type(newOwnershipTypeId) {
+            const selectedOwnershipType = this.ownershipTypeItems.find(item => item.id === newOwnershipTypeId);
+            if (selectedOwnershipType) {
+                console.log("Selected ID:", selectedOwnershipType.id);
+                console.log("Selected Title:", selectedOwnershipType.ownership_type);
+            }
+        },
+        product_type(newProduct) {
+            const productType = newProduct ? String(newProduct).trim() : ''; // Ensure it's a string
+            if (this.productTypeMap[productType]) {
+                this.gl_code = this.productTypeMap[productType];
+            } else {
+                this.gl_code = '';
+            }
+            console.log("Selected product type:", newProduct); // Debugging
+            console.log("Mapped GL Code:", this.productTypeMap[newProduct]);
+        },
+        app_type(newAppTypeId) {
+            if (!newAppTypeId) {
+                this.product_type = null;
+                return;
+            }
+            const matchingProductType = this.appTypeMap[newAppTypeId]; // Get mapped product type
+            if (matchingProductType) {
+                const productTypeItem = this.productTypeItems.find(
+                    item => item.product_type === matchingProductType
+                );
+                if (productTypeItem) {
+                    this.product_type = productTypeItem.id;
+                }
+            }
+        }
+    },
+
     computed: {
         formattedMaturitydate() {
             if (!this.maturity_date) return '';
@@ -292,9 +334,11 @@ export default {
             } catch (error) {
                 this.handleFormError(error);
                 this.validating = false;
+                this.validatingData = false;
                 this.confirmDialog = false;
             } finally {
                 this.validating = false;
+                this.validatingData = false;
             }
         },
         formatAcc(account_number) {
