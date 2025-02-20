@@ -46,10 +46,10 @@ export default {
         this.drawer = false
       },
     },
-  computed: {
+    computed: {
     showSidebar() {
       return this.$route.name !== 'Login';
-    }
+    },
   },
   methods: {
     async client_info() {

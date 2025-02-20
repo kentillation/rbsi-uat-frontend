@@ -13,25 +13,23 @@
                             <v-text-field v-model="cid" label="CID" outlined disabled></v-text-field>
                         </v-col>
                         <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                            <v-autocomplete v-model="ownership_type" :rules="[ownershipTypeRule]" label="Ownership type"
-                                :items="ownershipTypeItems" item-title="ownership_type"
-                                item-value="id"></v-autocomplete>
+                            <v-autocomplete @click="fetchOwnerTypes" v-model="ownership_type"
+                                :rules="[ownershipTypeRule]" label="Ownership type" :items="ownershipTypeItems"
+                                item-title="ownership_type" item-value="id"></v-autocomplete>
                         </v-col>
                         <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                             <v-autocomplete v-model="app_type" :rules="[appTypeRule]" label="Application type"
-                                :items="appTypeItems" item-title="app_type" item-value="id"></v-autocomplete>
+                                :items="appTypeItems" item-title="app_type" item-value="id" @click="fetchAppTypes"
+                                @update:modelValue="filterProductTypes">
+                            </v-autocomplete>
                         </v-col>
                         <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                             <v-autocomplete v-model="product_type" :rules="[prTypeRule]" label="Product type"
-                                :items="productTypeItems" item-title="product_type" item-value="id"></v-autocomplete>
+                                :items="filteredProductTypes" item-title="product_type" item-value="id" @click="fetchProductTypes">
+                            </v-autocomplete>
                         </v-col>
                         <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                             <v-text-field v-model="gl_code" label="GL Code" class="d-none" outlined></v-text-field>
-                        </v-col>
-                        <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                            <v-text-field variant="underlined" disabled>Maturity date: {{ formattedMaturitydate
-                                }}</v-text-field>
-                            <v-date-picker v-model="maturity_date"></v-date-picker>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -53,7 +51,7 @@
                         <v-row>
                             <v-col cols="12">
                                 <p><span class="text-grey-lighten-1">CID: </span><strong>{{ cid
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                             <v-col cols="12">
                                 <p><span class="text-grey-lighten-1">Application type: </span><strong>{{
@@ -69,11 +67,6 @@
                                     getTitle(ownership_type, ownershipTypeItems, 'ownership_type') }}</strong>
                                 </p>
                             </v-col>
-                            <v-col cols="12">
-                                <p><span class="text-grey-lighten-1">Maturity date: </span><strong>{{
-                                    formattedMaturitydate
-                                        }}</strong> </p>
-                            </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
@@ -88,7 +81,7 @@
                 </v-container>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="successDialog" max-width="500px">
+        <v-dialog v-model="successDialog" max-width="500px" persistent>
             <v-card>
                 <v-card-title>
                     <span class="headline">Created Account</span>
@@ -102,9 +95,9 @@
                 </v-card-text>
                 <v-container class="d-flex justify-end">
                     <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
-                        rounded>Print</v-btn>
-                    <v-btn class="bg-red-darken-4 px-3 me-2" prepend-icon="mdi-close-circle" text
-                        @click="closeSuccessDialog" rounded>Close</v-btn>
+                        rounded>Print Passbook</v-btn>
+                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
+                        rounded>Print Signature Card</v-btn>
                 </v-container>
             </v-card>
         </v-dialog>
@@ -128,22 +121,11 @@ export default {
             app_type: null,
             product_type: null,
             ownership_type: null,
-            maturity_date: null,
             gl_code: "",
             appTypeItems: [],
             productTypeItems: [],
             ownershipTypeItems: [],
             glCodeItems: [],
-            appTypeMap: {
-                '1': 'Regular Savings (Basic)',
-                '2': 'Current Account (Personal)',
-            },
-            productTypeMap: {
-                '1': '51',
-                '2': '51',
-                '3': '25',
-                '4': '25',
-            },
             appTypeRule: (v) => !!v || 'Application type is required',
             prTypeRule: (v) => !!v || 'Product type is required',
             ownershipTypeRule: (v) => !!v || 'Ownership type is required',
@@ -159,88 +141,43 @@ export default {
     created() {
         this.fetchCID();
     },
-    mounted() {
-        this.fetchAppTypesItems();
-        this.fetchProductTypesItems();
-        this.fetchOwnerTypesItems();
-    },
-    watch: {
-        ownership_type(newOwnershipTypeId) {
-            const selectedOwnershipType = this.ownershipTypeItems.find(item => item.id === newOwnershipTypeId);
-            if (selectedOwnershipType) {
-                console.log("Selected ID:", selectedOwnershipType.id);
-                console.log("Selected Title:", selectedOwnershipType.ownership_type);
-            }
-        },
-        product_type(newProduct) {
-            const productType = newProduct ? String(newProduct).trim() : '';
-            if (this.productTypeMap[productType]) {
-                this.gl_code = this.productTypeMap[productType];
-            } else {
-                this.gl_code = '';
-            }
-            console.log("Selected product type:", newProduct);
-            console.log("Mapped GL Code:", this.productTypeMap[newProduct]);
-        },
-        app_type(newAppTypeId) {
-            if (!newAppTypeId) {
-                this.product_type = null;
-                return;
-            }
-            const matchingProductType = this.appTypeMap[newAppTypeId];
-            if (matchingProductType) {
-                const productTypeItem = this.productTypeItems.find(
-                    item => item.product_type === matchingProductType
-                );
-                if (productTypeItem) {
-                    this.product_type = productTypeItem.id;
-                }
-            }
-        }
-    },
-
     computed: {
-        formattedMaturitydate() {
-            if (!this.maturity_date) return '';
-            const date = new Date(this.maturity_date);
-            return new Intl.DateTimeFormat('en-PH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                timeZone: this.timezone,
-            }).format(date);
+        filteredProductTypes() {
+            if (this.app_type === 1) {
+                return this.productTypeItems.filter(item => item.id === 1 || item.id === 2);
+            } else if (this.app_type === 2) {
+                return this.productTypeItems.filter(item => item.id === 3 || item.id === 4);
+            }
+            return this.productTypeItems;
         },
         isFormValid() {
             return [
-                this.app_type, this.product_type, this.ownership_type, this.maturity_date
+                this.app_type, this.product_type, this.ownership_type
             ].every(field => !!field);
+        }
+    },
+    watch: {
+        product_type(newVal) {
+            const selectedProduct = this.productTypeItems.find(item => item.id === newVal);
+            this.gl_code = selectedProduct ? selectedProduct.gl_code : '';
         }
     },
     methods: {
         goBack() {
             this.$router.go(-1);
         },
-        async fetchClientData(cid) {
-            this.validating = true;
-            try {
-                const response = await apiClient.get(`/show_mbwin_client_info/${cid}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                    },
-                });
-                const client = response.data;
-                Object.assign(this, client);
-            } catch (error) {
-                this.$refs.snackbarRef.showSnackbar('Client CID not found. Please try again!', 'error');
-            } finally {
-                this.validating = false;
-            }
+        fetchOwnerTypes() {
+            this.fetchItems('/ownership_type', 'ownershipTypeItems', 'Failed to fetch ownership types');
         },
-        fetchCID() {
-            const { cid } = this.$route.params;
-            if (cid) {
-                this.cid = cid;
-                this.fetchClientData(cid);
+        async fetchAppTypes() {
+            this.fetchItems('/app_type', 'appTypeItems', 'Failed to fetch app types');
+        },
+        async fetchProductTypes() {
+            this.fetchItems('/product_type', 'productTypeItems', 'Failed to fetch product types');
+        },
+        filterProductTypes() {
+            if (!this.filteredProductTypes.some(item => item.id === this.product_type)) {
+                this.product_type = null;
             }
         },
         async fetchItems(endpoint, targetArray, errorMessage) {
@@ -255,14 +192,46 @@ export default {
                 this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
             }
         },
-        async fetchAppTypesItems() {
-            this.fetchItems('/app_type', 'appTypeItems', 'Failed to fetch app types');
+        async fetchClientData(cid) {
+            this.validating = true;
+            try {
+                const response = await apiClient.get(`/show_mbwin_client_info/${cid}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    },
+                });
+                const client = response.data;
+                // Object.assign(this, client);
+                if (client) {
+                    this.account_number = client.account_number || "";
+                    this.TitleCode = client.TitleCode || "";
+                    this.DisplayName = client.DisplayName || "";
+                    const today = new Date().toISOString().split("T")[0];
+                    this.currentDate = today;
+                    if (Array.isArray(client.address) && client.address.length > 0) {
+                        const firstAddress = client.address[0];
+                        this.Line1 = firstAddress.Line1 || "";
+                        this.Line2 = firstAddress.Line2 || "";
+                        this.Line3 = firstAddress.Line3 || "";
+                        this.Line4 = firstAddress.Line4 || "";
+                    } else {
+                        this.Line1 = this.Line2 = this.Line3 = this.Line4 = ""; // Fallback if no address
+                    }
+                } else {
+                    console.warn("No data found in response.");
+                }
+            } catch (error) {
+                this.$refs.snackbarRef.showSnackbar('Client CID not found. Please try again!', 'error');
+            } finally {
+                this.validating = false;
+            }
         },
-        async fetchProductTypesItems() {
-            this.fetchItems('/product_type', 'productTypeItems', 'Failed to fetch product types');
-        },
-        async fetchOwnerTypesItems() {
-            this.fetchItems('/ownership_type', 'ownershipTypeItems', 'Failed to fetch ownership types');
+        fetchCID() {
+            const { cid } = this.$route.params;
+            if (cid) {
+                this.cid = cid;
+                this.fetchClientData(cid);
+            }
         },
         formatToDateString(date) {
             const year = date.getFullYear();
@@ -301,36 +270,32 @@ export default {
                     this.validating = false;
                     return;
                 }
-                const formData = new FormData();
-                const fields = ['cid', 'app_type', 'product_type', 'ownership_type', 'maturity_date'];
-                const formattedMaturityDate = this.maturity_date
-                    ? new Date(this.maturity_date).toISOString().split('T')[0]
-                    : '';
-                formData.append('maturity_date', formattedMaturityDate);
-                fields.forEach(field => {
-                    if (field !== 'maturity_date') {
-                        formData.append(field, this[field]);
-                    }
-                });
-                const response = await apiClient.post('/create_account', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.account_number = response.data.data.acc;
-                if (response.status === 200) {
+                // const formData = new FormData();
+                // const fields = ['cid', 'ownership_type', 'app_type', 'product_type', 'gl_code'];
+                // fields.forEach(field => {
+                //     if (field) {
+                //         formData.append(field, this[field]);
+                //     }
+                // });
+                // const response = await apiClient.post('/create_account', formData, {
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data',
+                //         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                //     }
+                // });
+                // this.account_number = response.data.data.acc;
+                // if (response.status === 200) {
                     try {
                         setTimeout(() => {
                             this.confirmDialog = false;
-                            this.validatingData = false;
                             this.successDialog = true;
+                            this.validatingData = false;
                         }, 3000);
                     } catch (error) {
                         console.error('Error fetching client CID:', error);
                         this.imageSource = "";
                     }
-                }
+                // }
             } catch (error) {
                 this.handleFormError(error);
                 this.validating = false;
@@ -346,11 +311,29 @@ export default {
             const account_numberStr = String(account_number);
             return account_numberStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
         },
-        closeSuccessDialog() {
-            this.successDialog = false;
-        },
-        printAccount() {
-            window.print();
+        async printAccount() {
+            if (!this.cid) {
+                this.$refs.snackbarRef.showSnackbar("CID is required!", "error");
+                return;
+            }
+            await this.fetchClientData(this.cid); 
+            const queryParams = new URLSearchParams({
+                account_number: this.account_number,
+                CID: this.cid,
+                TitleCode: this.TitleCode,
+                DisplayName: this.DisplayName,
+                Line1: this.Line1,
+                Line2: this.Line2,
+                Line3: this.Line3,
+                Line4: this.Line4,
+                date: this.currentDate,
+            }).toString();
+            const printUrl = `/print-passbook?${queryParams}`;
+            if (printUrl) {
+                window.open(printUrl, '_blank');
+            } else {
+                console.error("Failed to generate print URL");
+            }
         },
         handleFormError(error) {
             let message = 'An unknown error occurred.';

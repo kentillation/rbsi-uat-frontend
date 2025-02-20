@@ -6,6 +6,7 @@ import NewContact from '../views/NewContact.vue';
 import ClientInfo from '../views/ClientInfo.vue';
 import ClientAccount from '../views/ClientAccount.vue';
 import AllClients from '../views/AllClients.vue';
+import PrintPassbook from '../views-printing/PrintPassbook.vue';
 
 const routes = [
     { path: '/', name: 'Login', component: Login },
@@ -33,21 +34,23 @@ const routes = [
         component: () => import('../views/ClientAccountList.vue'),
         meta: { requiresAuth: true } 
     },
+    {
+        path: '/print-passbook',
+        name: 'PrintPassbook',
+        component: PrintPassbook,
+        meta: { layout: 'print' }
+    }
 ];
-
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes
 });
-
 router.beforeEach((to, from, next) => {
     const loggedIn = localStorage.getItem('auth_token');
-
     if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
         next('/');
     } else {
         next();
     }
 });
-
 export default router;
