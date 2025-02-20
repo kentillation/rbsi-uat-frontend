@@ -13,7 +13,6 @@
                                 density="compact" placeholder="Email address" prepend-inner-icon="mdi-email-outline"
                                 variant="outlined">
                             </v-text-field>
-
                             <div class="text-subtitle-1 text-medium-emphasis mt-2">Password</div>
                             <v-text-field v-model="password" :rules="[passwordRule]" autocomplete="current-password"
                                 required :type="visible ? 'text' : 'password'"
@@ -21,7 +20,6 @@
                                 placeholder="Enter your password" prepend-inner-icon="mdi-lock-outline"
                                 variant="outlined" @click:append-inner="visible = !visible">
                             </v-text-field>
-
                             <v-btn :disabled="!isFormValid || validating" color="white" type="submit" block
                                 class="bg-orange-darken-4 mb-8 mt-5" size="large" variant="tonal" :loading="validating"
                                 height="40" text="Validate" width="135" rounded>
@@ -32,19 +30,20 @@
                 </v-card>
             </v-col>
         </v-row>
-
-        <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-            {{ snackbar.message }}
-        </v-snackbar>
+        <Snackbar ref="snackbarRef" />
     </v-container>
 </template>
 
 <script>
 import apiClient from '../axios';
+import Snackbar from '@/components/Snackbar.vue';
 
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Login',
+    components: {
+        Snackbar
+    },
     data() {
         return {
             email: '',
@@ -74,17 +73,15 @@ export default {
                         email: this.email,
                         password: this.password,
                     });
-
                     if (response.status === 200) {
                         localStorage.setItem('auth_token', response.data.access_token);
                         this.$router.push('/home');
-                        this.showSnackbar('Login successful!', 'success');
+                        this.$refs.snackbarRef.showSnackbar('Login successful!', 'success');
                     }
                 }
             } catch (error) {
                 let message = 'An unknown error occurred.';
                 let color = 'error';
-
                 if (error.response) {
                     switch (error.response.status) {
                         case 422:
@@ -104,17 +101,11 @@ export default {
                 } else {
                     message = 'Request error. Please try again!';
                 }
-
-                this.showSnackbar(message, color);
+                this.$refs.snackbarRef.showSnackbar(message, color);
             } finally {
                 this.validating = false;
             }
         },
-        showSnackbar(message, color) {
-            this.snackbar.message = message;
-            this.snackbar.color = color;
-            this.snackbar.visible = true;
-        }
     },
 };
 </script>

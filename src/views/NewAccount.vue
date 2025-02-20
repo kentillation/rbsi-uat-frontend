@@ -173,13 +173,13 @@ export default {
             }
         },
         product_type(newProduct) {
-            const productType = newProduct ? String(newProduct).trim() : ''; // Ensure it's a string
+            const productType = newProduct ? String(newProduct).trim() : '';
             if (this.productTypeMap[productType]) {
                 this.gl_code = this.productTypeMap[productType];
             } else {
                 this.gl_code = '';
             }
-            console.log("Selected product type:", newProduct); // Debugging
+            console.log("Selected product type:", newProduct);
             console.log("Mapped GL Code:", this.productTypeMap[newProduct]);
         },
         app_type(newAppTypeId) {
@@ -187,7 +187,7 @@ export default {
                 this.product_type = null;
                 return;
             }
-            const matchingProductType = this.appTypeMap[newAppTypeId]; // Get mapped product type
+            const matchingProductType = this.appTypeMap[newAppTypeId];
             if (matchingProductType) {
                 const productTypeItem = this.productTypeItems.find(
                     item => item.product_type === matchingProductType
