@@ -8,7 +8,7 @@
         <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">New Info</v-btn>
       </div>
       <div class="w-75 mt-10">
-        <v-text-field v-model="search_item_CI" label="Search CID or last name..." @keyup.enter="searchClients"
+        <v-text-field v-model="search_item_CID" label="Search CID or last name..." @keyup.enter="searchClients"
           :loading="validating"></v-text-field>
         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
           :disabled="!searchValid || validating" @click="searchClients" rounded>
@@ -92,7 +92,7 @@ export default {
       imgCrd: false,
       image_file: null,
       imgSrc: '',
-      search_item_CI: '',
+      search_item_CID: '',
       staff_or_not: 2,
       headers: [
         { title: 'CID', value: 'cid', sortable: false },
@@ -136,7 +136,7 @@ export default {
   },
   computed: {
     searchValid() {
-      return this.search_item_CI.trim() !== '';
+      return this.search_item_CID.trim() !== '';
     },
   },
   methods: {
@@ -151,7 +151,7 @@ export default {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           },
-          params: { search: this.search_item_CI }
+          params: { search: this.search_item_CID }
         });
         const clients = response.data.map(client => ({
           ...client,

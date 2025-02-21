@@ -71,9 +71,9 @@
                     </v-container>
                 </v-card-text>
                 <v-container class="d-flex justify-end">
-                    <v-btn :disabled="validatingData" @click="closeConfirmDialog" class="bg-red-darken-4 px-3 me-2" text
+                    <v-btn prepend-icon="mdi-close" :disabled="validatingData" @click="closeConfirmDialog" class="bg-red-darken-4 px-3 me-2" text
                         rounded>Check again</v-btn>
-                    <v-btn :disabled="validatingData" @click="submitForm" class="bg-teal-darken-3 px-3" rounded>
+                    <v-btn  prepend-icon="mdi-check" :disabled="validatingData" @click="submitForm" class="bg-teal-darken-3 px-3" rounded>
                         <v-progress-circular v-if="validatingData" size="20" color="white" label="Loading..."
                             indeterminate />
                         <span v-else>Confirm</span>
@@ -195,7 +195,7 @@ export default {
         async fetchClientData(cid) {
             this.validating = true;
             try {
-                const response = await apiClient.get(`/show_mbwin_client_info/${cid}`, {
+                const response = await apiClient.get(`/get_cid_mbwin/${cid}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                     },

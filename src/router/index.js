@@ -20,6 +20,7 @@ const routes = [
         path: '/new_account/:cid', 
         name: 'NewAccount', 
         component: () => import('../views/NewAccount.vue'),
+        props: true,
         meta: { requiresAuth: true } 
     },
     { 

@@ -5,37 +5,85 @@
     <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
       rounded>
       <div class="d-flex justify-end w-100">
-        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewAccount" size="large">New Account</v-btn>
+        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="dialogOpenCID" size="large">New
+          Account</v-btn>
       </div>
       <div class="w-75 mt-10">
-        <v-text-field v-model="search_item_ACC" label="Search account..." @keyup.enter="searchAccount"
-          :loading="validating"></v-text-field>
-        <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
+        <v-text-field v-model="search_item_ACC" label="Search account..." @keyup.enter="searchAccount"></v-text-field>
+        <!-- <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
           :disabled="!searchValid || validating" @click="searchAccount" rounded>
           Search
+        </v-btn> -->
+
+        <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
+          :disabled="!searchValid || validating" @click="searchAccount" rounded>
+            <v-progress-circular v-if="validating" size="20" color="white" indeterminate />
+            <span v-else>Search</span>
         </v-btn>
       </div>
     </v-sheet>
 
-    <!-- Dialog for viewing multiple filtered client details -->
-    <v-dialog v-model="dialogMultiple" transition="dialog-bottom-transition" width="1200px" persistent>
+    <v-dialog v-model="dialogCID" transition="dialog-bottom-transition" width="600px" persistent>
+      <v-card>
+        <v-card-title>
+          <span class="headline"></span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-sheet class="d-flex flex-column align-center text-center mx-auto" height="100" width="100%" rounded>
+              <div class="w-75">
+                <v-text-field v-model="search_item_CID" label="Enter CID..." @keyup.enter="searchCID"></v-text-field>
+                <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
+                  :disabled="!searchValidCID || validatingCID" @click="searchCID" rounded>
+                  <v-progress-circular v-if="validatingCID" size="20" color="white" indeterminate />
+                  <span v-else>Search</span>
+                </v-btn>
+              </div>
+            </v-sheet>
+          </v-container>
+        </v-card-text>
+        <v-card-actions class="mx-4 my-4">
+          <v-spacer></v-spacer>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogCID = false"
+            rounded>
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="dialogOutput" transition="dialog-bottom-transition" width="600px" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">Account Details</span>
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-data-table :headers="headers" :items="clientAccounts" item-key="acc" class="elevation-1">
-              <template v-slot:loading>
-                <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-              </template>
-            </v-data-table>
+            <v-row v-if="selectedAccount">
+              <v-col cols="12">
+                <p><strong>Outstanding Balance:</strong>₱ {{ formatCurrency(selectedAccount.balAmt) }}</p>
+                <p><strong>Available Balance:</strong>₱ {{ formatCurrency(selectedAccount.availBalAmt) }}</p>
+                <p><strong>Interest Rate:</strong> {{ selectedAccount.intRate }}%</p>
+                <p><strong>Interest Effective Date:</strong> {{ formatDate(selectedAccount.intEffDate) }}</p>
+                <p><strong>Account Status:</strong> {{ selectedAccount.accStatus }}</p>
+                <p><strong>Status Date:</strong> {{ formatDate(selectedAccount.accStatusDate) }}</p>
+                <p><strong>Currency Type:</strong> {{ selectedAccount.ccyType }}</p>
+                <p><strong>Open Date:</strong> {{ formatDate(selectedAccount.openDate) }}</p>
+              </v-col>
+            </v-row>
+            <v-row v-else>
+              <v-col cols="12" class="text-center">
+                <p>No account details available.</p>
+              </v-col>
+            </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogMultiple = false"
-            rounded>Close</v-btn>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogOutput = false"
+            rounded>
+            Close
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -55,15 +103,13 @@ export default {
   },
   data() {
     return {
+      cid: '',
+      dialogCID: false,
       validating: false,
+      validatingCID: false,
       singleClient: null,
-      loading: true,
-      skltnLdr: false,
-      imgCrd: false,
-      image_file: null,
-      imgSrc: '',
+      search_item_CID: '',
       search_item_ACC: '',
-      staff_or_not: 2,
       headers: [
         { title: 'Outstanding Balance', value: 'balAmt', sortable: false },
         { title: 'Available Balance', value: 'availBalAmt', sortable: false },
@@ -72,61 +118,92 @@ export default {
       ],
       selectedClient: null,
       appTypeItems: [],
-      dialogMultiple: false,
+      dialogOutput: false,
     };
   },
   computed: {
     searchValid() {
       return this.search_item_ACC.trim() !== '';
     },
+    searchValidCID() {
+      return this.search_item_CID.trim() !== '';
+    },
   },
   mounted() {
     this.fetchItems('/app_type', 'appTypeItems');
   },
   methods: {
-    toNewAccount() {
-      const { cid } = this.$route.params;
-      if (cid) {
-          this.$router.push({
-          name: 'NewAccount',
-          params: {
-              cid: cid,
+    dialogOpenCID() {
+      this.dialogCID = true;
+    },
+    // toNewAccount() {
+    //   const { cid } = this.$route.params;
+    //   if (cid) {
+    //     this.$router.push({
+    //       name: 'NewAccount',
+    //       params: {
+    //         cid: cid,
+    //       },
+    //     });
+    //   }
+    // },
+    async searchCID() {
+      if (!this.searchValidCID) return;
+      this.validatingCID = true;
+      try {
+        const response = await apiClient.get('/get_search_cid_mbwin', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           },
+          params: { search: this.search_item_CID }
         });
+
+        // console.log("API Response:", response.data); 
+
+        if (response.data.length === 1) {
+          const selectedCID = response.data[0].CID;
+          this.$router.push({
+            name: 'NewAccount',
+            params: {
+                cid: String(selectedCID),
+            },
+          });
+        } else {
+          this.$refs.snackbarRef.showSnackbar("CID not found. Please try again!", "error");
+        }
+      } catch (error) {
+        this.$refs.snackbarRef.showSnackbar("An error occurred while searching for CID", "error");
+        this.validatingCID = false;
+      } finally {
+        this.validatingCID = false;
       }
     },
     async searchAccount() {
       if (!this.searchValid) return;
       this.validating = true;
       try {
-        const response = await apiClient.get('/accountEnquiry', {
+        const response = await apiClient.post('/account_enquiry', {
+          acc: this.search_item_ACC
+        }, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           },
           params: { search: this.search_item_ACC }
         });
-        const clients = response.data.map(client => ({
-          ...client,
-          intEffDate: this.formatDate(client.intEffDate)
-        }));
-        if (clients.length === 1) {
-          this.singleClient = clients[0];
-          this.selectedClient = this.singleClient;
-          this.skltnLdr = true
-          this.imgCrd = false
-          setTimeout(() => {
-            this.loading = false;
-            this.skltnLdr = false
-            this.imgCrd = true
-          }, 1000)
-        } else if (clients.length > 1) {
-          this.clientAccounts = clients;
-          this.dialogMultiple = true;
+        if (response.data && typeof response.data === "object") {
+          this.selectedAccount = {
+            ...response.data.data,
+            intEffDate: this.formatDate(response.data.data.intEffDate),
+            accStatusDate: this.formatDate(response.data.data.accStatusDate),
+            openDate: this.formatDate(response.data.data.openDate)
+          };
+          this.dialogOutput = true;
         } else {
-          this.$refs.snackbarRef.showSnackbar("No account found!", "error");
+          this.$refs.snackbarRef.showSnackbar("Unexpected response format", "error");
         }
       } catch (error) {
         this.$refs.snackbarRef.showSnackbar("An error occurred while searching for account", "error");
+        console.error("Error:", error);
       } finally {
         this.validating = false;
       }
@@ -143,11 +220,18 @@ export default {
         this.$refs.snackbarRef.showSnackbar(`Failed to fetch ${key}`, "error");
       }
     },
+    formatCurrency(value) {
+      if (!value || isNaN(value)) return "0.00";
+      return Number(value).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    },
     formatDate(date) {
       if (!date) return 'Invalid date';
       const parsedDate = new Date(date);
       if (isNaN(parsedDate.getTime())) {
-          return 'Invalid date';
+        return 'Invalid date';
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
