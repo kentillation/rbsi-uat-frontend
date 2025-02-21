@@ -22,7 +22,7 @@
           <td>{{ getTitle(item.appType, this.appTypeItems, "app_type") }}</td>
           <td>{{ item.relType }}</td>
           <td>{{ item.accStatus }}</td>
-          <td>{{ getTitle(item.prType, this.productTypeItems, "product_type") }}</td>
+          <td>{{ getProducts(item.prType, this.productTypeItems, "product_type_code") }}</td>
           <td>₱ {{ formatCurrency(item.balAmt) }}</td>
           <td>₱ {{ formatCurrency(item.availBalAmt) }}</td>
         </tr>
@@ -49,11 +49,11 @@ export default {
       productTypeItems: [],
       loading: true,
       headers: [
-        { title: 'Account No.', value: 'acc', sortable: false },
-        { title: 'Application Type', value: 'app_type', sortable: false }, // Fixed
-        { title: 'Rel Type', value: 'relType', sortable: false },
-        { title: 'Status', value: 'accStatus', sortable: false },
-        { title: 'Product Type', value: 'product_type', sortable: true },
+        { title: 'Account No.', value: 'acc', sortable: true },
+        { title: 'App Type', value: 'app_type', sortable: true },
+        { title: 'Rel Type', value: 'relType', sortable: true },
+        { title: 'Status', value: 'accStatus', sortable: true },
+        { title: 'Product Type', value: 'product_type_code', sortable: true },
         { title: 'Outstanding Balance', value: 'balAmt', sortable: true },
         { title: 'Available Balance', value: 'availBalAmt', sortable: true },
       ],
@@ -105,10 +105,13 @@ export default {
     },
     async fetchProductTypesItems() {
       this.fetchItems('/product_type', 'productTypeItems', 'Failed to fetch product types');
-      console.log("Product Types:", this.productTypeItems);
     },
     getTitle(id, items, titleKey) {
       const item = items.find(item => String(item.id) === String(id));
+      return item ? item[titleKey] : "Unknown";
+    },
+    getProducts(product_type_code, items, titleKey) {
+      const item = items.find(item => item.product_type_code === product_type_code);
       return item ? item[titleKey] : "Unknown";
     },
     async fetchClientAccount(cid) {
