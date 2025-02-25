@@ -20,7 +20,6 @@ export default {
             imageSource: "",
             type: "",
             title: "",
-            client_status: "",
             first_name: "",
             middle_name: "",
             last_name: "",
@@ -36,20 +35,17 @@ export default {
             timezone: 'Asia/Manila',
             birthdate: null,
             mobile1: "",
-            mobile2: "",
             email: "",
             nationality: 'Filipino',
             address_line1: "",
             address_line2: "",
-            address_line3: "",
             postal_code: "",
             address_type: "",
             telephone: "",
-            fax: "",
             image_file: null,
-            institution: "",
-            entity: "",
-            employment: "",
+            // institution: "",
+            // entity: "",
+            // employment: "",
             reg_date: this.formatToDateString(new Date()),
             relation: [
                 { cid: "", relation_type: "" },
@@ -63,16 +59,6 @@ export default {
                 { title: 'Display Name', value: 'display_name', sortable: false },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
-            titleToGenderMap: {
-                'Mr.': 'Male',
-                'Fr.': 'Male',
-                'Msg.': 'Male',
-                'Ms.': 'Female',
-                'Dr.': 'Prefer not to say',
-                'Atty.': 'Prefer not to say',
-                'Engr.': 'Prefer not to say',
-                '-': 'Prefer not to say',
-            },
             cityToPostalCodeMap: {
                 'Sagay': '6122',
                 'Cadiz': '6121',
@@ -87,13 +73,12 @@ export default {
             genderItems: [],
             civilstatusItems: [],
             addresstypeItems: [],
-            institutionItems: [],
-            entityItems: [],
-            employmentItems: [],
+            // institutionItems: [],
+            // entityItems: [],
+            // employmentItems: [],
             relationshipItems: [],
             typeRule: (v) => !!v || 'Type is required',
             titleRule: (v) => !!v || 'Title is required',
-            clientstatusRule: (v) => !!v || 'Client status is required',
             firstnameRule: (v) => !!v || 'First name is required',
             middlenameRule: (v) => !!v || 'Middle name is required',
             lastnameRule: (v) => !!v || 'Last name is required',
@@ -108,9 +93,9 @@ export default {
             addressline3Rule: (v) => !!v || 'Province is required',
             postalcodeRule: (v) => !!v || 'Postal Code is required',
             addresstypeRule: (v) => !!v || 'Address type is required',
-            institutionRule: (v) => !!v || 'Institution is required',
-            entityRule: (v) => !!v || 'Entity is required',
-            employmentRule: (v) => !!v || 'Employment is required',
+            // institutionRule: (v) => !!v || 'Institution is required',
+            // entityRule: (v) => !!v || 'Entity is required',
+            // employmentRule: (v) => !!v || 'Employment is required',
             imagefileRule: (v) => !!v || 'Please select an image',
             validating: false,
             snackbar: {
@@ -131,18 +116,6 @@ export default {
         displayName(newVal) {
             this.display_name = newVal;
         },
-        title(newGenderId) {
-            const selectedTitle = this.titleItems.find(item => item.id === newGenderId);
-            if (selectedTitle) {
-                const matchingGender = this.titleToGenderMap[selectedTitle.title];
-                if (matchingGender) {
-                const genderItem = this.genderItems.find(item => item.gender === matchingGender);
-                if (genderItem) {
-                    this.gender = genderItem.id;
-                }
-                }
-            }
-        },
         address_line2(newCity) {
             const city = newCity.trim();
             if (this.cityToPostalCodeMap[city]) {
@@ -153,17 +126,17 @@ export default {
         },
     },
     mounted() {
-        this.fetchSuffixesItems();
-        this.fetchTypesItems();
-        this.fetchTitlesItems();
-        this.fetchClientStatusItems();
-        this.fetchGenderItems();
-        this.fetchCivil_StatusItems();
-        this.fetchUndefItems();
-        this.fetchEntityItems();
-        this.fetchEmploymentItems();
-        this.fetchAddressTypeItems();
-        this.fetchRelation();
+        // this.fetchSuffixesItems();
+        // this.fetchTypesItems();
+        // this.fetchTitlesItems();
+        // this.fetchClientStatusItems();
+        // this.fetchGenderItems();
+        // this.fetchCivilStatusItems();
+        // this.fetchInstitutionItems();
+        // this.fetchEntityItems();
+        // this.fetchEmploymentItems();
+        // this.fetchAddressTypeItems();
+        // this.fetchRelationShip();
     },
     computed: {
         isIdentityCheckDisabled() {
@@ -188,11 +161,9 @@ export default {
         isFormValid() {
             return [
                 this.first_name, this.middle_name, this.last_name,
-                this.type, this.title, this.client_status,
-                this.display_name, this.gender, this.civil_status,
-                this.birthdate, this.address_line1, this.address_line2, this.address_line3,
+                this.type, this.title, this.display_name, this.gender, this.civil_status,
+                this.birthdate, this.address_line1, this.address_line2,
                 this.postal_code, this.address_type,
-                this.institution, this.entity, this.employment,
                 this.image_file, this.mobile1, this.email, this.nationality
             ].every(field => !!field);
         }
@@ -216,39 +187,36 @@ export default {
                 this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
             }
         },
-        async fetchSuffixesItems() {
-            this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
-        },
-        async fetchTypesItems() {
-            this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
-        },
-        async fetchTitlesItems() {
-            this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
-        },
-        async fetchClientStatusItems() {
-            this.fetchItems('/client_status', 'clientstatusItems', 'Failed to fetch client status');
-        },
-        async fetchGenderItems() {
-            this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
-        },
-        async fetchCivil_StatusItems() {
-            this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
-        },
-        async fetchAddressTypeItems() {
-            this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
-        },
-        async fetchUndefItems() {
-            this.fetchItems('/institution', 'institutionItems', 'Failed to fetch institution codes');
-        },
-        async fetchEntityItems() {
-            this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
-        },
-        async fetchEmploymentItems() {
-            this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
-        },
-        async fetchRelation() {
-            this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
-        },
+        // async fetchSuffixesItems() {
+        //     this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
+        // },
+        // async fetchTypesItems() {
+        //     this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
+        // },
+        // async fetchTitlesItems() {
+        //     this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
+        // },
+        // async fetchGenderItems() {
+        //     this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
+        // },
+        // async fetchCivilStatusItems() {
+        //     this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
+        // },
+        // async fetchAddressTypeItems() {
+        //     this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
+        // },
+        // async fetchInstitutionItems() {
+        //     this.fetchItems('/institution', 'institutionItems', 'Failed to fetch institution codes');
+        // },
+        // async fetchEntityItems() {
+        //     this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
+        // },
+        // async fetchEmploymentItems() {
+        //     this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
+        // },
+        // async fetchRelationShip() {
+        //     this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
+        // },
         async checkWatchlist() {
             if (this.isIdentityCheckDisabled) return;
             try {
@@ -270,17 +238,18 @@ export default {
         async checkIdentity() {
             if (!this.first_name || !this.middle_name || !this.last_name) return;
             try {
-                const [response1, response2] = await Promise.all([
-                    apiClient.get('/check_mbwin_client_info', {
-                        headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-                        params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
-                    }),
+                // const [response1, response2] = await Promise.all([
+                const [response2] = await Promise.all([
+                    // apiClient.get('/check_mbwin_client_info', {
+                    //     headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+                    //     params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
+                    // }),
                     apiClient.get('/check_new_db_client_info', {
                         headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
                         params: { first_name: this.first_name, middle_name: this.middle_name, last_name: this.last_name }
                     })
                 ]);
-                if (response1.data.exists) this.$refs.snackbarRef.showSnackbar('Name already exists in MBWin database.', 'error');
+                // if (response1.data.exists) this.$refs.snackbarRef.showSnackbar('Name already exists in MBWin database.', 'error');
                 if (response2.data.exists) this.$refs.snackbarRef.showSnackbar('Name already exists in new database.', 'error');
             } catch (error) {
                 this.$refs.snackbarRef.showSnackbar('Error checking identity. Refresh the page!', 'error');

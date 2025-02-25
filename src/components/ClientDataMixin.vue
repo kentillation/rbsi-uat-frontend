@@ -36,9 +36,9 @@ export default {
       genderItems: [],
       civilstatusItems: [],
       addresstypeItems: [],
-      institutionItems: [],
-      entityItems: [],
-      employmentItems: [],
+      // institutionItems: [],
+      // entityItems: [],
+      // employmentItems: [],
     }
   },
   props: {
@@ -57,10 +57,8 @@ export default {
         { label: "Display Name", value: this.client?.display_name },
         { label: "Initial", value: this.client?.initial },
         { label: "Staff or Not", value: this.staffLabel },
-        { label: "Client Status", value: this.getTitle(this.client?.client_status, this.clientstatusItems, "client_status") },
         { label: "Type", value: this.getTitle(this.client?.type, this.typeItems, "type") },
         { label: "Mobile 1", value: this.client?.mobile1 },
-        { label: "Mobile 2", value: this.client?.mobile2 },
         { label: "Email", value: this.client?.email },
         { label: "Nationality", value: this.client?.nationality },
         { label: "Gender", value: this.getTitle(this.client?.gender, this.genderItems, "gender") },
@@ -68,14 +66,9 @@ export default {
         { label: "Birthdate", value: this.client?.birthdate ? this.formatDate(this.client?.birthdate) : "N/A" },
         { label: "Barangay", value: this.client?.address_line1 },
         { label: "City", value: this.client?.address_line2 },
-        { label: "Province", value: this.client?.address_line3 },
-        { label: "Address Type", value: this.getTitle(this.client?.address_type, this.addresstypeItems, "address_type") }, //
+        { label: "Address Type", value: this.getTitle(this.client?.address_type, this.addresstypeItems, "address_type") },
         { label: "Telephone", value: this.client?.telephone },
-        { label: "Fax", value: this.client?.fax },
         { label: "Postal Code", value: this.client?.postal_code },
-        { label: "Institution", value: this.getTitle(this.client?.institution, this.institutionItems, "institution") },
-        { label: "Entity", value: this.getTitle(this.client?.entity, this.entityItems, "entity") },
-        { label: "Employment", value: this.getTitle(this.client?.employment, this.employmentItems, "employment") },
       ];
     },
     staffLabel() {
@@ -83,16 +76,15 @@ export default {
     },
   },
   mounted() {
-    this.fetchSuffixesItems();
-    this.fetchTypesItems();
-    this.fetchTitlesItems();
-    this.fetchClientStatusItems();
-    this.fetchGenderItems();
-    this.fetchCivil_StatusItems();
-    this.fetchUndefItems();
-    this.fetchEntityItems();
-    this.fetchEmploymentItems();
-    this.fetchAddressTypeItems();
+    // this.fetchSuffixesItems();
+    // this.fetchTypesItems();
+    // this.fetchTitlesItems();
+    // this.fetchGenderItems();
+    // this.fetchCivilStatusItems();
+    // this.fetchInstitutionItems();
+    // this.fetchEntityItems();
+    // this.fetchEmploymentItems();
+    // this.fetchAddressTypeItems();
   },
   methods: {
     async fetchItems(endpoint, targetArray, errorMessage) {
@@ -107,36 +99,33 @@ export default {
         this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
       }
     },
-    async fetchSuffixesItems() {
-      this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
-    },
-    async fetchTypesItems() {
-      this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
-    },
-    async fetchTitlesItems() {
-      this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
-    },
-    async fetchClientStatusItems() {
-      this.fetchItems('/client_status', 'clientstatusItems', 'Failed to fetch client status');
-    },
-    async fetchGenderItems() {
-      this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
-    },
-    async fetchCivil_StatusItems() {
-      this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
-    },
-    async fetchAddressTypeItems() {
-      this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
-    },
-    async fetchUndefItems() {
-      this.fetchItems('/institution', 'institutionItems', 'Failed to fetch institution codes');
-    },
-    async fetchEntityItems() {
-      this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
-    },
-    async fetchEmploymentItems() {
-      this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
-    },
+    // async fetchSuffixesItems() {
+    //   this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
+    // },
+    // async fetchTypesItems() {
+    //   this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
+    // },
+    // async fetchTitlesItems() {
+    //   this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
+    // },
+    // async fetchGenderItems() {
+    //   this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
+    // },
+    // async fetchCivilStatusItems() {
+    //   this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
+    // },
+    // async fetchAddressTypeItems() {
+    //   this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
+    // },
+    // async fetchInstitutionItems() {
+    //   this.fetchItems('/institution', 'institutionItems', 'Failed to fetch institution codes');
+    // },
+    // async fetchEntityItems() {
+    //   this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
+    // },
+    // async fetchEmploymentItems() {
+    //   this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
+    // },
     getTitle(id, items, titleKey) {
       const item = items.find(item => String(item.id) === String(id));
       return item ? item[titleKey] : "Unknown";

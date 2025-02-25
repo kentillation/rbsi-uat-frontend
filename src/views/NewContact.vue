@@ -21,7 +21,7 @@
                                         <span>Check&nbsp;</span>Identity
                                     </v-btn>
                                 </div>
-                                <v-row justify="center">
+                                <v-row>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-text-field v-model="first_name" :rules="[firstnameRule]" label="First Name"
                                             variant="underlined" clearable></v-text-field>
@@ -39,7 +39,7 @@
                                             label="Display Name" variant="underlined" disabled></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete v-model="suffix" label="Suffix" :items="suffixesItems"
+                                        <v-autocomplete @click="fetchSuffixesItems" v-model="suffix" label="Suffix" :items="suffixesItems"
                                             item-title="suffix" item-value="id" variant="underlined">
                                         </v-autocomplete>
                                     </v-col>
@@ -48,19 +48,21 @@
                                             clearable></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete v-model="type" :rules="[typeRule]" label="Type"
+                                        <v-autocomplete @click="fetchTypesItems" v-model="type" :rules="[typeRule]" label="Type"
                                             :items="typeItems" item-title="type" item-value="id" variant="underlined">
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete v-model="title" :rules="[titleRule]" label="Title"
+                                        <v-autocomplete @click="fetchTitleItems" v-model="title" :rules="[titleRule]" label="Title"
                                             :items="titleItems" item-title="title" item-value="id"
                                             variant="underlined"></v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete v-model="client_status" :rules="[clientstatusRule]"
-                                            label="Client Status" :items="clientstatusItems" item-title="client_status"
-                                            item-value="id" variant="underlined"></v-autocomplete>
+                                        <v-file-input v-model="image_file" @change="previewImage"
+                                            :rules="[imagefileRule]" accept="image/*" label="Image file"
+                                            append-inner-icon="mdi-camera" prepend-icon="" variant="underlined"
+                                            chips show-size>
+                                        </v-file-input>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-checkbox v-model="staff_or_not" color="success" label="Staff"></v-checkbox>
@@ -78,12 +80,12 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-autocomplete v-model="gender" :rules="[genderRule]"
+                                                        <v-autocomplete @click="fetchGenderItems" v-model="gender" :rules="[genderRule]"
                                                             label="Gender" :items="genderItems" item-title="gender"
                                                             item-value="id" variant="underlined"></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
-                                                        <v-autocomplete v-model="civil_status"
+                                                        <v-autocomplete @click="fetchCivilStatusItems" v-model="civil_status"
                                                             :rules="[civilstatusRule]" label="Civil status"
                                                             :items="civilstatusItems" item-title="civil_status"
                                                             item-value="id" variant="underlined"></v-autocomplete>
@@ -116,10 +118,6 @@
                                                     clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
-                                                    label="Province" variant="underlined" clearable></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
                                                 <v-text-field v-model="postal_code" :rules="[postalcodeRule]"
                                                     label="Postal Code" variant="underlined" clearable></v-text-field>
                                             </v-col>
@@ -128,11 +126,7 @@
                                                     variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-text-field v-model="fax" label="Fax (optional)" variant="underlined"
-                                                    clearable></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-autocomplete v-model="address_type" :rules="[addresstypeRule]"
+                                                <v-autocomplete @click="fetchAddressTypeItems" v-model="address_type" :rules="[addresstypeRule]"
                                                     label="Address Type" :items="addresstypeItems"
                                                     item-title="address_type" item-value="id"
                                                     variant="underlined"></v-autocomplete>
@@ -142,7 +136,7 @@
                                 </v-card>
                             </v-col>
                             <!-- Client Classification Codes -->
-                            <v-col cols="12" lg="6" md="6" sm="6" xs="12">
+                            <!-- <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                 <v-card border="opacity-50 sm" class="mb-5">
                                     <v-container>
                                         <h3 class="mb-4">Client Classification Codes</h3>
@@ -163,17 +157,10 @@
                                                     label="Employment" :items="employmentItems" item-title="employment"
                                                     item-value="id" variant="underlined"></v-autocomplete>
                                             </v-col>
-                                            <v-col cols="12">
-                                                <v-file-input v-model="image_file" @change="previewImage"
-                                                    :rules="[imagefileRule]" accept="image/*" label="Image file"
-                                                    append-inner-icon="mdi-camera" prepend-icon="" variant="underlined"
-                                                    chips show-size>
-                                                </v-file-input>
-                                            </v-col>
                                         </v-row>
                                     </v-container>
                                 </v-card>
-                            </v-col>
+                            </v-col> -->
                             <!-- Contact Information -->
                             <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                 <v-card border="opacity-50 sm" class="mb-5">
@@ -186,10 +173,6 @@
                                                         <v-text-field v-model="mobile1" :rules="[mobile1Rule]"
                                                             label="Mobile 1" variant="underlined"
                                                             clearable></v-text-field>
-                                                    </v-col>
-                                                    <v-col cols="12">
-                                                        <v-text-field v-model="mobile2" label="Mobile 2 (optional)"
-                                                            variant="underlined" clearable></v-text-field>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-text-field v-model="email" type="email" :rules="[emailRule]"
@@ -226,7 +209,7 @@
                                                     variant="underlined" disabled></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-autocomplete v-model="relationship" label="Relationship"
+                                                <v-autocomplete @click="fetchRelationShip" v-model="relationship" label="Relationship"
                                                     :items="relationshipItems" item-title="relationship" item-value="id"
                                                     variant="underlined"></v-autocomplete>
                                             </v-col>
@@ -315,10 +298,6 @@
                                     titleItems, 'title') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Client Status: </span><strong>{{
-                                    getTitle(client_status, clientstatusItems, 'client_status') }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staffLabel }}</strong>
                                 </p>
                             </v-col>
@@ -338,10 +317,6 @@
                                 <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Mobile 2 (optional): </span><strong>{{ mobile2
-                                }}</strong></p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Email: </span><strong>{{ email }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
@@ -357,10 +332,6 @@
                                 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Province: </span><strong>{{ address_line3
-                                }}</strong></p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code
                                 }}</strong> </p>
                             </v-col>
@@ -371,22 +342,6 @@
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Telephone (optional): </span><strong>{{ telephone
                                 }}</strong></p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Fax (optional): </span><strong>{{ fax }}</strong>
-                                </p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Institution: </span><strong>{{
-                                    getTitle(institution, institutionItems, 'institution') }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Entity: </span><strong>{{ getTitle(entity,
-                                    entityItems, 'entity') }}</strong> </p>
-                            </v-col>
-                            <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Employment: </span><strong>{{ getTitle(employment,
-                                    employmentItems, 'employment') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Related CID: </span><strong>{{ rel_cid }}</strong>
@@ -407,10 +362,13 @@
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="closeConfirmDialog"
+                    <v-btn :disabled="validating" class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="closeConfirmDialog"
                         rounded>Check again</v-btn>
-                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-check" text @click="submitForm"
-                        rounded>Confirm</v-btn>
+                    <v-btn prepend-icon="mdi-check" :disabled="validating" @click="submitForm" class="bg-teal-darken-3 px-3" rounded>
+                        <v-progress-circular v-if="validating" size="20" color="white" label="Loading..."
+                            indeterminate />
+                        <span v-else>Confirm</span>
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -446,9 +404,7 @@
                 </v-card-title>
                 <ClientDataMixin :client="singleRelation" :skeletonLoader="skeletonLoader" :imageCard="imageCard"
                     :imageSource="imageSource" :typeItems="typeItems" :titleItems="titleItems"
-                    :clientstatusItems="clientstatusItems" :genderItems="genderItems"
-                    :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
-                    :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems"
+                    :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
                     :relationshipItems="relationshipItems" />
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
@@ -493,9 +449,9 @@
 </template>
 
 <script>
+// import { debounce } from 'lodash';
 import apiClient from '../axios';
 import watchlistData from '@/temp/watchlist.json';
-import { debounce } from 'lodash';
 import Snackbar from '@/components/Snackbar.vue';
 import FormDataMixin from '@/components/FormDataMixin.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
@@ -520,13 +476,7 @@ export default {
             multipleRltnDialog: false,
         }
     },
-    created() {
-        this.checkIdentity = debounce(this.checkIdentity, 300);
-    },
     watch: {
-        first_name: 'checkIdentityWebhooks',
-        middle_name: 'checkIdentityWebhooks',
-        last_name: 'checkIdentityWebhooks',
         'singleRelation.image_file': {
             immediate: true,
             handler(newValue) {
@@ -547,9 +497,6 @@ export default {
     methods: {
         goBack() {
             this.$router.go(-1);
-        },
-        checkIdentityWebhooks() {
-            this.checkIdentity();
         },
         openConfirmIdentityDialog() {
             this.confirmIdentityDialog = true;
@@ -708,11 +655,10 @@ export default {
                 if (this.$refs.form.validate()) {
                     const formData = new FormData();
                     const fields = [
-                        'type', 'title', 'client_status', 'first_name', 'middle_name', 'last_name',
+                        'type', 'title', 'first_name', 'middle_name', 'last_name',
                         'display_name', 'suffix', 'initial', 'gender', 'civil_status', 'birthdate',
-                        'mobile1', 'mobile2', 'email', 'nationality', 'address_line1', 'address_line2',
-                        'address_line3', 'postal_code', 'address_type', 'telephone', 'fax', 'institution',
-                        'entity', 'employment', 'image_file', 'relationship',
+                        'mobile1', 'email', 'nationality', 'address_line1', 'address_line2',
+                        'postal_code', 'address_type', 'telephone', 'image_file', 'relationship',
                         'rel_cid', 'rel_display_name'
                     ];
                     // CHANGE TO PH TIMEZONE
@@ -726,7 +672,7 @@ export default {
                     if (this.image_file) {
                         formData.append('image_file', this.image_file);
                     }
-                    formData.append('staff_or_not', Number(this.staff_or_not));
+                    formData.append('staff_or_not', this.staff_or_not);
                     const response = await apiClient.post('/new_client_info', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
@@ -760,7 +706,28 @@ export default {
             } finally {
                 this.validating = false;
             }
-        }
+        },
+        fetchSuffixesItems() {
+            this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
+        },
+        fetchTypesItems() {
+            this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
+        },
+        fetchTitleItems() {
+            this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
+        },
+        fetchGenderItems() {
+            this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
+        },
+        fetchCivilStatusItems() {
+            this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
+        },
+        fetchAddressTypeItems() {
+            this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
+        },
+        fetchRelationShip() {
+            this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
+        },
     },
 };
 
