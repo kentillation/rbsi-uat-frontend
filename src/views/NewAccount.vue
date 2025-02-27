@@ -73,7 +73,7 @@
                 <v-container class="d-flex justify-end">
                     <v-btn prepend-icon="mdi-close" :disabled="validatingData" @click="closeConfirmDialog" class="bg-red-darken-4 px-3 me-2" text
                         rounded>Check again</v-btn>
-                    <v-btn  prepend-icon="mdi-check" :disabled="validatingData" @click="submitForm" class="bg-teal-darken-3 px-3" rounded>
+                    <v-btn prepend-icon="mdi-check" :disabled="validatingData" @click="submitForm" class="bg-teal-darken-3 px-3" rounded>
                         <v-progress-circular v-if="validatingData" size="20" color="white" label="Loading..."
                             indeterminate />
                         <span v-else>Confirm</span>
@@ -90,14 +90,17 @@
                     <v-container>
                         <h3 class="text-teal-lighten-1">New account has been created successfully!</h3>
                         <br>
-                        <h2>Account Number: {{ formatAcc(this.account_number) }}</h2>
+                        <h2>Account Number: {{ formatAcc(account_number) }} &nbsp; <v-icon class="copy-icon" @click="copyAccountNumber">mdi-content-copy</v-icon></h2>
                     </v-container>
                 </v-card-text>
                 <v-container class="d-flex justify-end">
                     <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
-                        rounded>Print Passbook</v-btn>
+                        rounded>Passbook</v-btn>
                     <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
-                        rounded>Print Signature Card</v-btn>
+                        rounded>Sig Card</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn class="bg-red-darken-4 px-3 me-2" prepend-icon="mdi-close" text @click="successDialog = false"
+                        rounded>Close</v-btn>
                 </v-container>
             </v-card>
         </v-dialog>
@@ -201,7 +204,7 @@ export default {
                     },
                 });
                 const client = response.data;
-                // Object.assign(this, client);
+                Object.assign(this, client);
                 if (client) {
                     this.account_number = client.account_number || "";
                     this.TitleCode = client.TitleCode || "";
@@ -277,25 +280,26 @@ export default {
                         formData.append(field, this[field]);
                     }
                 });
-                const response = await apiClient.post('/create_account', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.account_number = response.data.data.acc;
-                if (response.status === 200) {
-                    try {
-                        setTimeout(() => {
-                            this.confirmDialog = false;
-                            this.successDialog = true;
-                            this.validatingData = false;
-                        }, 3000);
-                    } catch (error) {
-                        console.error('Error fetching client CID:', error);
-                        this.imageSource = "";
-                    }
-                }
+                // const response = await apiClient.post('/create_account', formData, {
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data',
+                //         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                //     }
+                // });
+                // this.account_number = response.data.data.acc;
+                // if (response.status === 200) {
+                //     try {
+                //         setTimeout(() => {
+                //             this.confirmDialog = false;
+                //             this.successDialog = true;
+                //             this.validatingData = false;
+                //         }, 3000);
+                //     } catch (error) {
+                //         console.error('Error fetching client CID:', error);
+                //         this.imageSource = "";
+                //     }
+                // }
+                this.successDialog = true;
             } catch (error) {
                 this.handleFormError(error);
                 this.validating = false;
@@ -374,5 +378,10 @@ export default {
 <style scoped>
 .to-hide {
     display: none;
+}
+.copy-icon {
+    font-size: 16px;
+    cursor: pointer;
+    top: -10px;
 }
 </style>
