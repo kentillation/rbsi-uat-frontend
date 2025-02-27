@@ -39,13 +39,11 @@ export default {
             nationality: 'Filipino',
             address_line1: "",
             address_line2: "",
+            address_line3: "",
             postal_code: "",
             address_type: "",
             telephone: "",
             image_file: null,
-            // institution: "",
-            // entity: "",
-            // employment: "",
             reg_date: this.formatToDateString(new Date()),
             relation: [
                 { cid: "", relation_type: "" },
@@ -73,9 +71,6 @@ export default {
             genderItems: [],
             civilstatusItems: [],
             addresstypeItems: [],
-            // institutionItems: [],
-            // entityItems: [],
-            // employmentItems: [],
             relationshipItems: [],
             typeRule: (v) => !!v || 'Type is required',
             titleRule: (v) => !!v || 'Title is required',
@@ -88,14 +83,11 @@ export default {
             mobile1Rule: (v) => !!v || 'Mobile 1 is required',
             emailRule: (v) => !!v || 'Email is required',
             nationalityRule: (v) => !!v || 'Nationality is required',
-            addressline1Rule: (v) => !!v || 'Barangay is required',
-            addressline2Rule: (v) => !!v || 'City is required',
-            addressline3Rule: (v) => !!v || 'Province is required',
+            addressline1Rule: (v) => !!v || 'Purok/Street/Block No. is required',
+            addressline2Rule: (v) => !!v || 'Barangay is required',
+            addressline3Rule: (v) => !!v || 'City/Municipality is required',
             postalcodeRule: (v) => !!v || 'Postal Code is required',
             addresstypeRule: (v) => !!v || 'Address type is required',
-            // institutionRule: (v) => !!v || 'Institution is required',
-            // entityRule: (v) => !!v || 'Entity is required',
-            // employmentRule: (v) => !!v || 'Employment is required',
             imagefileRule: (v) => !!v || 'Please select an image',
             validating: false,
             snackbar: {
@@ -116,7 +108,7 @@ export default {
         displayName(newVal) {
             this.display_name = newVal;
         },
-        address_line2(newCity) {
+        address_line3(newCity) {
             const city = newCity.trim();
             if (this.cityToPostalCodeMap[city]) {
                 this.postal_code = this.cityToPostalCodeMap[city];
@@ -162,9 +154,8 @@ export default {
             return [
                 this.first_name, this.middle_name, this.last_name,
                 this.type, this.title, this.display_name, this.gender, this.civil_status,
-                this.birthdate, this.address_line1, this.address_line2,
-                this.postal_code, this.address_type,
-                this.image_file, this.mobile1, this.email, this.nationality
+                this.birthdate, this.address_line1, this.address_line2, this.address_line3,
+                this.postal_code, this.address_type, this.image_file, this.mobile1, this.email, this.nationality
             ].every(field => !!field);
         }
     },

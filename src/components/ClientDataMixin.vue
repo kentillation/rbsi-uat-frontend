@@ -36,9 +36,6 @@ export default {
       genderItems: [],
       civilstatusItems: [],
       addresstypeItems: [],
-      // institutionItems: [],
-      // entityItems: [],
-      // employmentItems: [],
     }
   },
   props: {
@@ -64,8 +61,9 @@ export default {
         { label: "Gender", value: this.getTitle(this.client?.gender, this.genderItems, "gender") },
         { label: "Civil Status", value: this.getTitle(this.client?.civil_status, this.civilstatusItems, "civil_status") },
         { label: "Birthdate", value: this.client?.birthdate ? this.formatDate(this.client?.birthdate) : "N/A" },
-        { label: "Barangay", value: this.client?.address_line1 },
-        { label: "City", value: this.client?.address_line2 },
+        { label: "Purok/Street/Block No.", value: this.client?.address_line1 },
+        { label: "Barangay", value: this.client?.address_line2 },
+        { label: "City/Municipality", value: this.client?.address_line3 },
         { label: "Address Type", value: this.getTitle(this.client?.address_type, this.addresstypeItems, "address_type") },
         { label: "Telephone", value: this.client?.telephone },
         { label: "Postal Code", value: this.client?.postal_code },

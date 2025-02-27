@@ -110,10 +110,15 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line1" :rules="[addressline1Rule]"
-                                                    label="Barangay" variant="underlined" clearable></v-text-field>
+                                                    label="Purok/Street/Block No." variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line2" :rules="[addressline2Rule]"
+                                                    label="Barangay" variant="underlined"
+                                                    clearable></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
                                                     label="City/Municipality" variant="underlined"
                                                     clearable></v-text-field>
                                             </v-col>
@@ -324,11 +329,15 @@
                                 }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Barangay: </span><strong>{{ address_line1
+                                <p><span class="text-grey-lighten-1">Purok/Street/Block No.: </span><strong>{{ address_line1
                                 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">City/Municipality: </span><strong>{{ address_line2
+                                <p><span class="text-grey-lighten-1">Barangay: </span><strong>{{ address_line2
+                                }}</strong></p>
+                            </v-col>
+                            <v-col cols="12" lg="4" md="4" sm="4">
+                                <p><span class="text-grey-lighten-1">City/Municipality: </span><strong>{{ address_line3
                                 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
@@ -658,11 +667,12 @@ export default {
                     const fields = [
                         'type', 'title', 'first_name', 'middle_name', 'last_name',
                         'display_name', 'suffix', 'initial', 'gender', 'civil_status', 'birthdate',
-                        'mobile1', 'email', 'nationality', 'address_line1', 'address_line2',
+                        'mobile1', 'email', 'nationality', 'address_line1', 'address_line2', 'address_line3',
                         'postal_code', 'address_type', 'telephone', 'image_file', 'relationship',
                         'rel_cid', 'rel_display_name'
                     ];
-                    const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
+                    // Format birthdate manually to avoid timezone issues
+                    const formattedBirthdate = this.birthdate ? this.formatToDateString(new Date(this.birthdate)) : '';
                     formData.append('birthdate', formattedBirthdate);
                     fields.forEach(field => {
                         if (field !== 'birthdate') {
@@ -694,6 +704,12 @@ export default {
             } finally {
                 this.validating = false;
             }
+        },
+        formatToDateString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         },
         fetchSuffixesItems() {
             this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
