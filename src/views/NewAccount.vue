@@ -90,14 +90,17 @@
                     <v-container>
                         <h3 class="text-teal-lighten-1">New account has been created successfully!</h3>
                         <br>
-                        <h2>Account Number: {{ formatAcc(this.account_number) }}</h2>
+                        <h2>Account Number: {{ formatAcc(account_number) }}</h2>
                     </v-container>
                 </v-card-text>
                 <v-container class="d-flex justify-end">
-                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
-                        rounded>Print Passbook</v-btn>
-                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
-                        rounded>Print Signature Card</v-btn>
+                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount(account_number)"
+                        rounded>Passbook</v-btn>
+                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount(account_number)"
+                        rounded>Signature Card</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn class="bg-red-darken-4 px-3 me-2" prepend-icon="mdi-close" text @click="successDialog = false"
+                        rounded>Close</v-btn>
                 </v-container>
             </v-card>
         </v-dialog>
@@ -270,21 +273,21 @@ export default {
                     this.validating = false;
                     return;
                 }
-                // const formData = new FormData();
-                // const fields = ['cid', 'ownership_type', 'app_type', 'product_type', 'gl_code'];
-                // fields.forEach(field => {
-                //     if (field) {
-                //         formData.append(field, this[field]);
-                //     }
-                // });
-                // const response = await apiClient.post('/create_account', formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data',
-                //         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                //     }
-                // });
-                // this.account_number = response.data.data.acc;
-                // if (response.status === 200) {
+                const formData = new FormData();
+                const fields = ['cid', 'ownership_type', 'app_type', 'product_type', 'gl_code'];
+                fields.forEach(field => {
+                    if (field) {
+                        formData.append(field, this[field]);
+                    }
+                });
+                const response = await apiClient.post('/create_account', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                    }
+                });
+                if (response.status === 200) {
+                    this.account_number = response.data.data.acc; // Ensure account_number is set
                     try {
                         setTimeout(() => {
                             this.confirmDialog = false;
@@ -295,7 +298,7 @@ export default {
                         console.error('Error fetching client CID:', error);
                         this.imageSource = "";
                     }
-                // }
+                }
             } catch (error) {
                 this.handleFormError(error);
                 this.validating = false;
@@ -311,14 +314,14 @@ export default {
             const account_numberStr = String(account_number);
             return account_numberStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
         },
-        async printAccount() {
+        async printAccount(account_number) {
             if (!this.cid) {
                 this.$refs.snackbarRef.showSnackbar("CID is required!", "error");
                 return;
             }
             await this.fetchClientData(this.cid); 
             const queryParams = new URLSearchParams({
-                account_number: this.account_number,
+                account_number: account_number, // Ensure account_number is included
                 CID: this.cid,
                 TitleCode: this.TitleCode,
                 DisplayName: this.DisplayName,
@@ -330,7 +333,7 @@ export default {
             }).toString();
             const printUrl = `/print-passbook?${queryParams}`;
             if (printUrl) {
-                window.open(printUrl, '_blank');
+                window.open(printUrl, '_blank', 'width=800,height=600'); // Open in a new window with specified features
             } else {
                 console.error("Failed to generate print URL");
             }

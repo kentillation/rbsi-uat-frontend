@@ -1,12 +1,12 @@
 <template>
-    <v-sheet class="d-flex justify-center">
-        <v-card>
-            <h3>RURAL BANK OF SAGAY, INC.</h3>
+    <v-sheet>
+        <div class="d-flex align-center flex-column">
+            <h4>RURAL BANK OF SAGAY, INC.</h4>
             <p><em>National Highway, Poblacion II</em></p>
             <p><em>Sagay City 6122, NIR Philippines</em></p>
             <br>
-            <p><strong>Account No: {{ account_number }}</strong></p>
-            <p><strong>Client ID: {{ CID }}</strong></p>
+            <h3><strong>Account No: {{ account_number }}</strong></h3>
+            <h3><strong>Client ID: {{ CID }}</strong></h3>
             <p>{{ TitleCode }} {{ DisplayName }}</p>
             <p>{{ Line1 }}</p>
             <p>{{ Line2 }}</p>
@@ -14,7 +14,7 @@
             <p>{{ Line4 }}</p>
             <br><br>
             <p>{{ dateToday }}</p>
-        </v-card>
+        </div>
     </v-sheet>
 </template>
 

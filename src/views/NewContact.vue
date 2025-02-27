@@ -474,6 +474,7 @@ export default {
             singleRelation: null,
             multipleRelation: [],
             multipleRltnDialog: false,
+            staff_or_not: false,
         }
     },
     watch: {
@@ -535,8 +536,8 @@ export default {
             this.multipleRltnDialog = false;
         },
         viewFrmMltplRltn(item) {
-            this.singleRelation = item; // Set the selected item
-            this.singleRltnDialog = true; // Open the dialog
+            this.singleRelation = item;
+            this.singleRltnDialog = true;
         },
         previewImage() {
             if (this.image_file && this.image_file instanceof File) {
@@ -661,7 +662,6 @@ export default {
                         'postal_code', 'address_type', 'telephone', 'image_file', 'relationship',
                         'rel_cid', 'rel_display_name'
                     ];
-                    // CHANGE TO PH TIMEZONE
                     const formattedBirthdate = this.birthdate ? new Date(this.birthdate).toISOString().split('T')[0] : '';
                     formData.append('birthdate', formattedBirthdate);
                     fields.forEach(field => {
@@ -672,7 +672,7 @@ export default {
                     if (this.image_file) {
                         formData.append('image_file', this.image_file);
                     }
-                    formData.append('staff_or_not', this.staff_or_not);
+                    formData.append('staff_or_not', this.staff_or_not ? 1 : 2);
                     const response = await apiClient.post('/new_client_info', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
@@ -680,25 +680,13 @@ export default {
                         }
                     });
                     if (response.status === 200) {
-                        try {
-                            const mbwinResponse = await apiClient.get(`/get_mbwin_client_cid`, {
-                                headers: {
-                                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                                },
-                            });
-                            this.cid = mbwinResponse.data;
-                            this.$router.push({
-                                name: 'NewAccount',
-                                params: {
-                                    cid: this.cid,
-                                },
-                            });
-                        } catch (error) {
-                            console.error('Error fetching client CID:', error);
-                            this.imageSource = "";
-                        }
-                        this.$refs.snackbarRef.showSnackbar('New client has been saved successfully.', 'success');
-                        this.confirmDialog = false;
+                        const newCid = response.data.data.cid;
+                        this.$router.push({
+                            name: 'NewAccount',
+                            params: {
+                                cid: newCid,
+                            },
+                        });
                     }
                 }
             } catch (error) {
