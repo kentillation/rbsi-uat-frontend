@@ -96,11 +96,11 @@
             <v-row>
               <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                 <v-text-field variant="outlined" disabled></v-text-field>
-                <v-date-picker v-model="startdate"></v-date-picker>
+                <v-date-picker v-model="startDate"></v-date-picker>
               </v-col>
               <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                 <v-text-field variant="outlined" disabled></v-text-field>
-                <v-date-picker v-model="enddate"></v-date-picker>
+                <v-date-picker v-model="endDate"></v-date-picker>
               </v-col>
             </v-row>
           </v-container>
@@ -131,6 +131,9 @@ export default {
   data() {
     return {
       cid: '',
+      appType: '',
+      startDate: '',
+      endDate: '',
       dialogCID: false,
       validating: false,
       validatingCID: false,
@@ -149,6 +152,18 @@ export default {
       dialogTransactionHistory: false,
     };
   },
+  watch: {
+    search_item_ACC(newVal) {
+      const firstTwoDigits = newVal.substring(0, 2);
+      if (firstTwoDigits === '51' || firstTwoDigits === '52') {
+        this.appType = 1;
+      } else if (firstTwoDigits === '20' || firstTwoDigits === '25') {
+        this.appType = 2;
+      } else {
+        this.appType = '';
+      }
+    }
+  },
   computed: {
     searchValid() {
       return this.search_item_ACC.trim() !== '';
@@ -156,9 +171,6 @@ export default {
     searchValidCID() {
       return this.search_item_CID.trim() !== '';
     },
-  },
-  mounted() {
-    this.fetchItems('/app_type', 'appTypeItems');
   },
   methods: {
     dialogOpenCID() {
@@ -178,9 +190,7 @@ export default {
           },
           params: { search: this.search_item_CID }
         });
-
         // console.log("API Response:", response.data); 
-
         if (response.data.length === 1) {
           const selectedCID = response.data[0].CID;
           this.$router.push({
@@ -204,7 +214,8 @@ export default {
       this.validating = true;
       try {
         const response = await apiClient.post('/account_enquiry', {
-          acc: this.search_item_ACC
+          acc: this.search_item_ACC,
+          appType: this.appType
         }, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
@@ -227,18 +238,6 @@ export default {
         console.error("Error:", error);
       } finally {
         this.validating = false;
-      }
-    },
-    async fetchItems(endpoint, key) {
-      try {
-        const response = await apiClient.get(endpoint, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-          }
-        });
-        this[key] = response.data;
-      } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(`Failed to fetch ${key}`, "error");
       }
     },
     formatCurrency(value) {
