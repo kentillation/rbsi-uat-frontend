@@ -72,6 +72,7 @@ export default {
             civilstatusItems: [],
             addresstypeItems: [],
             relationshipItems: [],
+            suffixRule: (v) => !!v || 'Suffix is required',
             typeRule: (v) => !!v || 'Type is required',
             titleRule: (v) => !!v || 'Title is required',
             firstnameRule: (v) => !!v || 'First name is required',

@@ -34,7 +34,7 @@
                                         <v-text-field v-model="last_name" :rules="[lastnameRule]" label="Last Name"
                                             variant="underlined" clearable></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12" style="display: none;">
+                                    <v-col cols="12" lg="4" md="4" sm="4" xs="12" class="d-none">
                                         <v-text-field v-model="display_name" :rules="[displaynameRule]"
                                             label="Display Name" variant="underlined" disabled></v-text-field>
                                     </v-col>

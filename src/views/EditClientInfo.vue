@@ -31,6 +31,14 @@
                       clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                    <v-autocomplete @click="fetchSuffixesItems" v-model="suffix"  :rules="[suffixRule]" label="Suffix" :items="suffixesItems"
+                      item-title="suffix" item-value="id">
+                    </v-autocomplete>
+                  </v-col>
+                  <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                    <v-text-field v-model="initial" label="Initial" outlined clearable></v-text-field>
+                  </v-col>
+                  <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                     <v-autocomplete v-model="type" :rules="[typeRule]" label="Type" :items="typeItems" item-title="type"
                       item-value="id"></v-autocomplete>
                   </v-col>
@@ -39,13 +47,13 @@
                       item-title="title" item-value="id"></v-autocomplete>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-autocomplete v-model="client_status" :rules="[clientstatusRule]" label="Client Status"
-                      :items="clientstatusItems" item-title="client_status" item-value="id"></v-autocomplete>
+                    <v-file-input v-model="image_file" @change="previewImage"
+                        :rules="[imagefileRule]" accept="image/*" label="Image file"
+                        append-inner-icon="mdi-camera" prepend-icon="" variant="underlined"
+                        chips show-size>
+                    </v-file-input>
                   </v-col>
-                  <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-text-field v-model="initial" label="Initial" outlined clearable></v-text-field>
-                  </v-col>
-                  <v-col cols="12" lg="4" md="4" sm="4" xs="12">
+                  <v-col cols="12" lg="4" md="4" sm="4" xs="12" class="d-none">
                     <v-text-field v-model="display_name" :rules="[displaynameRule]" label="Display Name"
                       disabled></v-text-field>
                   </v-col>
@@ -73,13 +81,47 @@
                               :items="civilstatusItems" item-title="civil_status" item-value="id"></v-autocomplete>
                           </v-col>
                           <v-col cols="12">
-                            <div class="d-flex">
-                              <v-text-field type="date" v-model="birthdate" width="80"
-                                class="custom-date-input"></v-text-field>
-                              <v-text-field disabled width="700">Birthdate: {{ formattedBirthdate }}</v-text-field>
-                            </div>
+                              <!-- <v-text-field type="date" v-model="birthdate" width="80"
+                                class="custom-date-input"></v-text-field> -->
+                              <!-- <v-text-field disabled width="700">Birthdate: {{ formattedBirthdate }}</v-text-field> -->
+                              <v-text-field variant="underlined" disabled>Birthdate: {{ formattedBirthdate }}</v-text-field>
+                          </v-col>
+                          <v-col cols="12">
+                            <v-date-picker :min="minDate" :max="maxDate" v-model="birthdate"></v-date-picker>
                           </v-col>
                         </v-row>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-col>
+              <v-col cols="12" lg="6" md="6" sm="6" xs="12">
+                <v-card border="opacity-50 sm" class="mb-5">
+                  <v-container>
+                    <h3 class="mb-4">Address</h3>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-text-field v-model="address_line1" :rules="[addressline1Rule]"
+                          label="Purok/Street/Block No." clearable></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field v-model="address_line2" :rules="[addressline2Rule]" label="Barangay"
+                          clearable></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field v-model="address_line3" :rules="[addressline3Rule]" label="City/Municipality"
+                          clearable></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field v-model="postal_code" :rules="[postalcodeRule]" label="Postal Code"
+                          clearable></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field v-model="telephone" label="Telephone" clearable></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-autocomplete v-model="address_type" :rules="[addresstypeRule]" label="Address Type"
+                          :items="addresstypeItems" item-title="address_type" item-value="id"></v-autocomplete>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -97,9 +139,6 @@
                               clearable></v-text-field>
                           </v-col>
                           <v-col cols="12">
-                            <v-text-field v-model="mobile2" label="Mobile 2" outlined clearable></v-text-field>
-                          </v-col>
-                          <v-col cols="12">
                             <v-text-field v-model="email" :rules="[emailRule]" label="Email" outlined
                               clearable></v-text-field>
                           </v-col>
@@ -108,62 +147,6 @@
                               clearable></v-text-field>
                           </v-col>
                         </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card>
-              </v-col>
-              <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                <v-card border="opacity-50 sm" class="mb-5">
-                  <v-container>
-                    <h3 class="mb-4">Address</h3>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-text-field v-model="address_line1" :rules="[addressline1Rule]"
-                          label="Street/Purok/Sitio/Hda." clearable></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field v-model="address_line2" :rules="[addressline2Rule]" label="Barangay"
-                          clearable></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field v-model="address_line3" :rules="[addressline3Rule]" label="City"
-                          clearable></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field v-model="postal_code" :rules="[postalcodeRule]" label="Postal Code"
-                          clearable></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-autocomplete v-model="address_type" :rules="[addresstypeRule]" label="Address Type"
-                          :items="addresstypeItems" item-title="address_type" item-value="id"></v-autocomplete>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field v-model="telephone" label="Telephone" clearable></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field v-model="fax" label="Fax" clearable></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card>
-              </v-col>
-              <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                <v-card border="opacity-50 sm" class="mb-5">
-                  <v-container>
-                    <h3 class="mb-4">Client Classification Codes</h3>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-autocomplete v-model="institution" :rules="[institutionRule]" label="Institution"
-                          :items="institutionItems" item-title="institution" item-value="id"></v-autocomplete>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity" :items="entityItems"
-                          item-title="entity" item-value="id"></v-autocomplete>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-autocomplete v-model="employment" :rules="[employmentRule]" label="Employment"
-                          :items="employmentItems" item-title="employment" item-value="id"></v-autocomplete>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -224,14 +207,14 @@
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Title: <br /></span><strong>{{ getTitle(title, titleItems, 'title')
-                    }}</strong></p>
+                }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Initial: <br /></span><strong>{{ initial }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Type: <br /></span><strong>{{ getTitle(type, typeItems, 'type')
-                    }}</strong></p>
+                }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Staff: <br /></span><strong>{{ staffLabel }}</strong></p>
@@ -252,13 +235,7 @@
                 <p><span class="text-grey-lighten-1">Mobile 1: <br /></span><strong>{{ mobile1 }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Mobile 2: <br /></span><strong>{{ mobile2 }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Email: <br /></span><strong>{{ email }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Nationality: <br /></span><strong>{{ nationality }}</strong></p>
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Address Line 1: <br /></span><strong>{{ address_line1 }}</strong>
@@ -281,22 +258,6 @@
               </v-col>
               <v-col cols="12" lg="4" md="4" sm="4">
                 <p><span class="text-grey-lighten-1">Telephone: <br /></span><strong>{{ telephone }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Fax: <br /></span><strong>{{ fax }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Institution: <br /></span><strong>{{ getTitle(institution,
-                  institutionItems,
-                  'institution') }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Entity: <br /></span><strong>{{ getTitle(entity, entityItems,
-                  'entity') }}</strong></p>
-              </v-col>
-              <v-col cols="12" lg="4" md="4" sm="4">
-                <p><span class="text-grey-lighten-1">Employment: <br /></span><strong>{{ getTitle(employment,
-                  employmentItems, 'employment') }}</strong></p>
               </v-col>
             </v-row>
           </v-container>
@@ -321,7 +282,7 @@ import apiClient from '../axios';
 import FormDataMixin from '@/components/FormDataMixin.vue';
 import Snackbar from '@/components/Snackbar.vue';
 
-export default { 
+export default {
   mixins: [FormDataMixin],
   components: {
     Snackbar
@@ -331,29 +292,20 @@ export default {
   },
   computed: {
     staffLabel: {
-      // return this.staff_or_not === 2 ? 'No' : 'Yes';
-        get() {
+      get() {
         return this.staff_or_not === 2;
       },
       set(value) {
         this.staff_or_not = value ? 2 : 1;
       },
     },
-    // isStaff: {
-    //   get() {
-    //     return this.staff_or_not === 2;
-    //   },
-    //   set(value) {
-    //     this.staff_or_not = value ? 1 : 2;
-    //   },
-    // },
     checkboxColor() {
       return this.staff_or_not === 1 ? 'primary' : 'secondary';
     },
   },
   methods: {
     goBack() {
-        this.$router.go(-1);
+      this.$router.go(-1);
     },
     toClientInfo() {
       this.$router.push({ name: 'ClientInfo' });
@@ -445,6 +397,21 @@ export default {
       } finally {
         this.validating = false;
       }
+    },
+    async fetchItems(endpoint, targetArray, errorMessage) {
+      try {
+        const response = await apiClient.get(endpoint, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+        });
+        this[targetArray] = response.data;
+      } catch (error) {
+        this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
+      }
+    },
+    fetchSuffixesItems() {
+      this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
     },
   },
 };

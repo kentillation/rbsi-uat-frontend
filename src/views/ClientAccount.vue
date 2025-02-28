@@ -56,14 +56,14 @@
           <v-container>
             <v-row v-if="selectedAccount">
               <v-col cols="12">
-                <p>Outstanding Balance:<strong>₱ {{ formatCurrency(selectedAccount.balAmt) }}</strong></p>
-                <p>Available Balance:<strong>₱ {{ formatCurrency(selectedAccount.availBalAmt) }}</strong></p>
-                <p>Interest Rate:<strong> {{ selectedAccount.intRate }}%</strong></p>
-                <p>Interest Effective Date:<strong> {{ formatDate(selectedAccount.intEffDate) }}</strong></p>
-                <p>Account Status:<strong> {{ selectedAccount.accStatus }}</strong></p>
-                <p>Status Date:<strong> {{ formatDate(selectedAccount.accStatusDate) }}</strong></p>
-                <p>Currency Type:<strong> {{ selectedAccount.ccyType }}</strong></p>
-                <p>Open Date:<strong> {{ formatDate(selectedAccount.openDate) }}</strong></p>
+                <p><strong>Outstanding Balance:</strong>₱ {{ formatCurrency(selectedAccount.balAmt) }}</p>
+                <p><strong>Available Balance:</strong>₱ {{ formatCurrency(selectedAccount.availBalAmt) }}</p>
+                <p><strong>Interest Rate:</strong> {{ selectedAccount.intRate }}%</p>
+                <p><strong>Interest Effective Date:</strong> {{ formatDate(selectedAccount.intEffDate) }}</p>
+                <p><strong>Account Status:</strong> {{ selectedAccount.accStatus }}</p>
+                <p><strong>Status Date:</strong> {{ formatDate(selectedAccount.accStatusDate) }}</p>
+                <p><strong>Currency Type:</strong> {{ selectedAccount.ccyType }}</p>
+                <p><strong>Open Date:</strong> {{ formatDate(selectedAccount.openDate) }}</p>
               </v-col>
             </v-row>
             <v-row v-else>
@@ -375,7 +375,7 @@ export default {
         this.dialogTransactionHistoryTable = true;
         this.validatingDate = false;
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar("An error occurred while fetching transaction history", "error");
+        this.$refs.snackbarRef.showSnackbar("No transaction history found!", "error");
         console.error("Error:", error);
         this.validatingDate = false;
       }

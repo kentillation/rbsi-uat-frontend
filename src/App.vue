@@ -14,14 +14,15 @@
         <v-divider></v-divider>
         <v-list density="compact" nav>
           <v-list-subheader class="ms-5" size="30">Client</v-list-subheader>
-          <v-list-item prepend-icon="mdi-information-outline" @click="client_info">Information</v-list-item>
-          <v-list-item prepend-icon="mdi-bank-outline" @click="client_account">Accounts</v-list-item>
+          <v-list-item prepend-icon="mdi-information-outline" @click="client_info" class="text-teal-darken-4">Information</v-list-item>
+          <v-list-item prepend-icon="mdi-bank-outline" @click="client_account" class="text-teal-darken-4">Account</v-list-item>
           <v-list-subheader class="ms-5" size="30">Reports</v-list-subheader>
-          <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients">Masterlist</v-list-item>
+          <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients" class="text-teal-darken-4">Masterlist</v-list-item>
+          <v-list-item prepend-icon="mdi-printer" @click="reprinting" class="text-teal-darken-4">Reprinting</v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-logout" @click="logout">Signout</v-list-item>
+          <v-list-item prepend-icon="mdi-logout" @click="logout" class="text-teal-darken-4">Signout</v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-layout>
@@ -71,6 +72,13 @@ export default {
         this.$router.push('/all_clients');
       } catch (error) {
         console.error('Error in accessing all clients:', error);
+      }
+    },
+    async reprinting() {
+      try {
+        this.$router.push('/reprinting');
+      } catch (error) {
+        console.error('Error in accessing reprinting:', error);
       }
     },
     async logout() {

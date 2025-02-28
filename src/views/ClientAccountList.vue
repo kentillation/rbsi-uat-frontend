@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div class="d-flex align-items-center">
+    <div class="d-flex">
       <v-icon @click="goBack" class="mt-2 me-3" size="x-large" icon="mdi-chevron-double-left" title="Back"></v-icon>
       <h1>Client Accounts</h1>
     </div>
@@ -10,6 +10,8 @@
       </template>
       <template v-slot:top>
         <v-toolbar flat>
+          <h2 class="ms-3 w-75 text-teal-darken-4">CID: {{ this.cid }}</h2>
+          <!-- <v-divider vertical></v-divider> -->
           <div class="d-flex justify-end w-100">
             <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 me-4" @click="toNewAccount">New Account</v-btn>
             <v-btn append-icon="mdi-refresh" class="me-3 pe-7" variant="outlined" @click="onRefresh"></v-btn>
@@ -38,12 +40,13 @@ import apiClient from '../axios';
 import Snackbar from '@/components/Snackbar.vue';
 
 export default {
-  name: 'ClientAccount',
+  name: 'ClientAccountList',
   components: {
     Snackbar
   },
   data() {
     return {
+      cid: "",
       account_list: [],
       appTypeItems: [],
       productTypeItems: [],
@@ -59,24 +62,24 @@ export default {
       ],
     };
   },
-  mounted () {
+  mounted() {
     this.fetchAppTypesItems();
     this.fetchProductTypesItems();
   },
   created() {
-    this.fetchCID_LastName();
+    this.fetchCID();
   },
   methods: {
     goBack() {
-        this.$router.go(-1);
+      this.$router.go(-1);
     },
     toNewAccount() {
       const { cid } = this.$route.params;
       if (cid) {
-          this.$router.push({
+        this.$router.push({
           name: 'NewAccount',
           params: {
-              cid: cid,
+            cid: cid,
           },
         });
       }
@@ -85,7 +88,7 @@ export default {
       this.loading = true;
       setTimeout(() => {
         this.loading = false;
-        this.fetchCID_LastName();
+        this.fetchCID();
       }, 2000);
     },
     async fetchItems(endpoint, targetArray, errorMessage) {
@@ -134,9 +137,10 @@ export default {
         this.loading = false;
       }
     },
-    fetchCID_LastName() {
+    fetchCID() {
       const { cid } = this.$route.params;
       if (cid) {
+        this.cid = cid;
         this.fetchClientAccount(cid);
       }
     },
