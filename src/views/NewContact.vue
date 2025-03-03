@@ -487,14 +487,14 @@ export default {
         }
     },
     watch: {
-        'singleRelation.image_file': {
-            immediate: true,
-            handler(newValue) {
-                if (newValue) {
-                    this.fetchClientImage(newValue);
-                }
-            },
-        },
+        // 'singleRelation.image_file': {
+        //     immediate: true,
+        //     handler(newValue) {
+        //         if (newValue) {
+        //             this.fetchClientImage(newValue);
+        //         }
+        //     },
+        // },
     },
     computed: {
         searchRelationValid() {
@@ -634,21 +634,21 @@ export default {
                 this.$refs.snackbarRef.showSnackbar('An error occurred while selecting the item!', 'error');
             }
         },
-        async fetchClientImage(imageFileName) {
-            try {
-                const response = await apiClient.get(`/client_image/${imageFileName}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                    },
-                    responseType: 'blob',
-                });
-                const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                this.imageSource = URL.createObjectURL(blob);
-            } catch (error) {
-                console.error('Error fetching client image:', error);
-                this.imageSource = "";
-            }
-        },
+        // async fetchClientImage(imageFileName) {
+        //     try {
+        //         const response = await apiClient.get(`/client_image/${imageFileName}`, {
+        //             headers: {
+        //                 Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+        //             },
+        //             responseType: 'blob',
+        //         });
+        //         const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        //         this.imageSource = URL.createObjectURL(blob);
+        //     } catch (error) {
+        //         console.error('Error fetching client image:', error);
+        //         this.imageSource = "";
+        //     }
+        // },
         showConfirmDialog() {
             if (this.isFormValid) this.confirmDialog = true;
             this.skeletonLoader = true;
