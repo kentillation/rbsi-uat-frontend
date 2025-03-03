@@ -47,7 +47,7 @@
                       item-title="title" item-value="id"></v-autocomplete>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-file-input v-model="image_file" @change="previewImage"
+                    <v-file-input v-model="image_file"
                         :rules="[imagefileRule]" accept="image/*" label="Image file"
                         append-inner-icon="mdi-camera" prepend-icon="" variant="underlined"
                         chips show-size>
