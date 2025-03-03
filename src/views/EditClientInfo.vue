@@ -39,15 +39,15 @@
                     <v-text-field v-model="initial" label="Initial" outlined clearable></v-text-field>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-autocomplete v-model="type" :rules="[typeRule]" label="Type" :items="typeItems" item-title="type"
+                    <v-autocomplete @click="fetchTypesItems" v-model="type" :rules="[typeRule]" label="Type" :items="typeItems" item-title="type"
                       item-value="id"></v-autocomplete>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-autocomplete v-model="title" :rules="[titleRule]" label="Title" :items="titleItems"
+                    <v-autocomplete @click="fetchTitlesItems" v-model="title" :rules="[titleRule]" label="Title" :items="titleItems"
                       item-title="title" item-value="id"></v-autocomplete>
                   </v-col>
                   <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                    <v-file-input v-model="image_file"
+                    <v-file-input v-model="image_file" @change="previewImage"
                         :rules="[imagefileRule]" accept="image/*" label="Image file"
                         append-inner-icon="mdi-camera" prepend-icon="" variant="underlined"
                         chips show-size>
@@ -73,11 +73,11 @@
                       <v-col cols="12">
                         <v-row>
                           <v-col cols="12">
-                            <v-autocomplete v-model="gender" :rules="[genderRule]" label="Gender" :items="genderItems"
+                            <v-autocomplete @click="fetchGenderItems" v-model="gender" :rules="[genderRule]" label="Gender" :items="genderItems"
                               item-title="gender" item-value="id"></v-autocomplete>
                           </v-col>
                           <v-col cols="12">
-                            <v-autocomplete v-model="civil_status" :rules="[civilstatusRule]" label="Civil status"
+                            <v-autocomplete @click="fetchCivilStatusItems" v-model="civil_status" :rules="[civilstatusRule]" label="Civil status"
                               :items="civilstatusItems" item-title="civil_status" item-value="id"></v-autocomplete>
                           </v-col>
                           <v-col cols="12">
@@ -120,7 +120,7 @@
                         <v-text-field v-model="telephone" label="Telephone" clearable></v-text-field>
                       </v-col>
                       <v-col cols="12">
-                        <v-autocomplete v-model="address_type" :rules="[addresstypeRule]" label="Address Type"
+                        <v-autocomplete @click="fetchAddressTypeItems" v-model="address_type" :rules="[addresstypeRule]" label="Address Type"
                           :items="addresstypeItems" item-title="address_type" item-value="id"></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -397,21 +397,6 @@ export default {
       } finally {
         this.validating = false;
       }
-    },
-    async fetchItems(endpoint, targetArray, errorMessage) {
-      try {
-        const response = await apiClient.get(endpoint, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-          },
-        });
-        this[targetArray] = response.data;
-      } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
-      }
-    },
-    fetchSuffixesItems() {
-      this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
     },
   },
 };

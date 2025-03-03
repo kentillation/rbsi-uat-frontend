@@ -101,9 +101,6 @@ export default {
         };
     },
     created() {
-        // if (this.singleRelation?.image_file) {
-        //     this.fetchClientImage(this.singleRelation.image_file);
-        // }
         if (this.singleRelation?.display_name && this.singleRelation?.image_file) {
             this.fetchClientImage(this.singleRelation.display_name, this.singleRelation.image_file);
         }
@@ -120,19 +117,6 @@ export default {
                 this.postal_code = '';
             }
         },
-    },
-    mounted() {
-        // this.fetchSuffixesItems();
-        // this.fetchTypesItems();
-        // this.fetchTitlesItems();
-        // this.fetchClientStatusItems();
-        // this.fetchGenderItems();
-        // this.fetchCivilStatusItems();
-        // this.fetchInstitutionItems();
-        // this.fetchEntityItems();
-        // this.fetchEmploymentItems();
-        // this.fetchAddressTypeItems();
-        // this.fetchRelationShip();
     },
     computed: {
         isIdentityCheckDisabled() {
@@ -188,33 +172,24 @@ export default {
                 this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
             }
         },
-        // async fetchSuffixesItems() {
-        //     this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
-        // },
-        // async fetchTypesItems() {
-        //     this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
-        // },
-        // async fetchTitlesItems() {
-        //     this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
-        // },
-        // async fetchGenderItems() {
-        //     this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
-        // },
-        // async fetchCivilStatusItems() {
-        //     this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
-        // },
-        // async fetchAddressTypeItems() {
-        //     this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
-        // },
-        // async fetchInstitutionItems() {
-        //     this.fetchItems('/institution', 'institutionItems', 'Failed to fetch institution codes');
-        // },
-        // async fetchEntityItems() {
-        //     this.fetchItems('/entity', 'entityItems', 'Failed to fetch entities');
-        // },
-        // async fetchEmploymentItems() {
-        //     this.fetchItems('/employment', 'employmentItems', 'Failed to fetch employment codes');
-        // },
+        fetchSuffixesItems() {
+            this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
+        },
+        fetchTypesItems() {
+            this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
+        },
+        fetchTitlesItems() {
+            this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
+        },
+        fetchGenderItems() {
+            this.fetchItems('/genders', 'genderItems', 'Failed to fetch gender');
+        },
+        fetchCivilStatusItems() {
+            this.fetchItems('/civil_status', 'civilstatusItems', 'Failed to fetch civil status');
+        },
+        fetchAddressTypeItems() {
+            this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
+        },
         // async fetchRelationShip() {
         //     this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
         // },
