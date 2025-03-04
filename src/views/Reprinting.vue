@@ -20,10 +20,8 @@
           <v-container>
             <v-sheet class="d-flex flex-column align-center text-center mx-auto" height="100" width="100%" rounded>
               <div class="w-75 d-flex">
-                <v-text-field v-model="search_item_ACC" ref="searchItemAcc" :style="{ width: '90%' }"
+                <v-text-field v-model="search_item_ACC" ref="searchItemAcc" @keyup.enter="searchACC"
                   label="Enter Account..." variant="underlined"></v-text-field>
-                <v-text-field v-model="search_item_CHD" ref="searchItemChd" :style="{ width: '10%' }" @keyup.enter="searchACC"
-                  :disabled="search_item_ACC.length !== 7" variant="underlined"></v-text-field>
               </div>
               <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
                 :disabled="!searchValidACC || validatingACC" @click="searchACC" rounded>
@@ -51,7 +49,8 @@ export default {
   data() {
     return {
       search_item_ACC: '',
-      search_item_CHD: '',
+      trimmedAcc: '',
+      chd: '',
       appType: '',
       validatingACC: false,
       passbookDialog: false,
@@ -59,21 +58,11 @@ export default {
   },
   computed: {
     searchValidACC() {
-      return this.search_item_ACC.trim() !== '' && this.search_item_CHD.trim() !== '';
+      return this.search_item_ACC.trim() !== '';
     },
   },
   watch: {
     search_item_ACC(newVal) {
-      if (newVal.length === 7) {
-        this.$nextTick(() => {
-          this.$refs.searchItemChd.focus();
-        });
-      } else if (newVal.length > 7) {
-        this.search_item_ACC = newVal.slice(0, 7);
-      } else {
-        this.search_item_CHD = '';
-      }
-
       const firstTwoDigits = newVal.substring(0, 2);
       if (firstTwoDigits === '51' || firstTwoDigits === '52') {
         this.appType = 1;
@@ -81,6 +70,14 @@ export default {
         this.appType = 2;
       } else {
         this.appType = '';
+      }
+
+      if (newVal.length >= 8) {
+        this.chd = newVal.charAt(7);
+        this.trimmedAcc = newVal.slice(0, 7);
+      } else {
+        this.chd = '';
+        this.trimmedAcc = newVal;
       }
     }
   },
@@ -94,16 +91,16 @@ export default {
     async searchACC() {
       if (!this.searchValidACC) return;
       this.validatingACC = true;
-      console.log("Sent account number:", this.search_item_ACC);
-      console.log("Sent chd:", this.search_item_CHD);
+      console.log("Sent account number:", this.trimmedAcc);
+      console.log("Sent chd:", this.chd);
       try {
         const response = await apiClient.get('/get_acc_chd_mbwin', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           },
           params: {
-            acc: this.search_item_ACC,
-            chd: this.search_item_CHD
+            acc: this.trimmedAcc,
+            chd: this.chd,
           }
         });
         if (response.data && Object.keys(response.data).length > 0) {
