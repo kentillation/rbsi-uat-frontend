@@ -19,9 +19,11 @@
         <v-card-text>
           <v-container>
             <v-sheet class="d-flex flex-column align-center text-center mx-auto" height="100" width="100%" rounded>
-              <div class="w-100 d-flex">
-                <v-text-field v-model="search_item_ACC" label="Enter Account..." ref="searchItemAcc" variant="underlined"></v-text-field>
-                <v-text-field v-model="search_item_CHD" :disabled="search_item_ACC.length !== 7" ref="searchItemChd" variant="underlined"></v-text-field>
+              <div class="w-75 d-flex">
+                <v-text-field v-model="search_item_ACC" ref="searchItemAcc" :style="{ width: '90%' }"
+                  label="Enter Account..." variant="underlined"></v-text-field>
+                <v-text-field v-model="search_item_CHD" ref="searchItemChd" :style="{ width: '10%' }" @keyup.enter="searchACC"
+                  :disabled="search_item_ACC.length !== 7" variant="underlined"></v-text-field>
               </div>
               <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
                 :disabled="!searchValidACC || validatingACC" @click="searchACC" rounded>
@@ -92,15 +94,21 @@ export default {
     async searchACC() {
       if (!this.searchValidACC) return;
       this.validatingACC = true;
+      console.log("Sent account number:", this.search_item_ACC);
+      console.log("Sent chd:", this.search_item_CHD);
       try {
         const response = await apiClient.get('/get_acc_chd_mbwin', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           },
-          params: { search: this.search_item_ACC }
+          params: {
+            acc: this.search_item_ACC,
+            chd: this.search_item_CHD
+          }
         });
-        if (response.data.length === 1) {
+        if (response.data && Object.keys(response.data).length > 0) {
           console.log("API Response:", response.data);
+          this.$refs.snackbarRef.showSnackbar("Fetching account success!", "success");
         } else {
           this.$refs.snackbarRef.showSnackbar("Account not found. Please try again!", "error");
         }
@@ -110,7 +118,8 @@ export default {
       } finally {
         this.validatingACC = false;
       }
-    },
+    }
+    ,
     async printAccount() {
       if (!this.cid) {
         this.$refs.snackbarRef.showSnackbar("Account is required!", "error");
