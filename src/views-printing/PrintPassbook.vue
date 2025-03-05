@@ -40,6 +40,7 @@ export default {
         if (this.Name4 === 'none') {
             this.Name4 = '';
         }
+        this.$nextTick(() => window.print());
     },
     unmounted() {
         document.body.classList.remove('hide-app-bar');

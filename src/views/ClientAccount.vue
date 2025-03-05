@@ -60,7 +60,7 @@
                 <p><strong>Available Balance:</strong>₱ {{ formatCurrency(selectedAccount.availBalAmt) }}</p>
                 <p><strong>Interest Rate:</strong> {{ selectedAccount.intRate }}%</p>
                 <p><strong>Interest Effective Date:</strong> {{ formatDate(selectedAccount.intEffDate) }}</p>
-                <p><strong>Account Status:</strong> {{ selectedAccount.accStatus }}</p>
+                <p><strong>Account Status:</strong> {{ acc_status(selectedAccount.accStatus) }}</p>
                 <p><strong>Status Date:</strong> {{ formatDate(selectedAccount.accStatusDate) }}</p>
                 <p><strong>Currency Type:</strong> {{ selectedAccount.ccyType }}</p>
                 <p><strong>Open Date:</strong> {{ formatDate(selectedAccount.openDate) }}</p>
@@ -385,7 +385,13 @@ export default {
       const accStr = String(acc);
       return accStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
     },
-
+    acc_status() {
+      if (this.selectedAccount.accStatus === '01') {
+        this.selectedAccount.accStatus === 'Active';
+      } else if (this.selectedAccount.accStatus === '00') {
+        this.selectedAccount.accStatus ==='Inactive';
+      }
+    }
   },
 };
 </script>
