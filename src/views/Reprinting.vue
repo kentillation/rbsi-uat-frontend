@@ -18,10 +18,12 @@
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-sheet class="d-flex flex-column align-center text-center mx-auto" height="100" width="100%" rounded>
-              <div class="w-75 d-flex">
+            <v-sheet class="d-flex flex-column align-center text-center mx-auto" height="200" width="100%" rounded>
+              <div class="w-75">
                 <v-text-field v-model="search_item_ACC" ref="searchItemAcc" @keyup.enter="searchACC"
-                  label="Enter Account..." variant="underlined"></v-text-field>
+                  label="Enter account number..." variant="underlined"></v-text-field>
+                <v-text-field v-model="passbookNumber" @keyup.enter="searchACC"
+                  label="Enter passbook number..." variant="underlined"></v-text-field>
               </div>
               <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
                 :disabled="!searchValidACC || validatingACC" @click="searchACC" rounded>
@@ -49,9 +51,18 @@ export default {
   data() {
     return {
       search_item_ACC: '',
+      passbookNumber: '',
       trimmedAcc: '',
       chd: '',
       appType: '',
+      cid: '',
+      TitleCode: '',
+      DisplayName: '',
+      Line1: '',
+      Line2: '',
+      Line3: '',
+      Line4: '',
+      currentDate: '',
       validatingACC: false,
       passbookDialog: false,
     };
@@ -71,7 +82,6 @@ export default {
       } else {
         this.appType = '';
       }
-
       if (newVal.length >= 8) {
         this.chd = newVal.charAt(7);
         this.trimmedAcc = newVal.slice(0, 7);
@@ -105,7 +115,8 @@ export default {
         });
         if (response.data && Object.keys(response.data).length > 0) {
           console.log("API Response:", response.data);
-          this.$refs.snackbarRef.showSnackbar("Fetching account success!", "success");
+          this.cid = response.data.CID;
+          this.printAccount();
         } else {
           this.$refs.snackbarRef.showSnackbar("Account not found. Please try again!", "error");
         }
@@ -115,8 +126,41 @@ export default {
       } finally {
         this.validatingACC = false;
       }
-    }
-    ,
+    },
+    async fetchClientData(cid) {
+      this.validatingACC = true;
+      try {
+        const response = await apiClient.get(`/show_mbwin_client_info/${cid}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+        });
+        const client = response.data;
+        Object.assign(this, client);
+        if (client) {
+          this.account_number = client.search_item_ACC || "";
+          this.Name1 = client.Name1 || "";
+          this.Name2 = client.Name2 || "";
+          this.Name3 = client.Name3 || "";
+          this.Name4 = client.Name4 || "";
+          this.Mobile1 = client.Mobile1 || "";
+          if (Array.isArray(client.address) && client.address.length > 0) {
+            const firstAddress = client.address[0];
+            this.Line1 = firstAddress.Line1 || "";
+            this.Line2 = firstAddress.Line2 || "";
+            this.Line3 = firstAddress.Line3 || "";
+          } else {
+            this.Line1 = this.Line2 = this.Line3 = this.Line4 = "";
+          }
+        } else {
+          console.warn("No data found in response.");
+        }
+      } catch (error) {
+        this.$refs.snackbarRef.showSnackbar('Client CID not found. Please try again!', 'error');
+      } finally {
+        this.validating = false;
+      }
+    },
     async printAccount() {
       if (!this.cid) {
         this.$refs.snackbarRef.showSnackbar("Account is required!", "error");
@@ -124,15 +168,17 @@ export default {
       }
       await this.fetchClientData(this.cid);
       const queryParams = new URLSearchParams({
-        account_number: this.account_number,
-        ACC: this.cid,
-        TitleCode: this.TitleCode,
-        DisplayName: this.DisplayName,
+        account_number: this.search_item_ACC,
+        CID: this.cid,
+        passbook_number : this.passbookNumber,
+        Name1: this.Name1,
+        Name2: this.Name2,
+        Name3: this.Name3,
+        Name4: this.Name4,
+        Mobile1: this.Mobile1,
         Line1: this.Line1,
         Line2: this.Line2,
         Line3: this.Line3,
-        Line4: this.Line4,
-        date: this.currentDate,
       }).toString();
       const printUrl = `/print-passbook?${queryParams}`;
       if (printUrl) {

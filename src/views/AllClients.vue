@@ -121,16 +121,16 @@ export default {
         }
     },
     created() {
-        if (this.selectedClient?.image_file) {
-            this.fetchClientImage(this.selectedClient.image_file);
+        if (this.selectedClient?.display_name && this.selectedClient?.image_file) {
+            this.fetchClientImage(this.selectedClient.display_name, this.selectedClient.image_file);
         }
     },
     watch: {
         'selectedClient.image_file': {
             immediate: true,
             handler(newValue) {
-                if (newValue) {
-                    this.fetchClientImage(newValue);
+                if (newValue && this.selectedClient?.display_name) {
+                this.fetchClientImage(this.selectedClient.display_name, newValue);
                 }
             },
         },
@@ -184,14 +184,15 @@ export default {
                 this.imgCrd = true
             }, 1000)
         },
-        async fetchClientImage(imageFileName) {
+        async fetchClientImage(folderName, imageFileName) {
             try {
-                const response = await apiClient.get(`/client_image/${imageFileName}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                    },
-                    responseType: 'blob',
+                const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                },
+                responseType: 'blob',
                 });
+                console.log(folderName, imageFileName);
                 const blob = new Blob([response.data], { type: response.headers['content-type'] });
                 this.imgSrc = URL.createObjectURL(blob);
             } catch (error) {
