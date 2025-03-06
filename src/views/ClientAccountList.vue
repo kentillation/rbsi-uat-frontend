@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div class="d-flex">
+    <div class="d-flex align-items-center">
       <v-icon @click="goBack" class="mt-2 me-3" size="x-large" icon="mdi-chevron-double-left" title="Back"></v-icon>
       <h1>Client Accounts</h1>
     </div>
@@ -21,10 +21,8 @@
       <template v-slot:item="{ item }">
         <tr>
           <td>{{ formatAcc(item.acc) }}</td>
-          <td>{{ getTitle(item.appType, this.appTypeItems, "app_type") }}</td>
-          <td>{{ item.relType }}</td>
-          <td>{{ item.accStatus }}</td>
-          <td>{{ getProducts(item.prType, this.productTypeItems, "product_type_code") }}</td>
+          <td>{{ formatProductType(item.prType) }}</td>
+          <td>{{ formatAccStatus(item.accStatus) }}</td>
           <td>₱ {{ formatCurrency(item.balAmt) }}</td>
           <td>₱ {{ formatCurrency(item.availBalAmt) }}</td>
         </tr>
@@ -53,18 +51,12 @@ export default {
       loading: true,
       headers: [
         { title: 'Account No.', value: 'acc', sortable: true },
-        { title: 'App Type', value: 'app_type', sortable: true },
-        { title: 'Rel Type', value: 'relType', sortable: true },
-        { title: 'Status', value: 'accStatus', sortable: true },
         { title: 'Product Type', value: 'product_type_code', sortable: true },
+        { title: 'Status', value: 'accStatus', sortable: true },
         { title: 'Outstanding Balance', value: 'balAmt', sortable: true },
         { title: 'Available Balance', value: 'availBalAmt', sortable: true },
       ],
     };
-  },
-  mounted() {
-    this.fetchAppTypesItems();
-    this.fetchProductTypesItems();
   },
   created() {
     this.fetchCID();
@@ -90,32 +82,6 @@ export default {
         this.loading = false;
         this.fetchCID();
       }, 2000);
-    },
-    async fetchItems(endpoint, targetArray, errorMessage) {
-      try {
-        const response = await apiClient.get(endpoint, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-          },
-        });
-        this[targetArray] = response.data;
-      } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(errorMessage, 'error');
-      }
-    },
-    async fetchAppTypesItems() {
-      this.fetchItems('/app_type', 'appTypeItems', 'Failed to fetch app types');
-    },
-    async fetchProductTypesItems() {
-      this.fetchItems('/product_type', 'productTypeItems', 'Failed to fetch product types');
-    },
-    getTitle(id, items, titleKey) {
-      const item = items.find(item => String(item.id) === String(id));
-      return item ? item[titleKey] : "Unknown";
-    },
-    getProducts(product_type_code, items, titleKey) {
-      const item = items.find(item => item.product_type_code === product_type_code);
-      return item ? item[titleKey] : "Unknown";
     },
     async fetchClientAccount(cid) {
       try {
@@ -155,7 +121,16 @@ export default {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });
-    }
+    },
+    formatAccStatus(accStatus) {
+      return accStatus === '01' ? 'Active' : 'Inactive';
+    },
+    formatProductType(productType) {
+      return productType === '51' ? 'Regular Savings (Basic)' : 
+              productType === '52' ? 'Regular Savings' :
+              productType === '20' ? 'Current Account (Corporate)' :
+              productType === '25' ? 'Current Account (Personal)' : 'Unknown';
+    },
   }
 };
 </script>

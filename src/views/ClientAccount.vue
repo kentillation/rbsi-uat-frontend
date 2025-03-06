@@ -9,7 +9,7 @@
           Account</v-btn>
       </div>
       <div class="w-75 mt-10">
-        <v-text-field v-model="search_item_ACC" label="Search account..." @keyup.enter="searchAccount"></v-text-field>
+        <v-text-field v-model="search_item_ACC" label="Search account number..." @keyup.enter="searchAccount"></v-text-field>
         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
           :disabled="!searchValid || validating" @click="searchAccount" rounded>
           <v-progress-circular v-if="validating" size="20" color="white" indeterminate />
@@ -27,7 +27,7 @@
           <v-container>
             <v-sheet class="d-flex flex-column align-center text-center mx-auto" height="100" width="100%" rounded>
               <div class="w-75">
-                <v-text-field v-model="search_item_CID" label="Enter CID..." @keyup.enter="searchCID"></v-text-field>
+                <v-text-field v-model="search_item_CID" label="Search CID..." @keyup.enter="searchCID"></v-text-field>
                 <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
                   :disabled="!searchValidCID || validatingCID" @click="searchCID" rounded>
                   <v-progress-circular v-if="validatingCID" size="20" color="white" indeterminate />

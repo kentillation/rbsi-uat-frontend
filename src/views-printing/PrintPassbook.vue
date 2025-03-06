@@ -11,8 +11,8 @@
         <h4><strong>Account No: {{ formatAcc(account_number) }}</strong></h4>
         <h4><strong>Client ID: {{ CID }}</strong></h4>
         <h4><strong>Passbook No: {{ passbookNumber }} </strong></h4>
+        <h4><strong>Contact No: {{ Mobile1 }} </strong></h4>
         <h5>{{ Name1 }}, {{ Name2 }} {{ Name3 }} {{ Name4 }}</h5>
-        <h5>{{ Mobile1 }}</h5>
         <h5>{{ Line1 }}, Brgy. {{ Line2 }}, {{ Line3 }} City</h5>
     </div>
 </template>

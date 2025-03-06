@@ -48,10 +48,9 @@
                     <span class="headline">Client Details</span>
                 </v-card-title>
                 <ClientDataMixin :client="selectedClient" :skeletonLoader="skltnLdr" :imageCard="imgCrd"
-                    :imageSource="imgSrc" :typeItems="typItms" :titleItems="ttlItms" :clientstatusItems="clntsttsItms"
-                    :genderItems="gndrItms" :civilstatusItems="cvlsttsItms" :addresstypeItems="addrsstypItms"
-                    :institutionItems="instttnItms" :entityItems="enttyItms" :employmentItems="emplymntItms"
-                    :relationshipItems="rltnshpItms" />
+                    :imageSource="imgSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
+                    :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
+                    :relationshipItems="relationshipItems" />
 
                 <v-card-actions class="mx-4 my-4">
                     <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccount"
@@ -97,16 +96,6 @@ export default {
             skltnLdr: false,
             imgCrd: false,
             imgSrc: null,
-            typItms: [],
-            ttlItms: [],
-            clntsttsItms: [],
-            gndrItms: [],
-            cvlsttsItms: [],
-            addrsstypItms: [],
-            instttnItms: [],
-            enttyItms: [],
-            emplymntItms: [],
-            rltnshpItms: [],
         };
     },
     mounted() {
@@ -209,11 +198,6 @@ export default {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
         },
-        // showSnackbar(message, color) {
-        //     this.snackbar.message = message;
-        //     this.snackbar.color = color;
-        //     this.snackbar.visible = true;
-        // },
         async fetchClientInfo() {
             try {
                 const response = await apiClient.get('/client_info', {

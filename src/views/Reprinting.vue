@@ -14,7 +14,7 @@
     <v-dialog v-model="passbookDialog" max-width="500px" persistent>
       <v-card>
         <v-card-title>
-          <span class="headline">Search Account</span>
+          <span class="headline">Reprint Passbook</span>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -22,8 +22,8 @@
               <div class="w-75">
                 <v-text-field v-model="search_item_ACC" ref="searchItemAcc" @keyup.enter="searchACC"
                   label="Enter account number..." variant="underlined"></v-text-field>
-                <v-text-field v-model="passbookNumber" @keyup.enter="searchACC"
-                  label="Enter passbook number..." variant="underlined"></v-text-field>
+                <v-text-field v-model="passbookNumber" @keyup.enter="searchACC" label="Enter passbook number..."
+                  variant="underlined"></v-text-field>
               </div>
               <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
                 :disabled="!searchValidACC || validatingACC" @click="searchACC" rounded>
@@ -33,6 +33,13 @@
             </v-sheet>
           </v-container>
         </v-card-text>
+        <v-card-actions class="me-3 my-3">
+          <v-spacer></v-spacer>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
+            @click="passbookDialog = false" rounded>
+            Close
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
     <Snackbar ref="snackbarRef" />
@@ -170,7 +177,7 @@ export default {
       const queryParams = new URLSearchParams({
         account_number: this.search_item_ACC,
         CID: this.cid,
-        passbook_number : this.passbookNumber,
+        passbook_number: this.passbookNumber,
         Name1: this.Name1,
         Name2: this.Name2,
         Name3: this.Name3,
