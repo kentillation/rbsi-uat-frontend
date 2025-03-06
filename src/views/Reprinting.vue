@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     searchValidACC() {
-      return this.search_item_ACC.trim() !== '';
+      return this.search_item_ACC.trim() !== '' && this.passbookNumber.trim() !== '';
     },
   },
   watch: {

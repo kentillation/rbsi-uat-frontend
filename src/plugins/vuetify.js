@@ -7,7 +7,15 @@ import { createVuetify } from 'vuetify'
 
 const vuetify = createVuetify({
   theme: {
-    defaultTheme: 'light',
+    defaultTheme: localStorage.getItem('theme') || 'light', // Load saved theme or default to light
+    themes: {
+      light: {
+        dark: false,
+      },
+      dark: {
+        dark: true,
+      },
+    },
   },
 });
 

@@ -10,7 +10,7 @@
       </template>
       <template v-slot:top>
         <v-toolbar flat>
-          <h2 class="ms-3 w-75 text-teal-darken-4">CID: {{ this.cid }}</h2>
+          <h2 class="ms-3 w-75 text-teal-darken-1">CID: {{ this.cid }}</h2>
           <!-- <v-divider vertical></v-divider> -->
           <div class="d-flex justify-end w-100">
             <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 me-4" @click="toNewAccount">New Account</v-btn>

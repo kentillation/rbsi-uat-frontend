@@ -63,16 +63,19 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <Snackbar ref="snackbarRef" />
     </v-container>
 </template>
 
 <script>
 import apiClient from '../axios';
+import Snackbar from '@/components/Snackbar.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
 
 export default {
     components: {
-        ClientDataMixin
+        ClientDataMixin,
+        Snackbar
     },
     name: 'AllClients',
     data() {

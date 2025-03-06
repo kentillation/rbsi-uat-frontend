@@ -140,32 +140,6 @@
                                     </v-container>
                                 </v-card>
                             </v-col>
-                            <!-- Client Classification Codes -->
-                            <!-- <v-col cols="12" lg="6" md="6" sm="6" xs="12">
-                                <v-card border="opacity-50 sm" class="mb-5">
-                                    <v-container>
-                                        <h3 class="mb-4">Client Classification Codes</h3>
-                                        <v-row>
-                                            <v-col cols="12">
-                                                <v-autocomplete v-model="institution" :rules="[institutionRule]"
-                                                    label="Institution" :items="institutionItems"
-                                                    item-title="institution" item-value="id"
-                                                    variant="underlined"></v-autocomplete>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-autocomplete v-model="entity" :rules="[entityRule]" label="Entity"
-                                                    :items="entityItems" item-title="entity" item-value="id"
-                                                    variant="underlined"></v-autocomplete>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-autocomplete v-model="employment" :rules="[employmentRule]"
-                                                    label="Employment" :items="employmentItems" item-title="employment"
-                                                    item-value="id" variant="underlined"></v-autocomplete>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card>
-                            </v-col> -->
                             <!-- Contact Information -->
                             <v-col cols="12" lg="6" md="6" sm="6" xs="12">
                                 <v-card border="opacity-50 sm" class="mb-5">
@@ -329,7 +303,7 @@
                                 }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Purok/Street/Block No.: </span><strong>{{ address_line1
+                                <p><span class="text-grey-lighten-1">Prk./St./Blck.: </span><strong>{{ address_line1
                                 }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
