@@ -128,7 +128,7 @@ export default {
           this.$refs.snackbarRef.showSnackbar("Account not found. Please try again!", "error");
         }
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar("An error occurred while searching for account", "error");
+        this.$refs.snackbarRef.showSnackbar("Account not found. Please try again!", "error");
         this.validatingACC = false;
       } finally {
         this.validatingACC = false;

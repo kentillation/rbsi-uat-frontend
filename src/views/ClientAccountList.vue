@@ -76,6 +76,91 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="dialogTransactionHistory" transition="dialog-bottom-transition" width="600px" persistent>
+      <v-card>
+        <v-card-title>
+          <span class="headline">Transaction History</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" md="6" sm="6" xs="12">
+                <v-dialog v-model="startDateMenu" width="350px">
+                  <template v-slot:activator="{ on, attrs }">
+                    <label for="">Start Date</label>
+                    <v-text-field v-bind="attrs" v-on="on" :value="formattedStartDate" variant="outlined" readonly
+                      @click="startDateMenu = true"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="startdate" @input="startDateMenu = false"></v-date-picker>
+                  <v-btn class="bg-teal-darken-4" @click="startDateMenu = false" size="large" width="25">Ok</v-btn>
+                </v-dialog>
+              </v-col>
+              <v-col cols="12" lg="6" md="6" sm="6" xs="12">
+                <v-dialog v-model="endDateMenu" width="350px">
+                  <template v-slot:activator="{ on, attrs }">
+                    <label for="">End Date</label>
+                    <v-text-field v-bind="attrs" v-on="on" :value="formattedEndDate" variant="outlined" readonly
+                      @click="endDateMenu = true"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="enddate" @input="endDateMenu = false"></v-date-picker>
+                  <v-btn class="bg-teal-darken-4" @click="closeEndDateDialog" size="large" width="25">Ok</v-btn>
+                </v-dialog>
+              </v-col>
+            </v-row>
+            <div class="d-flex flex-column align-center text-center mx-auto">
+              <v-btn prepend-icon="mdi-eye-outline" class="bg-teal-darken-4" size="large"
+                :disabled="!datesSelected || validatingDate" @click="viewTransactionHistory" rounded>
+                <v-progress-circular v-if="validatingDate" size="20" color="white" indeterminate />
+                <span v-else>View</span>
+              </v-btn>
+            </div>
+          </v-container>
+        </v-card-text>
+        <v-card-actions class="mx-4 my-4">
+          <v-spacer></v-spacer>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
+            @click="dialogTransactionHistory = false" rounded>
+            Close
+          </v-btn>
+        </v-card-actions>
+
+        <v-dialog v-model="dialogTransactionHistoryTable" transition="dialog-bottom-transition" width="1000px"
+          persistent>
+          <v-card>
+            <v-card-title>
+              <span class="headline">Transaction History</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <h4>Account number: {{ this.acc }}</h4>
+                <v-data-table :headers="transactionHeaders" :items="transactionHistory" class="elevation-1">
+                  <template v-slot:item="{ item }">
+                    <tr>
+                      <td>{{ formatDate(item.trnDate) }}</td>
+                      <td>{{ formatDate(item.valueDate) }}</td>
+                      <td>{{ formatCurrency(item.debitAmt) }}</td>
+                      <td>{{ formatCurrency(item.creditAmt) }}</td>
+                      <td>{{ formatCurrency(item.balAmt) }}</td>
+                      <td>{{ item.seqRef }}</td>
+                      <td>{{ item.trnDesc }}</td>
+                    </tr>
+                  </template>
+                </v-data-table>
+              </v-container>
+            </v-card-text>
+            <v-card-actions class="mx-4 my-4">
+              <v-spacer></v-spacer>
+              <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
+                @click="dialogTransactionHistoryTable = false" rounded>
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+      </v-card>
+    </v-dialog>
+
     <Snackbar ref="snackbarRef" />
   </v-container>
 </template>
@@ -99,7 +184,15 @@ export default {
       appTypeItems: [],
       productTypeItems: [],
       loading: true,
+      validatingDate: false,
       dialogAccountDetails: false,
+      dialogTransactionHistory: false,
+      dialogTransactionHistoryTable: false,
+      startdate: null,
+      enddate: null,
+      transactionHistory: [],
+      startDateMenu: false,
+      endDateMenu: false,
       headers: [
         { title: 'Account No.', value: 'acc', sortable: true },
         { title: 'Product Type', value: 'product_type_code', sortable: true },
@@ -108,7 +201,36 @@ export default {
         { title: 'Available Balance', value: 'availBalAmt', sortable: true },
         { title: 'Actions', value: 'action', sortable: false }
       ],
+      transactionHeaders: [
+        { title: 'Date', value: 'trnDate' },
+        { title: 'Value Date', value: 'valueDate' },
+        { title: 'Debit Amount', value: 'debitAmt' },
+        { title: 'Credit Amount', value: 'creditAmt' },
+        { title: 'Balance', value: 'balAmt' },
+        { title: 'Reference', value: 'seqRef' },
+        { title: 'Description', value: 'trnDesc' },
+      ],
     };
+  },
+  computed: {
+    formattedStartDate() {
+      return this.startdate ? this.formatDateToYYYYMMDD(this.startdate) : '';
+    },
+    formattedEndDate() {
+      return this.enddate ? this.formatDateToYYYYMMDD(this.enddate) : '';
+    },
+    datesSelected() {
+      return this.startdate && this.enddate;
+    }
+  },
+  watch: {
+    startdate(newDate) {
+      if (newDate) {
+        const endDate = new Date(newDate);
+        endDate.setDate(endDate.getDate() + 30);
+        this.enddate = endDate;
+      }
+    },
   },
   created() {
     this.fetchCID();
@@ -127,6 +249,10 @@ export default {
           },
         });
       }
+    },
+    showDialogTrnsctnHstry() {
+      this.dialogAccountDetails = false;
+      this.dialogTransactionHistory = true;
     },
     onRefresh() {
       this.loading = true;
@@ -217,6 +343,41 @@ export default {
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
+    },
+    formatDateToYYYYMMDD(date) {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+    closeStartDateDialog() {
+      this.startDateMenu = false;
+    },
+    closeEndDateDialog() {
+      this.endDateMenu = false;
+    },
+    async viewTransactionHistory() {
+      this.validatingDate = true;
+      try {
+        const response = await apiClient.post('/account_transaction_history', {
+          acc: this.acc,
+          startDate: this.formattedStartDate,
+          endDate: this.formattedEndDate
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+          }
+        });
+        // Ensure the response data is an array
+        this.transactionHistory = Array.isArray(response.data.data.trans) ? response.data.data.trans : [];
+        this.dialogTransactionHistoryTable = true;
+        this.validatingDate = false;
+      } catch (error) {
+        this.$refs.snackbarRef.showSnackbar("No transaction history found!", "error");
+        console.error("Error:", error);
+        this.validatingDate = false;
+      }
     },
     acc_status() {
       const statusMap = {
