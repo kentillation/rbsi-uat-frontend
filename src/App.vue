@@ -23,6 +23,7 @@
           <v-list-subheader class="ms-5" size="30">Client</v-list-subheader>
           <v-list-item prepend-icon="mdi-information-outline" @click="client_info" class="text-teal-darken-1">Information</v-list-item>
           <v-list-item prepend-icon="mdi-bank-outline" @click="client_account" class="text-teal-darken-1">Account</v-list-item>
+          <v-list-item prepend-icon="mdi-ocr" @click="ocr" class="text-teal-darken-1">OCR</v-list-item>
           <v-list-subheader class="ms-5" size="30">Reports</v-list-subheader>
           <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients" class="text-teal-darken-1">Masterlist</v-list-item>
           <v-list-item prepend-icon="mdi-printer" @click="reprinting" class="text-teal-darken-1">Reprinting</v-list-item>
@@ -92,6 +93,13 @@ export default {
         this.$router.push('/client_account');
       } catch (error) {
         console.error('Error in accessing client info:', error);
+      }
+    },
+    async ocr() {
+      try {
+        this.$router.push('/ocr');
+      } catch (error) {
+        console.error('Error in accessing OCR page:', error);
       }
     },
     async all_clients() {
