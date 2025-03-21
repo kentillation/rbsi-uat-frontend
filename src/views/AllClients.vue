@@ -26,12 +26,12 @@
             <template v-slot:item="{ item }">
                 <!-- <tr :class="{ 'bg-teal-darken-1': !item.existsInMBWin }"> -->
                 <tr>
-                    <td>{{ item.cid }}</td>
-                    <td>{{ item.last_name }}</td>
-                    <td>{{ item.first_name }}</td>
-                    <td>{{ item.middle_name }}</td>
-                    <td>{{ item.created_at }}</td>
-                    <td>{{ item.updated_at }}</td>
+                    <td>{{ item.CID }}</td>
+                    <td>{{ item.Name1 }}</td>
+                    <td>{{ item.Name2 }}</td>
+                    <td>{{ item.Name3 }}</td>
+                    <td>{{ item.RegisterDate }}</td>
+                    <td>{{ item.LastChangeDate }}</td>
                     <td class="text-center">
                         <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>
                             View
@@ -53,7 +53,7 @@
                     :relationshipItems="relationshipItems" />
 
                 <v-card-actions class="mx-4 my-4">
-                    <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccount"
+                    <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccountList"
                         rounded>List of Accounts</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil-outline" @click="toEditClientInfo"
@@ -81,18 +81,25 @@ export default {
     data() {
         return {
             client_info: [],
+            typeItems: false,
+            titleItems: false,
+            clientstatusItems: false,
+            genderItems: false,
+            civilstatusItems: false,
+            addresstypeItems: false,
+            relationshipItems: false,
             dialogSingle: false,
             loading: true,
             image_file: null,
             search_item_AC: '',
             staff_or_not: 2,
             headers: [
-                { title: 'CID', value: 'cid', sortable: false },
-                { title: 'Last Name', value: 'last_name', sortable: false },
-                { title: 'First Name', value: 'first_name', sortable: false },
-                { title: 'Middle Name', value: 'middle_name', sortable: false },
-                { title: 'Created At', value: 'created_at', sortable: true },
-                { title: 'Updated At', value: 'updated_at', sortable: true },
+                { title: 'CID', value: 'CID', sortable: false },
+                { title: 'Last Name', value: 'Name1', sortable: false },
+                { title: 'First Name', value: 'Name2', sortable: false },
+                { title: 'Middle Name', value: 'Name3', sortable: false },
+                { title: 'Created At', value: 'RegisterDate', sortable: true },
+                { title: 'Updated At', value: 'LastChangeDate', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
             selectedClient: null,
@@ -132,21 +139,21 @@ export default {
             const searchTerm = this.search_item_AC.toLowerCase();
             return this.client_info.filter((client) => {
                 return (
-                    client.cid.toString().includes(searchTerm) ||
-                    client.first_name.toLowerCase().includes(searchTerm) ||
-                    client.middle_name.toLowerCase().includes(searchTerm) ||
-                    client.last_name.toLowerCase().includes(searchTerm)
+                    client.CID.toString().includes(searchTerm) ||
+                    client.Name2.toLowerCase().includes(searchTerm) ||
+                    client.Name3.toLowerCase().includes(searchTerm) ||
+                    client.Name1.toLowerCase().includes(searchTerm)
                 );
             });
         },
     },
     methods: {
-        toClientAccount() {
+        toClientAccountList() {
             if (this.selectedClient) {
                 this.$router.push({
                 name: 'ClientAccountList',
                 params: {
-                    cid: this.selectedClient.cid,
+                    CID: this.selectedClient.CID,
                 },
                 });
             }
@@ -156,8 +163,8 @@ export default {
                 this.$router.push({
                     name: 'EditClientInfo',
                     params: {
-                        cid: this.selectedClient.cid,
-                        last_name: this.selectedClient.last_name,
+                        CID: this.selectedClient.CID,
+                        Name1: this.selectedClient.Name1,
                     },
                 });
             }
@@ -165,8 +172,8 @@ export default {
         viewItem(item) {
             this.selectedClient = {
                 ...item,
-                created_at: this.formatDate(item.created_at),
-                updated_at: this.formatDate(item.updated_at)
+                RegisterDate: this.formatDate(item.RegisterDate),
+                LastChangeDate: this.formatDate(item.LastChangeDate)
             };
             this.dialogSingle = true;
             this.skltnLdr = true
@@ -203,15 +210,15 @@ export default {
         },
         async fetchClientInfo() {
             try {
-                const response = await apiClient.get('/client_info', {
+                const response = await apiClient.get('/mbwin_client_info', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                     }
                 });
                 this.client_info = response.data.map(client => ({
                     ...client,
-                    created_at: this.formatDate(client.created_at),
-                    updated_at: this.formatDate(client.updated_at),
+                    RegisterDate: this.formatDate(client.RegisterDate),
+                    LastChangeDate: this.formatDate(client.LastChangeDate),
                     existsInMBWin: false
                 }));
             } catch (error) {

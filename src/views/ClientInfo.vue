@@ -95,13 +95,13 @@ export default {
       search_item_CID: '',
       staff_or_not: 2,
       headers: [
-        { title: 'CID', value: 'cid', sortable: false },
-        { title: 'Last Name', value: 'last_name', sortable: false },
-        { title: 'First Name', value: 'first_name', sortable: false },
-        { title: 'Middle Name', value: 'middle_name', sortable: false },
-        { title: 'Display Name', value: 'display_name', sortable: true },
-        { title: 'Created At', value: 'created_at', sortable: true },
-        { title: 'Updated At', value: 'updated_at', sortable: true },
+        { title: 'CID', value: 'CID', sortable: false },
+        { title: 'Last Name', value: 'Name1', sortable: false },
+        { title: 'First Name', value: 'Name2', sortable: false },
+        { title: 'Middle Name', value: 'Name3', sortable: false },
+        { title: 'Display Name', value: 'DisplayName', sortable: true },
+        { title: 'Created At', value: 'RegisterDate', sortable: true },
+        { title: 'Updated At', value: 'LastChangeDate', sortable: true },
         { title: 'Actions', value: 'action', sortable: false }
       ],
       selectedClient: null,
@@ -146,7 +146,7 @@ export default {
       if (!this.searchValid) return;
       this.validating = true;
       try {
-        const response = await apiClient.get('/client_info', {
+        const response = await apiClient.get('/mbwin_client_info', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           },
@@ -154,8 +154,8 @@ export default {
         });
         const clients = response.data.map(client => ({
           ...client,
-          created_at: this.formatDate(client.created_at),
-          updated_at: this.formatDate(client.updated_at)
+          RegisterDate: this.formatDate(client.RegisterDate),
+          LastChangeDate: this.formatDate(client.LastChangeDate),
         }));
         if (clients.length === 1) {
           this.singleClient = clients[0];
@@ -185,8 +185,8 @@ export default {
           this.$router.push({
           name: 'EditClientInfo',
           params: {
-              cid: this.selectedClient.cid,
-              last_name: this.selectedClient.last_name,
+              CID: this.selectedClient.CID,
+              Name: this.selectedClient.Name1,
           },
           });
       }
@@ -196,7 +196,7 @@ export default {
           this.$router.push({
           name: 'ClientAccountList',
           params: {
-              cid: this.selectedClient.cid,
+              CID: this.selectedClient.CID,
           },
           });
       }
@@ -204,8 +204,8 @@ export default {
     viewItem(item) {
       this.selectedClient = {
           ...item,
-          created_at: this.formatDate(item.created_at),
-          updated_at: this.formatDate(item.updated_at)
+          RegisterDate: this.formatDate(item.RegisterDate),
+          LastChangeDate: this.formatDate(item.LastChangeDate),
       };
       this.dialogSingle = true;
       this.skltnLdr = true

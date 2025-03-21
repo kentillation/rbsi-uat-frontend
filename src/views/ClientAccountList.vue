@@ -27,7 +27,7 @@
           <td>₱ {{ formatCurrency(item.availBalAmt) }}</td>
           <td class="text-center">
             <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>
-              Details
+              Inquiry
             </v-btn>
           </td>
         </tr>
@@ -36,7 +36,7 @@
     <v-dialog v-model="dialogAccountDetails" transition="dialog-bottom-transition" width="600px" persistent>
       <v-card>
         <v-card-title>
-          <span class="headline">Account Details</span>
+          <span class="headline">Account Inquiry</span>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -64,7 +64,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions class="mx-4 my-4">
-          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-clipboard-outline" @click="showDialogTrnsctnHstry"
+          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-receipt" @click="showDialogTrnsctnHstry"
             rounded>Transaction History
           </v-btn>
           <v-spacer></v-spacer>
@@ -308,10 +308,10 @@ export default {
       }
     },
     fetchCID() {
-      const { cid } = this.$route.params;
-      if (cid) {
-        this.cid = cid;
-        this.fetchClientAccount(cid);
+      const { CID } = this.$route.params;
+      if (CID) {
+        this.cid = CID;
+        this.fetchClientAccount(CID);
       }
     },
     formatAcc(acc) {
