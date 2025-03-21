@@ -277,7 +277,7 @@
                                     titleItems, 'title') }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
-                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staffLabel }}</strong>
+                                <p><span class="text-grey-lighten-1">Staff: </span><strong>{{ staffOrNot }}</strong>
                                 </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
@@ -474,8 +474,8 @@ export default {
         searchRelationValid() {
             return this.search_relation_info.trim() !== '';
         },
-        staffLabel() {
-            return this.staff_or_not === 2 ? 'No' : 'Yes';
+        staffOrNot() {
+            return this.staff_or_not ? 'Yes' : 'No';
         },
     },
     methods: {
@@ -656,7 +656,7 @@ export default {
                     if (this.image_file) {
                         formData.append('image_file', this.image_file);
                     }
-                    formData.append('staff_or_not', this.staff_or_not ? 1 : 2);
+                    formData.append('staff_or_not', this.staff_or_not ? 2 : 1);
                     const response = await apiClient.post('/new_client_info', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',

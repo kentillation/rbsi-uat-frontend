@@ -189,7 +189,7 @@ export default {
   },
   data() {
     return {
-      cid: '',
+      CID: '',
       appType: '',
       startDate: '',
       endDate: '',
@@ -289,7 +289,7 @@ export default {
           this.$router.push({
             name: 'NewAccount',
             params: {
-              cid: String(selectedCID),
+              CID: String(selectedCID),
             },
           });
         } else {

@@ -120,7 +120,7 @@ export default {
     data() {
         return {
             cid: "",
-            account_number: "123456",
+            account_number: "",
             app_type: null,
             product_type: null,
             ownership_type: null,

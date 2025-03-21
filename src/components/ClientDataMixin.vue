@@ -9,7 +9,7 @@
             alt="Client Image" />
         </p>
       </v-container>
-      <h3 class="mb-7"><span class="text-grey-lighten-1">CID: </span>{{ client?.cid }}</h3>
+      <h3 class="mb-7"><span class="text-grey-lighten-1">CID: </span>{{ client?.CID }}</h3>
     </div>
     <v-row>
       <v-col cols="12" lg="4" md="4" sm="4" v-for="field in clientFields" :key="field.label">
@@ -47,30 +47,30 @@ export default {
   computed: {
     clientFields() {
       return [
-        { label: "First Name", value: this.client?.first_name },
-        { label: "Middle Name", value: this.client?.middle_name },
-        { label: "Last Name", value: this.client?.last_name },
-        { label: "Title", value: this.getTitle(this.client?.title, this.titleItems, "title") },
-        { label: "Display Name", value: this.client?.display_name },
-        { label: "Initial", value: this.client?.initial },
+        { label: "First Name", value: this.client?.Name2 },
+        { label: "Middle Name", value: this.client?.Name3 },
+        { label: "Last Name", value: this.client?.Name1 },
+        { label: "Title", value: this.getTitle(this.client?.TitleCode, this.titleItems, "title") },
+        { label: "Display Name", value: this.client?.DisplayName },
+        { label: "Initial", value: this.client?.Initials },
         { label: "Staff or Not", value: this.staffLabel },
-        { label: "Type", value: this.getTitle(this.client?.type, this.typeItems, "type") },
-        { label: "Mobile 1", value: this.client?.mobile1 },
-        { label: "Email", value: this.client?.email },
-        { label: "Nationality", value: this.client?.nationality },
-        { label: "Gender", value: this.getTitle(this.client?.gender, this.genderItems, "gender") },
-        { label: "Civil Status", value: this.getTitle(this.client?.civil_status, this.civilstatusItems, "civil_status") },
-        { label: "Birthdate", value: this.client?.birthdate ? this.formatDate(this.client?.birthdate) : "N/A" },
-        { label: "Prk./St./Blck.", value: this.client?.address?.[0]?.line1 },
-        { label: "Barangay", value: this.client?.address?.[0]?.line2 },
-        { label: "City/Municipality", value: this.client?.address?.[0]?.line3 },
-        { label: "Address Type", value: this.getTitle(this.client?.address_type, this.addresstypeItems, "address_type") },
-        { label: "Telephone", value: this.client?.address?.[0]?.telephone },
-        { label: "Postal Code", value: this.client?.address?.[0]?.postal_code },
+        { label: "Type", value: this.getTitle(this.client?.Type, this.typeItems, "type") },
+        { label: "Mobile 1", value: this.client?.Mobile1 },
+        { label: "Email", value: this.client?.Email1 },
+        { label: "Nationality", value: this.client?.Email2 },
+        { label: "Gender", value: this.getTitle(this.client?.GenderType, this.genderItems, "gender") },
+        { label: "Civil Status", value: this.getTitle(this.client?.CivilStatusCode, this.civilstatusItems, "civil_status") },
+        { label: "Birthdate", value: this.client?.BirthDate ? this.formatDate(this.client?.BirthDate) : "N/A" },
+        { label: "Prk./St./Blck.", value: this.client?.address?.[0]?.Line1 },
+        { label: "Barangay", value: this.client?.address?.[0]?.Line2 },
+        { label: "City/Municipality", value: this.client?.address?.[0]?.Line3 },
+        { label: "Address Type", value: this.getTitle(this.client?.address?.[0]?.AddressType, this.addresstypeItems, "address_type") },
+        { label: "Telephone", value: this.client?.address?.[0]?.Phone1 },
+        { label: "Postal Code", value: this.client?.address?.[0]?.PostalCode },
       ];
     },
     staffLabel() {
-      return this.client?.staff_or_not === 2 ? 'No' : 'Yes';
+      return this.client?.DosriTF === 'F' ? 'No' : 'Yes';
     },
   },
   mounted() {
@@ -112,8 +112,8 @@ export default {
     async fetchAddressTypeItems() {
       this.fetchItems('/address_type', 'addresstypeItems', 'Failed to fetch address type');
     },
-    getTitle(id, items, titleKey) {
-      const item = items.find(item => String(item.id) === String(id));
+    getTitle(code, items, titleKey) {
+      const item = items.find(item => String(item.code) === String(code));
       return item ? item[titleKey] : "Unknown";
     },
     formatDate(date) {
