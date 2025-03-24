@@ -1,8 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <v-container>
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-      <div class="d-flex align-items-center">
+    <v-snackbar v-model="snackbar.visible" :color="snackbar.color"  location="top" timeout="5000">
+      <div class="d-flex align-items-center py-3">
         <span><v-icon icon="mdi-information-outline"></v-icon></span>
         <span>&nbsp; {{ snackbar.message }}</span>
       </div>
