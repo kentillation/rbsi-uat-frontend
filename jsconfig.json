@@ -16,7 +16,4 @@
       "scripthost"
     ]
   },
-  "exclude": [
-    "src/views/Login.vue"
-  ]
 }

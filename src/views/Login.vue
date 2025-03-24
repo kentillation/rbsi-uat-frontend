@@ -28,13 +28,12 @@
                 </v-card>
             </v-col>
         </v-row>
-
-        <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top>
-            <div class="d-flex align-items-center justify-space-between">
-                {{ snackbar.message }}
-            </div>
-        </v-snackbar>
     </v-container>
+    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" top absolute>
+        <div class="d-flex align-items-center justify-space-between">
+            {{ snackbar.message }}
+        </div>
+    </v-snackbar>
 </template>
 
 <script>
