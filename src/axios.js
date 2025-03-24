@@ -1,11 +1,10 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api',
-    // baseURL: 'http://192.168.1.105:8000/api',
+    baseURL: process.env.VUE_APP_API_BASE_URL,
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Content-Type': process.env.VUE_APP_MIME_TYPE,
+        'Accept': process.env.VUE_APP_MIME_TYPE
     },
     withCredentials: false,
 });

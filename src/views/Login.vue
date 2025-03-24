@@ -83,6 +83,10 @@ export default {
                 let message = 'An unknown error occurred.';
                 let color = 'error';
 
+                // Logging the error internally
+                console.error('Login error:', error);
+
+                // Sanitizing error messages to avoid exposing sensitive information
                 if (error.response) {
                     switch (error.response.status) {
                         case 422:
@@ -114,6 +118,7 @@ export default {
             this.snackbar.visible = true;
         }
     },
+
 };
 </script>
 
