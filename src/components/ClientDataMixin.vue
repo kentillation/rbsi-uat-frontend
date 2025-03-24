@@ -53,7 +53,7 @@ export default {
         { label: "Title", value: this.getTitle(this.client?.TitleCode, this.titleItems, "title") },
         { label: "Display Name", value: this.client?.DisplayName },
         { label: "Initial", value: this.client?.Initials },
-        { label: "Staff or Not", value: this.staffLabel },
+        { label: "Staff", value: this.staffLabel },
         { label: "Type", value: this.getTitle(this.client?.Type, this.typeItems, "type") },
         { label: "Mobile 1", value: this.client?.Mobile1 },
         { label: "Email", value: this.client?.Email1 },

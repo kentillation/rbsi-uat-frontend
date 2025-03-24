@@ -33,8 +33,6 @@
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
             rounded>Close</v-btn>
-          <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil-outline" @click="toEditClientInfo"
-            rounded>Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -146,7 +144,7 @@ export default {
       if (!this.searchValid) return;
       this.validating = true;
       try {
-        const response = await apiClient.get('/mbwin_client_info', {
+        const response = await apiClient.get('/mbwin_client_cid_lastname', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           },
@@ -178,17 +176,6 @@ export default {
         this.$refs.snackbarRef.showSnackbar("An error occurred while searching for clients", "error");
       } finally {
         this.validating = false;
-      }
-    },
-    toEditClientInfo() {
-      if (this.selectedClient) {
-          this.$router.push({
-          name: 'EditClientInfo',
-          params: {
-              CID: this.selectedClient.CID,
-              Name: this.selectedClient.Name1,
-          },
-          });
       }
     },
     toClientAccountList() {

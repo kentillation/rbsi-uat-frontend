@@ -30,12 +30,6 @@ const routes = [
         meta: { requiresAuth: true } 
     },
     { 
-        path: '/edit_client_info/:cid/:last_name', 
-        name: 'EditClientInfo', 
-        component: () => import('../views/EditClientInfo.vue'),
-        meta: { requiresAuth: true } 
-    },
-    { 
         path: '/client_account_list/:CID', 
         name: 'ClientAccountList', 
         component: () => import('../views/ClientAccountList.vue'),
