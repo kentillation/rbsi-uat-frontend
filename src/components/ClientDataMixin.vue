@@ -24,7 +24,6 @@
 import apiClient from '../axios';
 import Snackbar from '@/components/Snackbar.vue';
 export default {
-  name: "ClientDetails",
   components: {
     Snackbar
   },
