@@ -105,6 +105,7 @@ export default {
         { title: 'Actions', value: 'action', sortable: false }
       ],
       selectedClient: null,
+      typeItems: [],
       titleItems: [],
       clientstatusItems: [],
       genderItems: [],
