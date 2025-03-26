@@ -98,6 +98,12 @@ export default {
       }
     }
   },
+  mounted() {
+    window.addEventListener('keydown', this.handleKeyPress);
+  },
+  beforeUnmount() {
+    window.removeEventListener('keydown', this.handleKeyPress);
+  },
   methods: {
     openPassBookDialog() {
       this.passbookDialog = true;
@@ -145,7 +151,7 @@ export default {
         const client = response.data;
         Object.assign(this, client);
         if (client) {
-          this.account_number = client.search_item_ACC || "";
+          this.acc = client.search_item_ACC || "";
           this.Name1 = client.Name1 || "";
           this.Name2 = client.Name2 || "";
           this.Name3 = client.Name3 || "";
@@ -175,7 +181,7 @@ export default {
       }
       await this.fetchClientData(this.cid);
       const queryParams = new URLSearchParams({
-        account_number: this.search_item_ACC,
+        acc: this.search_item_ACC,
         CID: this.cid,
         passbook_number: this.passbookNumber,
         Name1: this.Name1,
@@ -192,6 +198,30 @@ export default {
         window.open(printUrl, '_blank');
       } else {
         console.error("Failed to generate print URL");
+      }
+    },
+    handleKeyPress(event) {
+      if (event.key === 'F1') {
+        event.preventDefault();
+        this.fetchAccountDetails();
+      }
+    },
+    async fetchAccountDetails() {
+      try {
+        const response = await apiClient.get('/get_mbwin_client_account_number', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+          }
+        });
+        if (response.data) {
+          this.search_item_ACC = response.data.ACC + response.data.Chd || '';
+          // this.chd = response.data.Chd || '';
+          this.$refs.snackbarRef.showSnackbar("Account details fetched successfully!", "success");
+        } else {
+          this.$refs.snackbarRef.showSnackbar("No account details found!", "error");
+        }
+      } catch (error) {
+        this.$refs.snackbarRef.showSnackbar("Failed to fetch account details. Please try again!", "error");
       }
     },
   },

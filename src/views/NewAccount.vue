@@ -90,14 +90,12 @@
                     <v-container>
                         <h3 class="text-teal-lighten-1">New account has been created successfully!</h3>
                         <br>
-                        <h2>Account Number: {{ formatAcc(account_number) }} </h2>
+                        <h2>Account Number: {{ formatAcc(acc) }} </h2>
                     </v-container>
                 </v-card-text>
                 <v-container class="d-flex justify-end">
-                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
-                        rounded>Passbook</v-btn>
-                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-printer" text @click="printAccount"
-                        rounded>Sig Card</v-btn>
+                    <v-btn class="bg-teal-darken-4 px-3 me-2" prepend-icon="mdi-home" text @click="toClientInfo"
+                        rounded>Back to Home</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn class="bg-red-darken-4 px-3 me-2" prepend-icon="mdi-close" text
                         @click="successDialog = false" rounded>Close</v-btn>
@@ -120,7 +118,7 @@ export default {
     data() {
         return {
             cid: "",
-            account_number: "",
+            acc: "",
             app_type: null,
             product_type: null,
             ownership_type: null,
@@ -206,7 +204,7 @@ export default {
                 const client = response.data;
                 Object.assign(this, client);
                 if (client) {
-                    this.account_number = client.account_number || "";
+                    this.acc = client.acc || "";
                     this.TitleCode = client.TitleCode || "";
                     this.DisplayName = client.DisplayName || "";
                     const today = new Date().toISOString().split("T")[0];
@@ -280,25 +278,29 @@ export default {
                         formData.append(field, this[field]);
                     }
                 });
-                const response = await apiClient.post('/create_account', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                this.account_number = response.data.data.acc;
-                if (response.status === 200) {
-                    try {
-                        setTimeout(() => {
-                            this.confirmDialog = false;
-                            this.successDialog = true;
-                            this.validatingData = false;
-                        }, 3000);
-                    } catch (error) {
-                        console.error('Error fetching client CID:', error);
-                        this.imageSource = "";
-                    }
-                }
+                // const response = await apiClient.post('/create_account', formData, {
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data',
+                //         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                //     }
+                // });
+                // this.acc = response.data.data.acc;
+                this.acc = "1234567890";
+                this.confirmDialog = false;
+                this.successDialog = true;
+                this.validatingData = false;
+                // if (response.status === 200) {
+                //     try {
+                //         setTimeout(() => {
+                //             this.confirmDialog = false;
+                //             this.successDialog = true;
+                //             this.validatingData = false;
+                //         }, 3000);
+                //     } catch (error) {
+                //         console.error('Error fetching client CID:', error);
+                //         this.imageSource = "";
+                //     }
+                // }
                 try {
                     setTimeout(() => {
                         this.confirmDialog = false;
@@ -320,42 +322,21 @@ export default {
                 this.validatingData = false;
             }
         },
-        formatAcc(account_number) {
-            if (!account_number) return account_number;
-            const account_numberStr = String(account_number);
-            return account_numberStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
-        },
-        async printAccount() {
-            if (!this.cid) {
-                this.$refs.snackbarRef.showSnackbar("CID is required!", "error");
-                return;
-            }
-            await this.fetchClientData(this.cid); 
-            const queryParams = new URLSearchParams({
-                account_number: this.account_number,
-                CID: this.cid,
-                TitleCode: this.TitleCode,
-                DisplayName: this.DisplayName,
-                Line1: this.Line1,
-                Line2: this.Line2,
-                Line3: this.Line3,
-                Line4: this.Line4,
-                date: this.currentDate,
-            }).toString();
-            const printUrl = `/print-passbook?${queryParams}`;
-            if (printUrl) {
-                window.open(printUrl, '_blank');
-            } else {
-                console.error("Failed to generate print URL");
-            }
+        formatAcc(acc) {
+            if (!acc) return acc;
+            const accStr = String(acc);
+            return accStr.replace(/^(\d{2})(\d{5})(\d{1})$/, "$1-$2-$3");
         },
         copyAccountNumber() {
-            navigator.clipboard.writeText(this.account_number).then(() => {
+            navigator.clipboard.writeText(this.acc).then(() => {
                 this.$refs.snackbarRef.showSnackbar("Account number copied!", "success");
                 // eslint-disable-next-line no-unused-vars
             }).catch(err => {
                 this.$refs.snackbarRef.showSnackbar("Failed to copy account number.", "error");
             });
+        },
+        toClientInfo () {
+            this.$router.push({ name: 'ClientInfo' });
         },
         handleFormError(error) {
             let message = 'An unknown error occurred.';
@@ -372,9 +353,6 @@ export default {
                         break;
                     case 429:
                         message = 'Too many API requests. Please refresh the page!';
-                        break;
-                    case 409:
-                        message = 'Contact already exist!';
                         break;
                     case 500:
                         message = 'Internal server error. Please try again later!';
