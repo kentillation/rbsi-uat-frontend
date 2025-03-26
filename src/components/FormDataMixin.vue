@@ -52,11 +52,6 @@ export default {
             rel_cid: "",
             relationship: "",
             rel_display_name: "",
-            headers: [
-                { title: 'CID', value: 'cid', sortable: false },
-                { title: 'Display Name', value: 'display_name', sortable: false },
-                { title: 'Actions', value: 'action', sortable: false }
-            ],
             cityToPostalCodeMap: {
                 'Sagay': '6122',
                 'Cadiz': '6121',

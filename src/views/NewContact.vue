@@ -407,7 +407,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-container>
-                        <v-data-table :headers="headers" :items="multipleRelation" item-key="cid" class="elevation-1">
+                        <v-data-table :headers="multplRltnsHeaders" :items="multipleRelation" item-key="cid" class="elevation-1">
                             <template v-slot:loading>
                                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
                             </template>
@@ -458,6 +458,11 @@ export default {
             multipleRelation: [],
             multipleRltnDialog: false,
             staff_or_not: false,
+            multplRltnsHeaders: [
+                { title: 'CID', value: 'CID', sortable: false },
+                { title: 'Display Name', value: 'DisplayName', sortable: false },
+                { title: 'Actions', value: 'action', sortable: false }
+            ],
         }
     },
     watch: {
@@ -504,9 +509,21 @@ export default {
         },
         selectFrmSnglRltn() {
             if (this.singleRelation) {
-                this.rel_cid = this.singleRelation.cid;
-                this.rel_display_name = this.singleRelation.display_name;
+                this.rel_cid = this.singleRelation.CID;
+                this.rel_display_name = this.singleRelation.DisplayName;
                 this.singleRltnDialog = false;
+                this.searchRltdDialog = false;
+                this.multipleRltnDialog = false;
+                this.$refs.snackbarRef.showSnackbar('Related contact has been added successfully!', 'success');
+            } else {
+                this.$refs.snackbarRef.showSnackbar('No related contact selected!', 'warning');
+            }
+            this.singleRltnDialog = false;
+        },
+        selectFrmMltplRltn(item) {
+            if (item) {
+                this.rel_cid = item.CID;
+                this.rel_display_name = item.DisplayName;
                 this.searchRltdDialog = false;
                 this.multipleRltnDialog = false;
                 this.$refs.snackbarRef.showSnackbar('Related contact has been added successfully!', 'success');
@@ -555,7 +572,7 @@ export default {
             if (!this.searchRelationValid) return;
             this.validatingRelation = true;
             try {
-                const response = await apiClient.get('/client_info', {
+                const response = await apiClient.get('/mbwin_client_cid_lastname', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                     },
@@ -584,28 +601,6 @@ export default {
                 this.$refs.snackbarRef.showSnackbar('An error occurred while searching!', 'error');
             } finally {
                 this.validatingRelation = false;
-            }
-        },
-        async selectFrmMltplRltn(infoFrmMltplRltn) {
-            try {
-                const response = await apiClient.get('/client_info', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                    },
-                    params: { search: infoFrmMltplRltn.cid },
-                });
-                const myRelation = response.data[0];
-                if (myRelation) {
-                    this.rel_cid = myRelation.cid;
-                    this.rel_display_name = myRelation.display_name;
-                    this.searchRltdDialog = false;
-                    this.multipleRltnDialog = false;
-                    this.$refs.snackbarRef.showSnackbar('Related contact has been added successfully!', 'success');
-                } else {
-                    this.$refs.snackbarRef.showSnackbar('No additional details found!', 'info');
-                }
-            } catch (error) {
-                this.$refs.snackbarRef.showSnackbar('An error occurred while selecting the item!', 'error');
             }
         },
         // async fetchClientImage(imageFileName) {
