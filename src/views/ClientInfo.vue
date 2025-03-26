@@ -87,11 +87,10 @@ export default {
     return {
       validating: false,
       singleClient: null,
-      loading: true,
       skltnLdr: false,
       imgCrd: false,
       image_file: null,
-      imgSrc: '',
+      imgSrc: null,
       search_item_CID: '',
       staff_or_not: 2,
       headers: [
@@ -105,6 +104,7 @@ export default {
         { title: 'Actions', value: 'action', sortable: false }
       ],
       selectedClient: null,
+      selectedImage: null,
       typeItems: [],
       titleItems: [],
       clientstatusItems: [],
@@ -117,22 +117,18 @@ export default {
       multipleClients: [],
       dialogSingle: false,
       dialogMultiple: false,
+      messages: {
+        noRecordFound: "No record found!",
+        searchError: "An error occurred while searching for clients",
+        fetchError: "Failed to fetch",
+      },
+      TIMEOUT_DURATION: 1000,
     };
   },
   created() {
-    if (this.selectedClient?.display_name && this.selectedClient?.image_file) {
-      this.fetchClientImage(this.selectedClient.display_name, this.selectedClient.image_file);
+    if (this.selectedImage?.display_name && this.selectedImage?.image_file) {
+      this.fetchClientImage(this.selectedImage.display_name, this.selectedImage.image_file);
     }
-  },
-  watch: {
-    'selectedClient.image_file': {
-      immediate: true,
-      handler(newValue) {
-        if (newValue && this.selectedClient?.display_name) {
-          this.fetchClientImage(this.selectedClient.display_name, newValue);
-        }
-      },
-    },
   },
   computed: {
     searchValid() {
@@ -158,27 +154,49 @@ export default {
           RegisterDate: this.formatDate(client.RegisterDate),
           LastChangeDate: this.formatDate(client.LastChangeDate),
         }));
+
         if (clients.length === 1) {
           this.singleClient = clients[0];
           this.selectedClient = this.singleClient;
           this.dialogSingle = true;
-          this.skltnLdr = true
-          this.imgCrd = false
-          setTimeout(() => {
-            this.loading = false;
-            this.skltnLdr = false
-            this.imgCrd = true
-          }, 1000)
+          this.toggleSkeletonLoader(true);
+          await this.fetchClientInfoByCID(this.singleClient.CID);
         } else if (clients.length > 1) {
           this.multipleClients = clients;
           this.dialogMultiple = true;
         } else {
-          this.$refs.snackbarRef.showSnackbar("No record found!", "error");
+          this.$refs.snackbarRef.showSnackbar(this.messages.noRecordFound, "error");
         }
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar("An error occurred while searching for clients", "error");
+        this.$refs.snackbarRef.showSnackbar(this.messages.searchError, "error");
       } finally {
         this.validating = false;
+      }
+    },
+    async fetchClientInfoByCID(cid) {
+      try {
+        console.log(`Fetching client info for CID: ${cid}`);
+        const response = await apiClient.get(`/client_info`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+          params: { cid },
+        });
+        const clientData = response.data;
+        if (clientData.display_name && clientData.image_file) {
+          this.selectedImage = {
+            display_name: clientData.display_name,
+            image_file: clientData.image_file,
+          };
+          this.fetchClientImage(clientData.display_name, clientData.image_file);
+        } else {
+          this.selectedImage = null;
+          this.imgSrc = '';
+          console.warn('No image data available for the selected client.');
+        }
+      } catch (error) {
+        console.error('Error fetching client info by CID:', error);
+        this.$refs.snackbarRef.showSnackbar(this.messages.fetchError, "error");
       }
     },
     toClientAccountList() {
@@ -198,27 +216,23 @@ export default {
           LastChangeDate: this.formatDate(item.LastChangeDate),
       };
       this.dialogSingle = true;
-      this.skltnLdr = true
-      this.imgCrd = false
-      setTimeout(() => {
-          this.skltnLdr = false
-          this.imgCrd = true
-      }, 1000)
+      this.toggleSkeletonLoader(true);
     },
     async fetchClientImage(folderName, imageFileName) {
       try {
-          const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
+        console.log(`Fetching image: Folder - ${folderName}, File - ${imageFileName}`);
+        const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
           headers: {
-              Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
           },
           responseType: 'blob',
-          });
-          console.log(folderName, imageFileName);
-          const blob = new Blob([response.data], { type: response.headers['content-type'] });
-          this.imgSrc = URL.createObjectURL(blob);
+        });
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        this.imgSrc = URL.createObjectURL(blob);
+        console.log(`Image successfully loaded: ${this.imgSrc}`);
       } catch (error) {
-          console.error('Error fetching client image:', error);
-          this.imgSrc = '';
+        console.error('Error fetching client image:', error);
+        this.imgSrc = '';
       }
     },
     async fetchItems(endpoint, key) {
@@ -230,7 +244,17 @@ export default {
         });
         this[key] = response.data;
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(`Failed to fetch ${key}`, "error");
+        this.$refs.snackbarRef.showSnackbar(`${this.messages.fetchError} ${key}`, "error");
+      }
+    },
+    toggleSkeletonLoader(state) {
+      this.skltnLdr = state;
+      this.imgCrd = !state;
+      if (state) {
+        setTimeout(() => {
+          this.skltnLdr = false;
+          this.imgCrd = true;
+        }, this.TIMEOUT_DURATION);
       }
     },
     formatDate(date) {
@@ -242,6 +266,32 @@ export default {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
     },
+    async fetchClientInfo(clientId) {
+      try {
+        console.log(`Fetching client info for ID: ${clientId}`);
+        const response = await apiClient.get(`/client_info/${clientId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+        });
+        const clientData = response.data;
+        this.selectedClient = clientData;
+        if (clientData.display_name && clientData.image_file) {
+          this.selectedImage = {
+            display_name: clientData.display_name,
+            image_file: clientData.image_file,
+          };
+          this.fetchClientImage(clientData.display_name, clientData.image_file);
+        } else {
+          this.selectedImage = null;
+          this.imgSrc = '';
+          console.warn('No image data available for the selected client.');
+        }
+      } catch (error) {
+        console.error('Error fetching client info:', error);
+        this.$refs.snackbarRef.showSnackbar(this.messages.fetchError, "error");
+      }
+    },
   },
 };
 </script>
@@ -249,5 +299,10 @@ export default {
 <style scoped>
 .to-hide {
   display: none;
+}
+.client-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 </style>
