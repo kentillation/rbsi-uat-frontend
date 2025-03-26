@@ -175,24 +175,33 @@ export default {
     },
     async fetchClientInfoByCID(cid) {
       try {
-        console.log(`Fetching client info for CID: ${cid}`);
         const response = await apiClient.get(`/client_info`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
           },
-          params: { cid },
+          params: { search: cid }
         });
         const clientData = response.data;
-        if (clientData.display_name && clientData.image_file) {
-          this.selectedImage = {
-            display_name: clientData.display_name,
-            image_file: clientData.image_file,
-          };
-          this.fetchClientImage(clientData.display_name, clientData.image_file);
+        if (Array.isArray(clientData) && clientData.length > 0) {
+          const client = clientData[0]; // Fetch only the first record
+          if (client.last_name && client.first_name && client.middle_name && client.image_file) {
+            this.selectedImage = {
+              last_name: client.last_name,
+              first_name: client.first_name,
+              middle_name: client.middle_name,
+              image_file: client.image_file,
+            };
+            const fullName = [client.last_name + ',', client.first_name, client.middle_name].filter(Boolean).join(' ');
+            this.fetchClientImage(fullName, client.image_file);
+          } else {
+            this.selectedImage = null;
+            this.imgSrc = '';
+            console.warn('No image data available for the selected client.');
+          }
         } else {
+          console.warn('No client data found.');
           this.selectedImage = null;
           this.imgSrc = '';
-          console.warn('No image data available for the selected client.');
         }
       } catch (error) {
         console.error('Error fetching client info by CID:', error);
@@ -220,7 +229,8 @@ export default {
     },
     async fetchClientImage(folderName, imageFileName) {
       try {
-        console.log(`Fetching image: Folder - ${folderName}, File - ${imageFileName}`);
+        console.log(`Fetching Folder: ${folderName}`);
+        console.log(`Fetching Image: ${imageFileName}`);
         const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
@@ -265,32 +275,6 @@ export default {
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
-    },
-    async fetchClientInfo(clientId) {
-      try {
-        console.log(`Fetching client info for ID: ${clientId}`);
-        const response = await apiClient.get(`/client_info/${clientId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-          },
-        });
-        const clientData = response.data;
-        this.selectedClient = clientData;
-        if (clientData.display_name && clientData.image_file) {
-          this.selectedImage = {
-            display_name: clientData.display_name,
-            image_file: clientData.image_file,
-          };
-          this.fetchClientImage(clientData.display_name, clientData.image_file);
-        } else {
-          this.selectedImage = null;
-          this.imgSrc = '';
-          console.warn('No image data available for the selected client.');
-        }
-      } catch (error) {
-        console.error('Error fetching client info:', error);
-        this.$refs.snackbarRef.showSnackbar(this.messages.fetchError, "error");
-      }
     },
   },
 };
