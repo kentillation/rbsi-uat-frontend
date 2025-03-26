@@ -278,29 +278,25 @@ export default {
                         formData.append(field, this[field]);
                     }
                 });
-                // const response = await apiClient.post('/create_account', formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data',
-                //         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                //     }
-                // });
-                // this.acc = response.data.data.acc;
-                this.acc = "1234567890";
-                this.confirmDialog = false;
-                this.successDialog = true;
-                this.validatingData = false;
-                // if (response.status === 200) {
-                //     try {
-                //         setTimeout(() => {
-                //             this.confirmDialog = false;
-                //             this.successDialog = true;
-                //             this.validatingData = false;
-                //         }, 3000);
-                //     } catch (error) {
-                //         console.error('Error fetching client CID:', error);
-                //         this.imageSource = "";
-                //     }
-                // }
+                const response = await apiClient.post('/create_account', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                    }
+                });
+                this.acc = response.data.data.acc;
+                if (response.status === 200) {
+                    try {
+                        setTimeout(() => {
+                            this.confirmDialog = false;
+                            this.successDialog = true;
+                            this.validatingData = false;
+                        }, 3000);
+                    } catch (error) {
+                        console.error('Error fetching client CID:', error);
+                        this.imageSource = "";
+                    }
+                }
                 try {
                     setTimeout(() => {
                         this.confirmDialog = false;
