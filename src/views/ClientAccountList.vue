@@ -303,7 +303,7 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching accounts:", error);
-        this.$refs.snackbarRef.showSnackbar("No accounts found.", "error");
+        this.$refs.snackbarRef.showSnackbar("No account found.", "error");
       } finally {
         this.loading = false;
       }
