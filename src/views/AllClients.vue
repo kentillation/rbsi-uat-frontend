@@ -11,11 +11,12 @@
                     <v-toolbar-title>
                         <v-row>
                             <v-col cols="12" lg="6" md="6" sm="12">
-                                <v-text-field v-model="search_item_AC" label="Type CID or last name..."
+                                <v-text-field v-model="search_item_CID_LastName" ref="searchItemCIDLastName" label="Type CID or last name..."
                                     class="pt-5"></v-text-field>
                             </v-col>
                         </v-row>
                     </v-toolbar-title>
+                    <v-btn append-icon="mdi-printer" class="me-3 pe-7" variant="outlined" @click="printClients"></v-btn>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <div class="text-right">
                         <v-btn :disabled="loading" append-icon="mdi-refresh" class="me-3 pe-7" variant="outlined"
@@ -90,15 +91,15 @@ export default {
             dialogSingle: false,
             loading: true,
             image_file: null,
-            search_item_AC: '',
+            search_item_CID_LastName: '',
             staff_or_not: 2,
             headers: [
                 { title: 'CID', value: 'CID', sortable: false },
                 { title: 'Last Name', value: 'Name1', sortable: false },
                 { title: 'First Name', value: 'Name2', sortable: false },
                 { title: 'Middle Name', value: 'Name3', sortable: false },
-                { title: 'Created At', value: 'RegisterDate', sortable: true },
-                { title: 'Updated At', value: 'LastChangeDate', sortable: true },
+                { title: 'Register Date', value: 'RegisterDate', sortable: true },
+                { title: 'Last Change Date', value: 'LastChangeDate', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
             selectedClient: null,
@@ -114,9 +115,12 @@ export default {
         }
     },
     mounted() {
+        this.$nextTick(() => {
+            this.$refs.searchItemCIDLastName.focus();
+        });
         this.fetchClientInfo();
         if (this.$route.query.search) {
-            this.search_item_AC = this.$route.query.search;
+            this.search_item_CID_LastName = this.$route.query.search;
         }
     },
     beforeUnmount() {
@@ -126,7 +130,7 @@ export default {
     },
     computed: {
         filteredClients() {
-            const searchTerm = this.search_item_AC.toLowerCase();
+            const searchTerm = this.search_item_CID_LastName.toLowerCase();
             return this.client_info.filter((client) => {
                 return (
                     client.CID.toString().includes(searchTerm) ||
@@ -248,6 +252,109 @@ export default {
                 this.fetchClientInfo()
             }, 2000)
         },
+        async printClients() {
+            const printWindow = window.open('', '_blank');
+            const tableHeaders = this.headers
+                .filter(header => header.value !== 'action') // Exclude the 'Actions' header
+                .map(header => `<th>${header.title}</th>`)
+                .join('');
+            const tableRows = this.filteredClients.map(client => {
+                const formattedRegisterDate = this.formatDateForPrint(client.RegisterDate);
+                const formattedLastChangeDate = this.formatDateForPrint(client.LastChangeDate);
+                return `
+                    <tr>
+                        <td>${client.CID}</td>
+                        <td>${client.Name1}</td>
+                        <td>${client.Name2}</td>
+                        <td>${client.Name3}</td>
+                        <td>${formattedRegisterDate}</td>
+                        <td>${formattedLastChangeDate}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Fetch the logo as a Base64 string
+            const logoBase64 = await this.getBase64Image('/logo.png');
+
+            const tableHTML = `
+                <html>
+                    <head>
+                        <title>Clients Masterlist</title>
+                        <style>
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                            }
+                            th, td {
+                                padding: 8px;
+                                text-align: left;
+                            }
+                            th {
+                                border: none;
+                                background-color: #f2f2f2;
+                                color: #004d40;
+                                font-weight: bold;
+                            }
+                            td { border-bottom: 1px solid #ddd;}
+                            .header {
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-around;
+                                text-align: center;
+                            }
+                            .header img {
+                                max-height: 50px;
+                            }
+                            h3 { text-align: center; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <img src="${logoBase64}" alt="Logo">
+                            <h2>Rural Bank of Sagay, Inc.</h2>
+                            <span>${this.formatDateForPrint(new Date())}</span>
+                        </div>
+                        <h3>RBSI Core Banking System Clients Masterlist</h3>
+                        <table>
+                            <thead>
+                                <tr>${tableHeaders}</tr>
+                            </thead>
+                            <tbody>
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </body>
+                </html>
+            `;
+            printWindow.document.write(tableHTML);
+            printWindow.document.close();
+            printWindow.print();
+        },
+
+        async getBase64Image(url) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (error) {
+                console.error('Error fetching Base64 image:', error);
+                return '';
+            }
+        },
+        formatDateForPrint(date) {
+            if (!date) return 'Invalid date';
+            const parsedDate = new Date(date);
+            if (isNaN(parsedDate.getTime())) {
+                return 'Invalid date';
+            }
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
+        }
     }
 };
 </script>

@@ -179,7 +179,12 @@ export default {
         return;
       }
       await this.fetchClientData(this.cid);
-      const queryParams = new URLSearchParams({
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/print_passbook';
+      form.target = '_blank';
+      const authToken = localStorage.getItem('auth_token');
+      const params = {
         acc: this.search_item_ACC,
         CID: this.cid,
         passbook_number: this.passbookNumber,
@@ -191,13 +196,18 @@ export default {
         Line1: this.Line1,
         Line2: this.Line2,
         Line3: this.Line3,
-      }).toString();
-      const printUrl = `/print-passbook?${queryParams}`;
-      if (printUrl) {
-        window.open(printUrl, '_blank');
-      } else {
-        console.error("Failed to generate print URL");
-      }
+        token: `Bearer ${authToken}`,
+      };
+      Object.keys(params).forEach((key) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = params[key];
+        form.appendChild(input);
+      });
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
     },
     handleKeyPress(event) {
       if (event.key === 'F1') {
@@ -214,8 +224,7 @@ export default {
         });
         if (response.data) {
           this.search_item_ACC = response.data.ACC + response.data.Chd || '';
-          // this.chd = response.data.Chd || '';
-          this.$refs.snackbarRef.showSnackbar("Account details fetched successfully!", "success");
+          this.$refs.snackbarRef.showSnackbar("Account number fetched successfully!", "success");
         } else {
           this.$refs.snackbarRef.showSnackbar("No account details found!", "error");
         }
@@ -226,9 +235,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.to-hide {
-  display: none;
-}
-</style>

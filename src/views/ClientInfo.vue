@@ -10,7 +10,7 @@
         </v-btn>
       </div>
       <div class="w-75 mt-5">
-        <v-text-field v-model="search_item_CID" label="Search CID or last name..." @keyup.enter="searchClients"
+        <v-text-field v-model="search_item_CID" ref="searchItemCID" label="Search CID or last name..." @keyup.enter="searchClients"
           :loading="validating"></v-text-field>
         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
           :disabled="!searchValid || validating" @click="searchClients" rounded>
@@ -124,6 +124,11 @@ export default {
       },
       TIMEOUT_DURATION: 1000,
     };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.searchItemCID.focus();
+    });
   },
   created() {
     if (this.selectedImage?.display_name && this.selectedImage?.image_file) {

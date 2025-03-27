@@ -10,7 +10,7 @@
         </v-btn>
       </div>
       <div class="w-75 mt-5">
-        <v-text-field v-model="search_item_ACC" label="Search account number..." @keyup.enter="searchAccount"></v-text-field>
+        <v-text-field v-model="search_item_ACC" ref="searchItemAcc" label="Search account number..." @keyup.enter="searchAccount"></v-text-field>
         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
           :disabled="!searchValid || validating" @click="searchAccount" rounded>
           <v-progress-circular v-if="validating" size="20" color="white" indeterminate />
@@ -228,6 +228,11 @@ export default {
         { title: 'Description', value: 'trnDesc' },
       ],
     };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.searchItemAcc.focus();
+    });
   },
   computed: {
     searchValid() {

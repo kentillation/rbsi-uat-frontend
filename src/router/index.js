@@ -36,7 +36,7 @@ const routes = [
         meta: { requiresAuth: true } 
     },
     {
-        path: '/print-passbook',
+        path: '/print_passbook',
         name: 'PrintPassbook',
         component: PrintPassbook,
         meta: { layout: 'print' }
