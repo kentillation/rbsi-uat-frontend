@@ -53,6 +53,7 @@ export default {
         this.Line2 = Line2 || '';
         this.Line3 = Line3 || '';
         this.token = token || '';
+        this.$router.replace({ query: {} });
         this.validateToken();
     },
     mounted() {
