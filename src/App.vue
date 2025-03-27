@@ -14,19 +14,17 @@
       </v-app-bar>
       <v-navigation-drawer class="h-screen" v-model="drawer" v-if="showSidebar && hideForbiddenPage && hideNotFoundPage" expand-on-hover rail>
         <v-list>
-          <v-list-item
-            prepend-avatar="https://file.juancash.com/group1/M00/02/71/rBDKAWKph1qAS2RCAAA5jllxxdg605.jpg"
-            subtitle="support@rbsagay.com.ph" title="Administrator"></v-list-item>
+          <v-list-item :prepend-avatar="logo" subtitle="support@rbsagay.org" title="Administrator"></v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list density="compact" nav>
           <v-list-subheader class="ms-5" size="30">Client</v-list-subheader>
           <v-list-item prepend-icon="mdi-information-outline" @click="client_info" class="text-teal-darken-2">Information</v-list-item>
           <v-list-item prepend-icon="mdi-bank-outline" @click="client_account" class="text-teal-darken-2">Account</v-list-item>
+          <v-list-item prepend-icon="mdi-printer" @click="reprinting" class="text-teal-darken-2">Reprinting</v-list-item>
           <v-list-item prepend-icon="mdi-ocr" @click="ocr" class="text-teal-darken-2">OCR</v-list-item>
           <v-list-subheader class="ms-5" size="30">Reports</v-list-subheader>
           <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients" class="text-teal-darken-2">Masterlist</v-list-item>
-          <v-list-item prepend-icon="mdi-printer" @click="reprinting" class="text-teal-darken-2">Reprinting</v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list density="compact" nav>
@@ -58,7 +56,8 @@ export default {
     return { theme, toggleTheme };
   },
   data: () => ({
-    drawer: false,
+    logo: require('@/assets/logo.png'),
+    drawer: true,
     group: null,
   }),
   watch: {
