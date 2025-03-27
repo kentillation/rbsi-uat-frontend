@@ -9,11 +9,11 @@
             alt="Client Image" />
         </p>
       </v-container>
-      <h3 class="mb-7"><span class="text-grey-lighten-1">CID: </span>{{ client?.CID }}</h3>
+      <h3 class="mb-7"><span class="text-grey-darken-1">CID: </span>{{ client?.CID }}</h3>
     </div>
     <v-row>
       <v-col cols="12" lg="4" md="4" sm="4" v-for="field in clientFields" :key="field.label">
-        <p><span class="text-grey-lighten-1">{{ field.label }}: </span>{{ field.value }}</p>
+        <p><span class="text-grey-darken-1">{{ field.label }}: </span>{{ field.value }}</p>
       </v-col>
     </v-row>
     <Snackbar ref="snackbarRef" />

@@ -21,18 +21,18 @@
         <v-divider></v-divider>
         <v-list density="compact" nav>
           <v-list-subheader class="ms-5" size="30">Client</v-list-subheader>
-          <v-list-item prepend-icon="mdi-information-outline" @click="client_info" class="text-teal-darken-1">Information</v-list-item>
-          <v-list-item prepend-icon="mdi-bank-outline" @click="client_account" class="text-teal-darken-1">Account</v-list-item>
-          <v-list-item prepend-icon="mdi-ocr" @click="ocr" class="text-teal-darken-1">OCR</v-list-item>
+          <v-list-item prepend-icon="mdi-information-outline" @click="client_info" class="text-teal-darken-2">Information</v-list-item>
+          <v-list-item prepend-icon="mdi-bank-outline" @click="client_account" class="text-teal-darken-2">Account</v-list-item>
+          <v-list-item prepend-icon="mdi-ocr" @click="ocr" class="text-teal-darken-2">OCR</v-list-item>
           <v-list-subheader class="ms-5" size="30">Reports</v-list-subheader>
-          <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients" class="text-teal-darken-1">Masterlist</v-list-item>
-          <v-list-item prepend-icon="mdi-printer" @click="reprinting" class="text-teal-darken-1">Reprinting</v-list-item>
+          <v-list-item prepend-icon="mdi-account-multiple-outline" @click="all_clients" class="text-teal-darken-2">Masterlist</v-list-item>
+          <v-list-item prepend-icon="mdi-printer" @click="reprinting" class="text-teal-darken-2">Reprinting</v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list density="compact" nav>
           <v-list-subheader class="ms-5" size="30">More</v-list-subheader>
-          <v-list-item prepend-icon="mdi-help-circle-outline" class="text-teal-darken-1">Help</v-list-item>
-          <v-list-item prepend-icon="mdi-information-outline" class="text-teal-darken-1">About</v-list-item>
+          <v-list-item prepend-icon="mdi-help-circle-outline" class="text-teal-darken-2">Help</v-list-item>
+          <v-list-item prepend-icon="mdi-information-outline" class="text-teal-darken-2">About</v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-layout>

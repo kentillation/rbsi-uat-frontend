@@ -242,12 +242,12 @@ export default {
       this.$router.go(-1);
     },
     toNewAccount() {
-      const { cid } = this.$route.params;
-      if (cid) {
+      const { CID } = this.$route.params;
+      if (CID) {
         this.$router.push({
           name: 'NewAccount',
           params: {
-            cid: cid,
+            cid: CID,
           },
         });
       }
