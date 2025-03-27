@@ -2,17 +2,17 @@
   <v-app>
     <v-main>
       <v-app-bar prominent>
-        <v-app-bar-nav-icon v-if="showMenu && hideForbiddenPage" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-toolbar-title v-if="hideForbiddenPage"><span class="to-hide-head">Rural Bank of Sagay, Inc.</span><span class="to-show-head">RBSI</span></v-toolbar-title>
+        <v-app-bar-nav-icon v-if="showMenu && hideForbiddenPage && hideNotFoundPage" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-toolbar-title v-if="hideForbiddenPage && hideNotFoundPage"><span class="to-hide-head">Rural Bank of Sagay, Inc.</span><span class="to-show-head">RBSI</span></v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click="toggleTheme" :title="themeText">
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
-        <v-btn v-if="showLogout && hideForbiddenPage" icon @click="logout" title="Signout">
+        <v-btn v-if="showLogout && hideForbiddenPage && hideNotFoundPage" icon @click="logout" title="Signout">
           <v-icon>mdi-logout</v-icon>
         </v-btn>
       </v-app-bar>
-      <v-navigation-drawer class="h-screen" v-model="drawer" v-if="showSidebar && hideForbiddenPage" expand-on-hover rail>
+      <v-navigation-drawer class="h-screen" v-model="drawer" v-if="showSidebar && hideForbiddenPage && hideNotFoundPage" expand-on-hover rail>
         <v-list>
           <v-list-item
             prepend-avatar="https://file.juancash.com/group1/M00/02/71/rBDKAWKph1qAS2RCAAA5jllxxdg605.jpg"
@@ -81,6 +81,9 @@ export default {
     },
     hideForbiddenPage() {
       return this.$route.name !== 'ForbiddenPage';
+    },
+    hideNotFoundPage() {
+      return this.$route.name !== 'NotFound';
     }
   },
   methods: {

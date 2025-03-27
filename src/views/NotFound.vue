@@ -1,11 +1,12 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
     <v-container>
-        <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
+        <v-sheet class="d-flex flex-column align-center text-center mx-auto mt-10" elevation="4" height="250" width="100%"
             rounded>
-            <div class="w-75 mt-15">
-                <v-icon class="mdi-web-off"></v-icon>
-                <h1>Page not found!</h1>
+            <div class="w-50 mt-5">
+                <v-icon :size="iconSize" icon="mdi-alert-circle-outline" class="text-red-darken-2 mb-3"></v-icon>
+                <h2 class="text-red-darken-2 mb-3">Page not found!</h2>
+                <h4 class="mb-3">The page you are trying to navigate is not found.</h4>
             </div>
         </v-sheet>
     </v-container>
@@ -14,5 +15,10 @@
 <script>
 export default {
     name: "NotFound",
+    data() {
+        return {
+            iconSize: "70px",
+        };
+    },
 };
 </script>
