@@ -13,7 +13,7 @@
           <h2 class="ms-3 w-75 text-teal-darken-1">CID: {{ this.cid }}</h2>
           <!-- <v-divider vertical></v-divider> -->
           <div class="d-flex justify-end w-100">
-            <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 me-4" @click="toNewAccount">New Account</v-btn>
+            <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 me-4" @click="toNewAccount">New <span class="to-hide">Account</span></v-btn>
             <v-btn append-icon="mdi-refresh" class="me-3 pe-7" variant="outlined" @click="onRefresh"></v-btn>
           </div>
         </v-toolbar>
@@ -22,7 +22,9 @@
         <tr>
           <td>{{ formatAcc(item.acc) }}</td>
           <td>{{ formatProductType(item.prType) }}</td>
-          <td>{{ formatAccStatus(item.accStatus) }}</td>
+          <td :class="{ 'text-red-darken-1' : item.accStatus === '00' }">
+              {{ formatAccStatus(item.accStatus) }}
+          </td>
           <td>₱ {{ formatCurrency(item.balAmt) }}</td>
           <td>₱ {{ formatCurrency(item.availBalAmt) }}</td>
           <td class="text-center">
@@ -294,7 +296,6 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
           },
         });
-        console.log("API Response:", response.data);
         if (response.data && response.data.data && Array.isArray(response.data.data.accs)) {
           this.account_list = response.data.data.accs;
         } else {

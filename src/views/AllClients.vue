@@ -48,16 +48,15 @@
                     <span class="headline">Client Details</span>
                 </v-card-title>
                 <ClientDataMixin :client="selectedClient" :skeletonLoader="skltnLdr" :imageCard="imgCrd"
-                    :imageSource="imgSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
-                    :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
+                    :imageSource="imgSrc" :typeItems="typeItems" :titleItems="titleItems"
+                    :clientstatusItems="clientstatusItems" :genderItems="genderItems"
+                    :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
                     :relationshipItems="relationshipItems" />
 
                 <v-card-actions class="mx-4 my-4">
                     <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccountList"
                         rounded>List of Accounts</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn class="bg-teal-darken-3 px-3" prepend-icon="mdi-pencil-outline" @click="toEditClientInfo"
-                        rounded>Edit</v-btn>
                     <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
                         @click="dialogSingle = false" rounded>Close</v-btn>
                 </v-card-actions>
@@ -103,10 +102,16 @@ export default {
                 { title: 'Actions', value: 'action', sortable: false }
             ],
             selectedClient: null,
+            selectedImage: null,
             skltnLdr: false,
             imgCrd: false,
             imgSrc: null,
         };
+    },
+    created() {
+        if (this.selectedImage?.display_name && this.selectedImage?.image_file) {
+            this.fetchClientImage(this.selectedImage.display_name, this.selectedImage.image_file);
+        }
     },
     mounted() {
         this.fetchClientInfo();
@@ -118,21 +123,6 @@ export default {
         if (this.pollingTimer) {
             clearInterval(this.pollingTimer);
         }
-    },
-    created() {
-        if (this.selectedClient?.display_name && this.selectedClient?.image_file) {
-            this.fetchClientImage(this.selectedClient.display_name, this.selectedClient.image_file);
-        }
-    },
-    watch: {
-        'selectedClient.image_file': {
-            immediate: true,
-            handler(newValue) {
-                if (newValue && this.selectedClient?.display_name) {
-                this.fetchClientImage(this.selectedClient.display_name, newValue);
-                }
-            },
-        },
     },
     computed: {
         filteredClients() {
@@ -151,20 +141,9 @@ export default {
         toClientAccountList() {
             if (this.selectedClient) {
                 this.$router.push({
-                name: 'ClientAccountList',
-                params: {
-                    CID: this.selectedClient.CID,
-                },
-                });
-            }
-        },
-        toEditClientInfo() {
-            if (this.selectedClient) {
-                this.$router.push({
-                    name: 'EditClientInfo',
+                    name: 'ClientAccountList',
                     params: {
                         CID: this.selectedClient.CID,
-                        Name1: this.selectedClient.Name1,
                     },
                 });
             }
@@ -178,26 +157,11 @@ export default {
             this.dialogSingle = true;
             this.skltnLdr = true
             this.imgCrd = false
+            this.fetchClientInfoByCID(item.CID);
             setTimeout(() => {
                 this.skltnLdr = false
                 this.imgCrd = true
             }, 1000)
-        },
-        async fetchClientImage(folderName, imageFileName) {
-            try {
-                const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                },
-                responseType: 'blob',
-                });
-                console.log(folderName, imageFileName);
-                const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                this.imgSrc = URL.createObjectURL(blob);
-            } catch (error) {
-                console.error('Error fetching client image:', error);
-                this.imgSrc = '';
-            }
         },
         formatDate(date) {
             if (!date) return 'Invalid date';
@@ -225,6 +189,56 @@ export default {
                 console.error('Error fetching client_info:', error);
             } finally {
                 this.loading = false;
+            }
+        },
+        async fetchClientInfoByCID(cid) {
+            try {
+                const response = await apiClient.get(`/client_info`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    },
+                    params: { search: cid }
+                });
+                const clientData = response.data;
+                if (Array.isArray(clientData) && clientData.length > 0) {
+                    const client = clientData[0]; // Fetch only the first record
+                    if (client.last_name && client.first_name && client.middle_name && client.image_file) {
+                        this.selectedImage = {
+                            last_name: client.last_name,
+                            first_name: client.first_name,
+                            middle_name: client.middle_name,
+                            image_file: client.image_file,
+                        };
+                        const fullName = [client.last_name + ',', client.first_name, client.middle_name].filter(Boolean).join(' ');
+                        this.fetchClientImage(fullName, client.image_file);
+                    } else {
+                        this.selectedImage = null;
+                        this.imgSrc = '';
+                        console.warn('No image data available for the selected client.');
+                    }
+                } else {
+                    console.warn('No client data found.');
+                    this.selectedImage = null;
+                    this.imgSrc = '';
+                }
+            } catch (error) {
+                console.error('Error fetching client info by CID:', error);
+                this.$refs.snackbarRef.showSnackbar(this.messages.fetchError, "error");
+            }
+        },
+        async fetchClientImage(folderName, imageFileName) {
+            try {
+                const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    },
+                    responseType: 'blob',
+                });
+                const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                this.imgSrc = URL.createObjectURL(blob);
+            } catch (error) {
+                console.error('Error fetching client image:', error);
+                this.imgSrc = '';
             }
         },
         onRefresh() {

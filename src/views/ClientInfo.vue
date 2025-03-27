@@ -6,10 +6,10 @@
       rounded>
       <div class="d-flex justify-end w-100">
         <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="toNewContact" size="large">
-          <span class="d-none-sm">New </span>Info<span class="d-none-sm">rmation</span>
+          New <span class="to-hide">Information</span>
         </v-btn>
       </div>
-      <div class="w-75 mt-10">
+      <div class="w-75 mt-5">
         <v-text-field v-model="search_item_CID" label="Search CID or last name..." @keyup.enter="searchClients"
           :loading="validating"></v-text-field>
         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
@@ -226,11 +226,10 @@ export default {
       };
       this.dialogSingle = true;
       this.toggleSkeletonLoader(true);
+      this.fetchClientInfoByCID(item.CID);
     },
     async fetchClientImage(folderName, imageFileName) {
       try {
-        console.log(`Fetching Folder: ${folderName}`);
-        console.log(`Fetching Image: ${imageFileName}`);
         const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
@@ -239,7 +238,6 @@ export default {
         });
         const blob = new Blob([response.data], { type: response.headers['content-type'] });
         this.imgSrc = URL.createObjectURL(blob);
-        console.log(`Image successfully loaded: ${this.imgSrc}`);
       } catch (error) {
         console.error('Error fetching client image:', error);
         this.imgSrc = '';
@@ -279,14 +277,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.to-hide {
-  display: none;
-}
-.client-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-</style>

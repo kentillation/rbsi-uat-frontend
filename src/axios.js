@@ -6,7 +6,7 @@ const apiClient = axios.create({
         'Content-Type': process.env.VUE_APP_MIME_TYPE,
         'Accept': process.env.VUE_APP_MIME_TYPE
     },
-    withCredentials: false,
+    withCredentials: process.env.VUE_APP_WITH_CREDENTIALS,
 });
 
 export default apiClient;

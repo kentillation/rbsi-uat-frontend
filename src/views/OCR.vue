@@ -4,10 +4,7 @@
         <h1>OCR</h1>
         <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
             rounded>
-            <div class="d-flex justify-end w-100">
-                <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" size="large">OCR</v-btn>
-            </div>
-            <div class="w-75 mt-10">
+            <div class="w-75 mt-15">
                 <v-file-input label="Upload Document" v-model="selectedFile" accept=".pdf, .docx"></v-file-input>
                 <v-btn @click="handleFileUpload" prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
                     rounded>
@@ -95,9 +92,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-.to-hide {
-    display: none;
-}
-</style>

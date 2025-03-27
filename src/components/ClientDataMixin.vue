@@ -5,7 +5,7 @@
         <p>
           <v-skeleton-loader v-if="skeletonLoader" type="image" width="240" height="248"
             style="border: 1px solid #ccc; border-radius: 10px;"></v-skeleton-loader>
-          <img v-if="imageCard" :src="imageSource" width="241" style="border: 1px solid #ccc; border-radius: 10px;"
+          <img v-if="imageCard" :src="imageSource" width="241" height="241" style="border: 1px solid #ccc; border-radius: 10px;"
             alt="Client Image" />
         </p>
       </v-container>

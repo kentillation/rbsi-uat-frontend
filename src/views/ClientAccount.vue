@@ -5,10 +5,11 @@
     <v-sheet class="d-flex flex-column align-center text-center mx-auto" elevation="4" height="250" width="100%"
       rounded>
       <div class="d-flex justify-end w-100">
-        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="dialogOpenCID" size="large">New
-          Account</v-btn>
+        <v-btn prepend-icon="mdi-plus" class="bg-teal-darken-4 mt-4 me-4" @click="dialogOpenCID" size="large">
+          New <span class="to-hide">Account</span>
+        </v-btn>
       </div>
-      <div class="w-75 mt-10">
+      <div class="w-75 mt-5">
         <v-text-field v-model="search_item_ACC" label="Search account number..." @keyup.enter="searchAccount"></v-text-field>
         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
           :disabled="!searchValid || validating" @click="searchAccount" rounded>
@@ -399,9 +400,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.to-hide {
-  display: none;
-}
-</style>
