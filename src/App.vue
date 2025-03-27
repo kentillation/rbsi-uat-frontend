@@ -2,17 +2,17 @@
   <v-app>
     <v-main>
       <v-app-bar prominent>
-        <v-app-bar-nav-icon v-if="showMenu" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-toolbar-title><span class="to-hide-head">Rural Bank of Sagay, Inc.</span><span class="to-show-head">RBSI</span></v-toolbar-title>
+        <v-app-bar-nav-icon v-if="showMenu && hideForbiddenPage" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-toolbar-title v-if="hideForbiddenPage"><span class="to-hide-head">Rural Bank of Sagay, Inc.</span><span class="to-show-head">RBSI</span></v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click="toggleTheme" :title="themeText">
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
-        <v-btn v-if="showLogout" icon @click="logout" title="Signout">
+        <v-btn v-if="showLogout && hideForbiddenPage" icon @click="logout" title="Signout">
           <v-icon>mdi-logout</v-icon>
         </v-btn>
       </v-app-bar>
-      <v-navigation-drawer class="h-screen" v-model="drawer" v-if="showSidebar" expand-on-hover rail>
+      <v-navigation-drawer class="h-screen" v-model="drawer" v-if="showSidebar && hideForbiddenPage" expand-on-hover rail>
         <v-list>
           <v-list-item
             prepend-avatar="https://file.juancash.com/group1/M00/02/71/rBDKAWKph1qAS2RCAAA5jllxxdg605.jpg"
@@ -49,24 +49,24 @@ import { useTheme } from 'vuetify';
 export default {
   name: 'App',
   setup() {
-        const theme = useTheme();
-        const toggleTheme = () => {
-            const newTheme = theme.global.name.value === 'light' ? 'dark' : 'light';
-            theme.global.name.value = newTheme;
-            localStorage.setItem('theme', newTheme);
-        };
-        return { theme, toggleTheme };
-    },
+    const theme = useTheme();
+    const toggleTheme = () => {
+      const newTheme = theme.global.name.value === 'light' ? 'dark' : 'light';
+      theme.global.name.value = newTheme;
+      localStorage.setItem('theme', newTheme);
+    };
+    return { theme, toggleTheme };
+  },
   data: () => ({
-      drawer: false,
-      group: null,
-    }),
-    watch: {
-      group () {
-        this.drawer = false
-      },
+    drawer: false,
+    group: null,
+  }),
+  watch: {
+    group() {
+      this.drawer = false
     },
-    computed: {
+  },
+  computed: {
     showSidebar() {
       return this.$route.name !== 'Login';
     },
@@ -78,6 +78,9 @@ export default {
     },
     themeText() {
       return this.theme.global.name.value === 'light' ? 'Dark Mode' : 'Light Mode';
+    },
+    hideForbiddenPage() {
+      return this.$route.name !== 'ForbiddenPage';
     }
   },
   methods: {
@@ -137,12 +140,14 @@ export default {
 .to-show-head {
   display: none;
 }
+
 @media (max-width: 450px) {
-    .to-hide-head {
-        display: none;
-    }
-    .to-show-head {
-      display: flex;
-    }
+  .to-hide-head {
+    display: none;
+  }
+
+  .to-show-head {
+    display: flex;
+  }
 }
 </style>

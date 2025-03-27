@@ -58,7 +58,9 @@ export default {
     },
     mounted() {
         document.body.classList.add('hide-app-bar');
-        this.$nextTick(() => window.print());
+        if (this.isValidToken) {
+            this.$nextTick(() => window.print());
+        }
     },
     unmounted() {
         document.body.classList.remove('hide-app-bar');
@@ -83,8 +85,7 @@ export default {
             if (decodedToken.startsWith("Bearer ")) {
                 this.isValidToken = true;
             } else {
-                alert("Invalid or missing token. Redirecting to error page.");
-                this.$router.push("/error");
+                this.$router.push('/forbidden');
             }
         }
     }

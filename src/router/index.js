@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import ForbiddenPage from '@/views/ForbiddenPage.vue';
+import NotFound from '@/views/NotFound.vue';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
@@ -12,6 +14,8 @@ import Reprinting from '../views/Reprinting.vue';
 import PrintPassbook from '../views-printing/PrintPassbook.vue';
 
 const routes = [
+    { path: '/forbidden', name: 'ForbiddenPage', component: ForbiddenPage },
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
     { path: '/', name: 'Login', component: Login },
     { path: '/register', name: 'Register', component: Register },
     { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: true } },

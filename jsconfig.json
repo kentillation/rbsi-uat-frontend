@@ -16,4 +16,7 @@
       "scripthost"
     ]
   },
+  "exclude": [
+    "src/views/ForbiddenPage.vue"
+  ]
 }
