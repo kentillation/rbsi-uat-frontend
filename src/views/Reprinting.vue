@@ -4,9 +4,10 @@
     <h1>Reprinting</h1>
     <v-sheet class="d-flex align-center text-center" elevation="4" height="180" rounded>
       <div class="d-flex flex-column mt-5 mx-auto">
-        <v-btn @click="openPassBookDialog" prepend-icon="mdi-book-open-page-variant" class="bg-teal-darken-4 ms-2 mb-3" size="large"
-          rounded>Reprint Passbook</v-btn>
-        <v-btn prepend-icon="mdi-book-open-outline" class="bg-teal-darken-4 ms-2 mb-3" size="large" rounded>Reprint Signature
+        <v-btn @click="openPassBookDialog" prepend-icon="mdi-book-open-page-variant" class="bg-teal-darken-4 ms-2 mb-3"
+          size="large" rounded>Reprint Passbook</v-btn>
+        <v-btn prepend-icon="mdi-book-open-outline" class="bg-teal-darken-4 ms-2 mb-3" size="large" rounded>Reprint
+          Signature
           Card</v-btn>
       </div>
     </v-sheet>
@@ -34,8 +35,8 @@
         </v-card-text>
         <v-card-actions class="me-3 my-3">
           <v-spacer></v-spacer>
-          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
-            @click="passbookDialog = false" rounded>
+          <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="passbookDialog = false"
+            rounded>
             Close
           </v-btn>
         </v-card-actions>
@@ -113,28 +114,20 @@ export default {
     async searchACC() {
       if (!this.searchValidACC) return;
       this.validatingACC = true;
-      console.log("Sent account number:", this.trimmedAcc);
-      console.log("Sent chd:", this.chd);
       try {
         const response = await apiClient.get('/get_acc_chd_mbwin', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-          },
-          params: {
-            acc: this.trimmedAcc,
-            chd: this.chd,
-          }
+          headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
+          params: { acc: this.trimmedAcc, chd: this.chd }
         });
         if (response.data && Object.keys(response.data).length > 0) {
-          console.log("API Response:", response.data);
           this.cid = response.data.CID;
-          this.printAccount();
+          await this.printAccount(); // Ensure the function completes before proceeding
         } else {
           this.$refs.snackbarRef.showSnackbar("Account not found. Please try again!", "error");
         }
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar("Account not found. Please try again!", "error");
-        this.validatingACC = false;
+        console.error(error);
+        this.$refs.snackbarRef.showSnackbar("Error fetching account data!", "error");
       } finally {
         this.validatingACC = false;
       }
@@ -180,7 +173,7 @@ export default {
       }
       await this.fetchClientData(this.cid);
       const form = document.createElement('form');
-      form.method = 'POST';
+      form.method = 'GET';
       form.action = '/print_passbook';
       form.target = '_blank';
       const authToken = localStorage.getItem('auth_token');
