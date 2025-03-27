@@ -57,7 +57,7 @@ export default {
     },
     mounted() {
         document.body.classList.add('hide-app-bar');
-        // this.$nextTick(() => window.print());
+        this.$nextTick(() => window.print());
     },
     unmounted() {
         document.body.classList.remove('hide-app-bar');
