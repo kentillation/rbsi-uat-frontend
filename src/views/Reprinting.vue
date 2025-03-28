@@ -26,7 +26,7 @@
                   variant="underlined"></v-text-field>
               </div>
               <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
-                :disabled="!searchValidACC || validatingACC" @click="searchACC" rounded>
+                :disabled="!searchValidACC || validatingACC" @click="searchACC" variant="tonal" rounded>
                 <v-progress-circular v-if="validatingACC" size="20" color="white" indeterminate />
                 <span v-else>Search</span>
               </v-btn>

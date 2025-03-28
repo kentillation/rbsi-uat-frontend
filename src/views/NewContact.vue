@@ -480,7 +480,7 @@ export default {
             return this.search_relation_info.trim() !== '';
         },
         staffOrNot() {
-            return this.staff_or_not ? 'Yes' : 'No';
+            return this.staff_or_not ? 'No' : 'Yes';
         },
     },
     methods: {
