@@ -82,11 +82,7 @@ export default {
             } catch (error) {
                 let message = 'An unknown error occurred.';
                 let color = 'error';
-
-                // Logging the error internally
                 console.error('Login error:', error);
-
-                // Sanitizing error messages to avoid exposing sensitive information
                 if (error.response) {
                     switch (error.response.status) {
                         case 422:
@@ -94,6 +90,9 @@ export default {
                             break;
                         case 401:
                             message = 'Email or password is incorrect.';
+                            break;
+                        case 403:
+                            message = 'You do not have permission to this action.';
                             break;
                         case 500:
                             message = 'Internal server error. Please try again later.';
@@ -106,7 +105,6 @@ export default {
                 } else {
                     message = 'Request error. Please try again!';
                 }
-
                 this.showSnackbar(message, color);
             } finally {
                 this.validating = false;

@@ -9,11 +9,17 @@
 </template>
 
 <script>
+import { useOcrStore } from "@/stores/ocrStore";
+
 export default {
   name: 'OCR',
+  setup() {
+    const ocrStore = useOcrStore();
+    return { ocrStore };
+  },
   computed: {
     extractedText() {
-      return this.$route.query.text || "No content available.";
+      return this.ocrStore.extractedText || "No content available."; // ✅ Get from Pinia
     },
   },
   methods: {

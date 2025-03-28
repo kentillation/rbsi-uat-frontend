@@ -22,6 +22,7 @@ import mammoth from "mammoth";
 import Snackbar from "@/components/Snackbar.vue";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import "pdfjs-dist/legacy/build/pdf.worker.mjs";
+import { useOcrStore } from "@/stores/ocrStore";
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/legacy/build/pdf.worker.mjs",
     import.meta.url
@@ -35,8 +36,12 @@ export default {
     data() {
         return {
             validating: false,
-            selectedFile: null, // Store uploaded file
+            selectedFile: null,
         };
+    },
+    setup() {
+        const ocrStore = useOcrStore();
+        return { ocrStore }; // Ensure ocrStore is returned for use in the template or methods
     },
     methods: {
         async handleFileUpload() {
@@ -44,9 +49,7 @@ export default {
                 alert("Please select a file first.");
                 return;
             }
-
-            this.validating = true; // Show loading indicator
-
+            this.validating = true;
             const file = this.selectedFile;
             if (file.type === "application/pdf") {
                 await this.extractPdfText(file);
@@ -59,15 +62,12 @@ export default {
             }
             console.log("Selected File:", this.selectedFile);
             console.log("File Type:", this.selectedFile?.type);
-            this.validating = false; // Hide loading indicator
+            this.validating = false;
         },
-
         async extractPdfText(file) {
             const reader = new FileReader();
             reader.readAsArrayBuffer(file);
             reader.onload = async () => {
-                console.log("PDF file successfully read!"); // Debugging log
-
                 const pdf = await pdfjsLib.getDocument({ data: reader.result }).promise;
                 let text = "";
 
@@ -77,8 +77,10 @@ export default {
                     text += content.items.map((item) => item.str).join(" ") + "\n";
                 }
 
-                console.log("Extracted text:", text); // Debugging log
-                this.$router.push({ name: "OCR-textview", query: { text } });
+                this.ocrStore.setExtractedText(text); // Ensure ocrStore is accessed correctly
+                this.$router.push({ name: "OCR-textview" });
+                this.$refs.snackbarRef.showSnackbar("Text extracted successfully!");
+                this.$emit("textExtracted", text);
             };
         },
         async extractDocxText(file) {
@@ -86,7 +88,10 @@ export default {
             reader.readAsArrayBuffer(file);
             reader.onload = async () => {
                 const result = await mammoth.extractRawText({ arrayBuffer: reader.result });
-                this.$router.push({ name: "OCR-textview", query: { text: result.value } });
+                this.ocrStore.setExtractedText(result.value); // Ensure ocrStore is accessed correctly
+                this.$router.push({ name: "OCR-textview" });
+                this.$refs.snackbarRef.showSnackbar("Text extracted successfully!");
+                this.$emit("textExtracted", result.value);
             };
         },
     },

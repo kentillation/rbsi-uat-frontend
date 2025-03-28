@@ -10,7 +10,8 @@
         </v-btn>
       </div>
       <div class="w-75 mt-5">
-        <v-text-field v-model="search_item_ACC" ref="searchItemAcc" label="Search account number..." @keyup.enter="searchAccount"></v-text-field>
+        <v-text-field v-model="search_item_ACC" ref="searchItemAcc" label="Search account number..."
+          @keyup.enter="searchAccount"></v-text-field>
         <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"
           :disabled="!searchValid || validating" @click="searchAccount" rounded>
           <v-progress-circular v-if="validating" size="20" color="white" indeterminate />
@@ -64,8 +65,8 @@
                 <p><strong>Status Date:</strong> {{ formatDate(selectedAccount.accStatusDate) }}</p>
                 <p><strong>Open Date:</strong> {{ formatDate(selectedAccount.openDate) }}</p>
                 <p>
-                  <strong>Account Status: </strong> 
-                  <span :class="{ 'text-red-darken-1' : selectedAccount.accStatus === '00' }">
+                  <strong>Account Status: </strong>
+                  <span :class="{ 'text-red-darken-1': selectedAccount.accStatus === '00' }">
                     {{ acc_status(selectedAccount.accStatus) }}
                   </span>
                 </p>
@@ -289,7 +290,6 @@ export default {
           },
           params: { search: this.search_item_CID }
         });
-        // console.log("API Response:", response.data); 
         if (response.data.length === 1) {
           const selectedCID = response.data[0].CID;
           this.$router.push({
@@ -380,7 +380,6 @@ export default {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`
           }
         });
-        // Ensure the response data is an array
         this.transactionHistory = Array.isArray(response.data.data.trans) ? response.data.data.trans : [];
         this.dialogTransactionHistoryTable = true;
         this.validatingDate = false;
