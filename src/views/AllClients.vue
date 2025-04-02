@@ -107,6 +107,13 @@ export default {
             skltnLdr: false,
             imgCrd: false,
             imgSrc: null,
+            messages: {
+                internalServerError: "Internal server error.",
+                fetchClientIDError: "Error fetching client info by CID.",
+                fetchClientInfoError: "Error fetching client info.",
+                clientDataNotFound: "Client data not found.",
+                fetchImageError: "Error fetching client image.",
+            },
         };
     },
     created() {
@@ -190,9 +197,11 @@ export default {
                     existsInMBWin: false
                 }));
             } catch (error) {
-                console.error('Error fetching client_info:', error);
+                this.loading = false;
+                this.$refs.snackbarRef.showSnackbar(this.messages.fetchClientInfoError, "error");
             } finally {
                 this.loading = false;
+                this.$refs.snackbarRef.showSnackbar(this.messages.internalServerError, "error");
             }
         },
         async fetchClientInfoByCID(cid) {
@@ -218,16 +227,18 @@ export default {
                     } else {
                         this.selectedImage = null;
                         this.imgSrc = '';
-                        console.warn('No image data available for the selected client.');
+                        this.$refs.snackbarRef.showSnackbar(this.messages.fetchImageError, "error");
                     }
                 } else {
-                    console.warn('No client data found.');
                     this.selectedImage = null;
                     this.imgSrc = '';
+                    this.$refs.snackbarRef.showSnackbar(this.messages.clientDataNotFound, "error");
                 }
             } catch (error) {
-                console.error('Error fetching client info by CID:', error);
-                this.$refs.snackbarRef.showSnackbar(this.messages.fetchError, "error");
+                this.$refs.snackbarRef.showSnackbar(this.messages.fetchClientIDError, "error");
+            } finally {
+                this.loading = false;
+                this.$refs.snackbarRef.showSnackbar(this.messages.internalServerError, "error");
             }
         },
         async fetchClientImage(folderName, imageFileName) {
@@ -241,7 +252,7 @@ export default {
                 const blob = new Blob([response.data], { type: response.headers['content-type'] });
                 this.imgSrc = URL.createObjectURL(blob);
             } catch (error) {
-                console.error('Error fetching client image:', error);
+                this.$refs.snackbarRef.showSnackbar(this.messages.fetchImageError, "error");
                 this.imgSrc = '';
             }
         },
@@ -342,7 +353,7 @@ export default {
                     reader.readAsDataURL(blob);
                 });
             } catch (error) {
-                console.error('Error fetching Base64 image:', error);
+                this.$refs.snackbarRef.showSnackbar(this.messages.fetchImageError, "error");
                 return '';
             }
         },
