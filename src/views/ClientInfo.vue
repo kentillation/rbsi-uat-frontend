@@ -203,11 +203,12 @@ export default {
             this.imgSrc = '';
             console.warn('No image data available for the selected client.');
           }
-        } else {
-          console.warn('No client data found.');
-          this.selectedImage = null;
-          this.imgSrc = '';
-        }
+        } 
+        // else {
+        //     this.selectedImage = null;
+        //     this.imgSrc = '';
+        //     this.$refs.snackbarRef.showSnackbar(this.messages.clientDataNotFound, "error");
+        // }
       } catch (error) {
         console.error('Error fetching client info by CID:', error);
         this.$refs.snackbarRef.showSnackbar(this.messages.fetchError, "error");

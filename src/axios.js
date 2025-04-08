@@ -7,6 +7,13 @@ const apiClient = axios.create({
         'Accept': process.env.VUE_APP_MIME_TYPE
     },
     withCredentials: process.env.VUE_APP_WITH_CREDENTIALS,
+    transformResponse: [function (data) {
+        try {
+            return JSON.parse(data);
+        } catch (e) {
+            return data;
+        }
+    }]
 });
 
 export default apiClient;

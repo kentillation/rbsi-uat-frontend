@@ -457,7 +457,7 @@ export default {
             singleRelation: null,
             multipleRelation: [],
             multipleRltnDialog: false,
-            staff_or_not: false,
+            staff_or_not: 2,
             multplRltnsHeaders: [
                 { title: 'CID', value: 'CID', sortable: false },
                 { title: 'Display Name', value: 'DisplayName', sortable: false },

@@ -11,12 +11,12 @@
                     <v-toolbar-title>
                         <v-row>
                             <v-col cols="12" lg="6" md="6" sm="12">
-                                <v-text-field v-model="search_item_CID_LastName" ref="searchItemCIDLastName" label="Type CID or last name..."
+                                <v-text-field :disabled="loading" v-model="search_item_CID_LastName" ref="searchItemCIDLastName" label="Type CID or last name..."
                                     class="pt-5"></v-text-field>
                             </v-col>
                         </v-row>
                     </v-toolbar-title>
-                    <v-btn append-icon="mdi-printer" class="me-3 pe-7" variant="outlined" @click="printClients"></v-btn>
+                    <v-btn :disabled="loading" append-icon="mdi-printer" class="me-3 pe-7" variant="outlined" @click="printClients"></v-btn>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <div class="text-right">
                         <v-btn :disabled="loading" append-icon="mdi-refresh" class="me-3 pe-7" variant="outlined"
@@ -28,12 +28,9 @@
                 <!-- <tr :class="{ 'bg-teal-darken-1': !item.existsInMBWin }"> -->
                 <tr>
                     <td>{{ item.CID }}</td>
-                    <td>{{ item.Name1 }}</td>
-                    <td>{{ item.Name2 }}</td>
-                    <td>{{ item.Name3 }}</td>
-                    <td>{{ item.RegisterDate }}</td>
+                    <td>{{ item.clientName }}</td>
                     <td>{{ item.LastChangeDate }}</td>
-                    <td class="text-center">
+                    <td>
                         <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>
                             View
                         </v-btn>
@@ -53,7 +50,6 @@
                     :clientstatusItems="clientstatusItems" :genderItems="genderItems"
                     :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
                     :relationshipItems="relationshipItems" />
-
                 <v-card-actions class="mx-4 my-4">
                     <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccountList"
                         rounded>List of Accounts</v-btn>
@@ -71,7 +67,6 @@
 import apiClient from '../axios';
 import Snackbar from '@/components/Snackbar.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
-
 export default {
     components: {
         ClientDataMixin,
@@ -94,11 +89,8 @@ export default {
             search_item_CID_LastName: '',
             staff_or_not: 2,
             headers: [
-                { title: 'CID', value: 'CID', sortable: false },
-                { title: 'Last Name', value: 'Name1', sortable: false },
-                { title: 'First Name', value: 'Name2', sortable: false },
-                { title: 'Middle Name', value: 'Name3', sortable: false },
-                { title: 'Register Date', value: 'RegisterDate', sortable: true },
+                { title: 'CID', value: 'CID', sortable: true },
+                { title: 'Name', value: 'clientName', sortable: true },
                 { title: 'Last Change Date', value: 'LastChangeDate', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
@@ -136,18 +128,18 @@ export default {
         }
     },
     computed: {
-        filteredClients() {
-            const searchTerm = this.search_item_CID_LastName.toLowerCase();
-            return this.client_info.filter((client) => {
-                return (
-                    client.CID.toString().includes(searchTerm) ||
-                    client.Name2.toLowerCase().includes(searchTerm) ||
-                    client.Name3.toLowerCase().includes(searchTerm) ||
-                    client.Name1.toLowerCase().includes(searchTerm)
-                );
-            });
-        },
+    filteredClients() {
+        const searchTerm = (this.search_item_CID_LastName || '').toLowerCase();
+        return this.client_info.filter((client) => {
+            return (
+                client.CID?.toString().includes(searchTerm) ||
+                (client.Name2 || '').toLowerCase().includes(searchTerm) ||
+                (client.Name3 || '').toLowerCase().includes(searchTerm) ||
+                (client.Name1 || '').toLowerCase().includes(searchTerm)
+            );
+        });
     },
+},
     methods: {
         toClientAccountList() {
             if (this.selectedClient) {
@@ -162,7 +154,6 @@ export default {
         viewItem(item) {
             this.selectedClient = {
                 ...item,
-                RegisterDate: this.formatDate(item.RegisterDate),
                 LastChangeDate: this.formatDate(item.LastChangeDate)
             };
             this.dialogSingle = true;
@@ -192,7 +183,7 @@ export default {
                 });
                 this.client_info = response.data.map(client => ({
                     ...client,
-                    RegisterDate: this.formatDate(client.RegisterDate),
+                    clientName: client.Name1 + ', ' + client.Name2 + ' ' + (client.Name3 || ''),
                     LastChangeDate: this.formatDate(client.LastChangeDate),
                     existsInMBWin: false
                 }));
@@ -201,7 +192,6 @@ export default {
                 this.$refs.snackbarRef.showSnackbar(this.messages.fetchClientInfoError, "error");
             } finally {
                 this.loading = false;
-                this.$refs.snackbarRef.showSnackbar(this.messages.internalServerError, "error");
             }
         },
         async fetchClientInfoByCID(cid) {
@@ -214,7 +204,7 @@ export default {
                 });
                 const clientData = response.data;
                 if (Array.isArray(clientData) && clientData.length > 0) {
-                    const client = clientData[0]; // Fetch only the first record
+                    const client = clientData[0];
                     if (client.last_name && client.first_name && client.middle_name && client.image_file) {
                         this.selectedImage = {
                             last_name: client.last_name,
@@ -229,16 +219,16 @@ export default {
                         this.imgSrc = '';
                         this.$refs.snackbarRef.showSnackbar(this.messages.fetchImageError, "error");
                     }
-                } else {
-                    this.selectedImage = null;
-                    this.imgSrc = '';
-                    this.$refs.snackbarRef.showSnackbar(this.messages.clientDataNotFound, "error");
                 }
+                // else {
+                //     this.selectedImage = null;
+                //     this.imgSrc = '';
+                //     this.$refs.snackbarRef.showSnackbar(this.messages.clientDataNotFound, "error");
+                // }
             } catch (error) {
                 this.$refs.snackbarRef.showSnackbar(this.messages.fetchClientIDError, "error");
             } finally {
                 this.loading = false;
-                this.$refs.snackbarRef.showSnackbar(this.messages.internalServerError, "error");
             }
         },
         async fetchClientImage(folderName, imageFileName) {
@@ -270,7 +260,6 @@ export default {
                 .map(header => `<th>${header.title}</th>`)
                 .join('');
             const tableRows = this.filteredClients.map(client => {
-                const formattedRegisterDate = this.formatDateForPrint(client.RegisterDate);
                 const formattedLastChangeDate = this.formatDateForPrint(client.LastChangeDate);
                 return `
                     <tr>
@@ -278,7 +267,6 @@ export default {
                         <td>${client.Name1}</td>
                         <td>${client.Name2}</td>
                         <td>${client.Name3}</td>
-                        <td>${formattedRegisterDate}</td>
                         <td>${formattedLastChangeDate}</td>
                     </tr>
                 `;
