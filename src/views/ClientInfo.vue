@@ -165,7 +165,7 @@ export default {
           this.selectedClient = this.singleClient;
           this.dialogSingle = true;
           this.toggleSkeletonLoader(true);
-          await this.fetchClientInfoByCID(this.singleClient.CID);
+          // await this.fetchClientInfoByCID(this.singleClient.CID);
         } else if (clients.length > 1) {
           this.multipleClients = clients;
           this.dialogMultiple = true;
@@ -232,7 +232,7 @@ export default {
       };
       this.dialogSingle = true;
       this.toggleSkeletonLoader(true);
-      this.fetchClientInfoByCID(item.CID);
+      // this.fetchClientInfoByCID(item.CID);
     },
     async fetchClientImage(folderName, imageFileName) {
       try {
