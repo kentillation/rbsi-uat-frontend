@@ -31,7 +31,7 @@
               <div class="w-75">
                 <v-text-field v-model="search_item_CID" label="Search CID..." @keyup.enter="searchCID"></v-text-field>
                 <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2"
-                  :disabled="!searchValidCID || validatingCID" @click="searchCID" rounded>
+                  :disabled="!searchValidCID || validatingCID" @click="searchCID" variant="tonal" rounded>
                   <v-progress-circular v-if="validatingCID" size="20" color="white" indeterminate />
                   <span v-else>Search</span>
                 </v-btn>
