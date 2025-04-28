@@ -154,11 +154,11 @@ export default {
           },
           params: { search: this.search_item_CID }
         });
-        const clients = response.data.map(client => ({
-          ...client,
-          RegisterDate: this.formatDate(client.RegisterDate),
-          LastChangeDate: this.formatDate(client.LastChangeDate),
-        }));
+        const clients = Array.isArray(response.data) ? response.data.map(client => ({
+            ...client,
+            RegisterDate: this.formatDate(client.RegisterDate),
+            LastChangeDate: this.formatDate(client.LastChangeDate),
+        })) : [];
 
         if (clients.length === 1) {
           this.singleClient = clients[0];

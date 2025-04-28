@@ -21,7 +21,7 @@
             <v-sheet class="d-flex flex-column align-center text-center mx-auto" height="200" width="100%" rounded>
               <div class="w-75">
                 <v-text-field v-model="search_item_ACC" ref="searchItemAcc" @keyup.enter="searchACC"
-                  label="Enter account number..." variant="underlined"></v-text-field>
+                  label="Enter account number..." @input="search_item_ACC = search_item_ACC.replace(/[^0-9]/g, '')" variant="underlined"></v-text-field>
                 <v-text-field v-model="passbookNumber" @keyup.enter="searchACC" label="Enter passbook number..."
                   variant="underlined"></v-text-field>
               </div>
