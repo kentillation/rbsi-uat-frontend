@@ -47,7 +47,7 @@
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-data-table :headers="headers" :items="multipleClients" item-key="cid" class="elevation-1">
+            <v-data-table :headers="clientInfoDetailsHeaders" :items="multipleClients" item-key="cid" class="elevation-1">
               <template v-slot:loading>
                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
               </template>
@@ -93,14 +93,13 @@ export default {
       imgSrc: null,
       search_item_CID: '',
       staff_or_not: 2,
-      headers: [
+      clientInfoDetailsHeaders: [
         { title: 'CID', value: 'CID', sortable: false },
         { title: 'Last Name', value: 'Name1', sortable: false },
         { title: 'First Name', value: 'Name2', sortable: false },
         { title: 'Middle Name', value: 'Name3', sortable: false },
         { title: 'Display Name', value: 'DisplayName', sortable: true },
-        { title: 'Created At', value: 'RegisterDate', sortable: true },
-        { title: 'Updated At', value: 'LastChangeDate', sortable: true },
+        { title: 'Last Changes', value: 'LastChangeDate', sortable: true },
         { title: 'Actions', value: 'action', sortable: false }
       ],
       selectedClient: null,
@@ -156,7 +155,6 @@ export default {
         });
         const clients = Array.isArray(response.data) ? response.data.map(client => ({
             ...client,
-            RegisterDate: this.formatDate(client.RegisterDate),
             LastChangeDate: this.formatDate(client.LastChangeDate),
         })) : [];
 
@@ -227,7 +225,6 @@ export default {
     viewItem(item) {
       this.selectedClient = {
           ...item,
-          RegisterDate: this.formatDate(item.RegisterDate),
           LastChangeDate: this.formatDate(item.LastChangeDate),
       };
       this.dialogSingle = true;
