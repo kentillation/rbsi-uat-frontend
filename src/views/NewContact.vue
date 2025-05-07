@@ -750,44 +750,6 @@ export default {
                 this.created_at = new Date(clientData.created_at);
             }
         },
-        formatDateForPicker(dateString) {
-            if (!dateString) return null;
-            const date = new Date(dateString);
-            return date.toISOString().substr(0, 10); // Returns "YYYY-MM-DD"
-        },
-        isValidDate(date) {
-            return date instanceof Date && !isNaN(date.getTime());
-        },
-        formatDateForDisplay(date) {
-            if (!this.isValidDate(date)) return 'N/A';
-            return date.toLocaleDateString('en-PH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        },
-        formatDateTimeForDisplay(date) {
-            if (!this.isValidDate(date)) return 'N/A';
-            return date.toLocaleString('en-PH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-        },
-        formattedBirthdate() {
-            if (!this.birthdate) return 'N/A';
-            if (typeof this.birthdate === 'string') {
-                return this.formatDateTime(this.birthdate);
-            }
-            return this.birthdate.toLocaleDateString('en-PH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        },
     },
 };
 

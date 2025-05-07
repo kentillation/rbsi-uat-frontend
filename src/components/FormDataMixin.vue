@@ -134,6 +134,17 @@ export default {
                 minute: '2-digit'
             });
         },
+        formattedBirthdate() {
+            if (!this.birthdate) return 'N/A';
+            if (typeof this.birthdate === 'string') {
+                return this.formatDateTime(this.birthdate);
+            }
+            return this.birthdate.toLocaleDateString('en-PH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        },
         isFormValid() {
             return [
                 this.first_name, this.middle_name, this.last_name,
