@@ -24,7 +24,7 @@ const routes = [
     { path: '/ocr', name: 'OCR', component: OCR, meta: { requiresAuth: true } },
     { path: '/ocr-textview', name: 'OCR-textview', component: OCRtextview, meta: { requiresAuth: true } },
     { path: '/fetch_online', name: 'OnlineFetching', component: OnlineFetching, meta: { requiresAuth: true } },
-    { path: '/new_contact', name: 'NewContact', component: NewContact, meta: { requiresAuth: true } },
+    { path: '/new_contact', name: 'NewContact', component: NewContact, props: (route) => ({ query: route.query }), meta: { requiresAuth: true } },
     { path: '/reprinting', name: 'Reprinting', component: Reprinting, meta: { requiresAuth: true } },
     { 
         path: '/new_account/:cid', 

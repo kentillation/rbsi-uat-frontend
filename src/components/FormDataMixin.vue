@@ -95,11 +95,11 @@ export default {
             confirmIdentityDialog: false,
         };
     },
-    created() {
-        if (this.singleRelation?.display_name && this.singleRelation?.image_file) {
-            this.fetchClientImage(this.singleRelation.display_name, this.singleRelation.image_file);
-        }
-    },
+    // created() {
+    //     if (this.singleRelation?.display_name && this.singleRelation?.image_file) {
+    //         this.fetchClientImage(this.singleRelation.display_name, this.singleRelation.image_file);
+    //     }
+    // },
     watch: {
         displayName(newVal) {
             this.display_name = newVal;
@@ -123,15 +123,16 @@ export default {
             const lastName = this.last_name || '';
             return `${lastName}, ${firstName} ${middleName}`.trim();
         },
-        formattedBirthdate() {
-            if (!this.birthdate) return '';
-            const date = new Date(this.birthdate);
-            return new Intl.DateTimeFormat('en-PH', {
+        formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleString('en-PH', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
-                timeZone: this.timezone,
-            }).format(date);
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         },
         isFormValid() {
             return [

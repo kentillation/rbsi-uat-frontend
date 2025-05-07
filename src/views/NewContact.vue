@@ -39,8 +39,9 @@
                                             label="Display Name" variant="underlined" disabled></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete @click="fetchSuffixesItems" v-model="suffix" label="Suffix" :items="suffixesItems"
-                                            item-title="suffix" item-value="id" variant="underlined">
+                                        <v-autocomplete @click="fetchSuffixesItems" v-model="suffix" label="Suffix"
+                                            :items="suffixesItems" item-title="suffix" item-value="id"
+                                            variant="underlined">
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
@@ -48,20 +49,21 @@
                                             clearable></v-text-field>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete @click="fetchTypesItems" v-model="type" :rules="[typeRule]" label="Type"
-                                            :items="typeItems" item-title="type" item-value="id" variant="underlined">
+                                        <v-autocomplete @click="fetchTypesItems" v-model="type" :rules="[typeRule]"
+                                            label="Type" :items="typeItems" item-title="type" item-value="id"
+                                            variant="underlined">
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
-                                        <v-autocomplete @click="fetchTitleItems" v-model="title" :rules="[titleRule]" label="Title"
-                                            :items="titleItems" item-title="title" item-value="id"
+                                        <v-autocomplete @click="fetchTitleItems" v-model="title" :rules="[titleRule]"
+                                            label="Title" :items="titleItems" item-title="title" item-value="id"
                                             variant="underlined"></v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
                                         <v-file-input v-model="image_file" @change="previewImage"
                                             :rules="[imagefileRule]" accept="image/*" label="Image file"
-                                            append-inner-icon="mdi-camera" prepend-icon="" variant="underlined"
-                                            chips show-size>
+                                            append-inner-icon="mdi-camera" prepend-icon="" variant="underlined" chips
+                                            show-size>
                                         </v-file-input>
                                     </v-col>
                                     <v-col cols="12" lg="4" md="4" sm="4" xs="12">
@@ -80,21 +82,23 @@
                                             <v-col cols="12">
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <v-autocomplete @click="fetchGenderItems" v-model="gender" :rules="[genderRule]"
-                                                            label="Gender" :items="genderItems" item-title="gender"
-                                                            item-value="id" variant="underlined"></v-autocomplete>
+                                                        <v-autocomplete @click="fetchGenderItems" v-model="gender"
+                                                            :rules="[genderRule]" label="Gender" :items="genderItems"
+                                                            item-title="gender" item-value="id"
+                                                            variant="underlined"></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
-                                                        <v-autocomplete @click="fetchCivilStatusItems" v-model="civil_status"
-                                                            :rules="[civilstatusRule]" label="Civil status"
-                                                            :items="civilstatusItems" item-title="civil_status"
-                                                            item-value="id" variant="underlined"></v-autocomplete>
+                                                        <v-autocomplete @click="fetchCivilStatusItems"
+                                                            v-model="civil_status" :rules="[civilstatusRule]"
+                                                            label="Civil status" :items="civilstatusItems"
+                                                            item-title="civil_status" item-value="id"
+                                                            variant="underlined"></v-autocomplete>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-text-field variant="underlined" disabled>Birthdate: {{
                                                             formattedBirthdate }}</v-text-field>
                                                         <v-date-picker :min="minDate" :max="maxDate"
-                                                            v-model="birthdate"></v-date-picker>
+                                                            :model-value="birthdate ? new Date(birthdate) : null"></v-date-picker>
                                                     </v-col>
                                                 </v-row>
                                             </v-col>
@@ -110,12 +114,12 @@
                                         <v-row>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line1" :rules="[addressline1Rule]"
-                                                    label="Purok/Street/Block No." variant="underlined" clearable></v-text-field>
+                                                    label="Purok/Street/Block No." variant="underlined"
+                                                    clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line2" :rules="[addressline2Rule]"
-                                                    label="Barangay" variant="underlined"
-                                                    clearable></v-text-field>
+                                                    label="Barangay" variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
                                                 <v-text-field v-model="address_line3" :rules="[addressline3Rule]"
@@ -131,9 +135,9 @@
                                                     variant="underlined" clearable></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-autocomplete @click="fetchAddressTypeItems" v-model="address_type" :rules="[addresstypeRule]"
-                                                    label="Address Type" :items="addresstypeItems"
-                                                    item-title="address_type" item-value="id"
+                                                <v-autocomplete @click="fetchAddressTypeItems" v-model="address_type"
+                                                    :rules="[addresstypeRule]" label="Address Type"
+                                                    :items="addresstypeItems" item-title="address_type" item-value="id"
                                                     variant="underlined"></v-autocomplete>
                                             </v-col>
                                         </v-row>
@@ -188,8 +192,9 @@
                                                     variant="underlined" disabled></v-text-field>
                                             </v-col>
                                             <v-col cols="12">
-                                                <v-autocomplete @click="fetchRelationShip" v-model="relationship" label="Relationship"
-                                                    :items="relationshipItems" item-title="relationship" item-value="id"
+                                                <v-autocomplete @click="fetchRelationShip" v-model="relationship"
+                                                    label="Relationship" :items="relationshipItems"
+                                                    item-title="relationship" item-value="id"
                                                     variant="underlined"></v-autocomplete>
                                             </v-col>
                                         </v-row>
@@ -246,11 +251,11 @@
                         <v-row>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">First Name: </span><strong>{{ first_name
-                                }}</strong> </p>
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Middle Name: </span><strong>{{ middle_name
-                                }}</strong> </p>
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Last Name: </span><strong>{{ last_name }}</strong>
@@ -258,7 +263,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Display Name: </span><strong>{{ display_name
-                                }}</strong> </p>
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Suffix: </span><strong>{{
@@ -266,7 +271,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Initial (optional): </span><strong>{{ initial
-                                }}</strong> </p>
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Type: </span><strong>{{ getTitle(type, typeItems,
@@ -290,7 +295,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Birthdate: </span><strong>{{ formattedBirthdate
-                                }}</strong> </p>
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Mobile 1: </span><strong>{{ mobile1 }}</strong></p>
@@ -300,23 +305,23 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Nationality: </span><strong>{{ nationality
-                                }}</strong> </p>
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Prk./St./Blck.: </span><strong>{{ address_line1
-                                }}</strong></p>
+                                        }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Barangay: </span><strong>{{ address_line2
-                                }}</strong></p>
+                                        }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">City/Municipality: </span><strong>{{ address_line3
-                                }}</strong></p>
+                                        }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Postal Code: </span><strong>{{ postal_code
-                                }}</strong> </p>
+                                        }}</strong> </p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Address Type: </span><strong>{{
@@ -324,7 +329,7 @@
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Telephone (optional): </span><strong>{{ telephone
-                                }}</strong></p>
+                                        }}</strong></p>
                             </v-col>
                             <v-col cols="12" lg="4" md="4" sm="4">
                                 <p><span class="text-grey-lighten-1">Related CID: </span><strong>{{ rel_cid }}</strong>
@@ -338,16 +343,17 @@
                                 <p><span class="text-grey-lighten-1">Relationship: </span><strong>{{
                                     getTitle(relationship,
                                         relationshipItems, 'relationship')
-                                        }}</strong> </p>
+                                }}</strong> </p>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-card-actions class="mx-4 my-4">
                     <v-spacer></v-spacer>
-                    <v-btn :disabled="validating" class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text @click="closeConfirmDialog"
-                        rounded>Check again</v-btn>
-                    <v-btn prepend-icon="mdi-check" :disabled="validating" @click="submitForm" class="bg-teal-darken-3 px-3" rounded>
+                    <v-btn :disabled="validating" class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle" text
+                        @click="closeConfirmDialog" rounded>Check again</v-btn>
+                    <v-btn prepend-icon="mdi-check" :disabled="validating" @click="submitForm"
+                        class="bg-teal-darken-3 px-3" rounded>
                         <v-progress-circular v-if="validating" size="20" color="white" label="Loading..."
                             indeterminate />
                         <span v-else>Confirm</span>
@@ -407,7 +413,8 @@
                 </v-card-title>
                 <v-card-text>
                     <v-container>
-                        <v-data-table :headers="multplRltnsHeaders" :items="multipleRelation" item-key="cid" class="elevation-1">
+                        <v-data-table :headers="multplRltnsHeaders" :items="multipleRelation" item-key="cid"
+                            class="elevation-1">
                             <template v-slot:loading>
                                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
                             </template>
@@ -463,6 +470,18 @@ export default {
                 { title: 'Display Name', value: 'DisplayName', sortable: false },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
+        }
+    },
+    created() {
+        if (this.$route.query.client) {
+            try {
+                const clientData = JSON.parse(decodeURIComponent(this.$route.query.client));
+                console.log('Received birthdate:', clientData.birthdate, typeof clientData.birthdate);
+                this.populateForm(clientData);
+            } catch (error) {
+                console.error('Error parsing client data:', error);
+                this.$refs.snackbarRef.showSnackbar('Error loading client data', 'error');
+            }
         }
     },
     watch: {
@@ -700,6 +719,74 @@ export default {
         },
         fetchRelationShip() {
             this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
+        },
+        populateForm(clientData) {
+            this.address_type = clientData.address_type || '';
+            this.type = clientData.type || '';
+            this.title = clientData.title || '';
+            this.client_status = clientData.client_status || '';
+            this.first_name = clientData.first_name || '';
+            this.middle_name = clientData.middle_name || '';
+            this.last_name = clientData.last_name || '';
+            this.suffix = clientData.suffix || '';
+            this.initial = clientData.initial || '';
+            this.display_name = clientData.display_name || '';
+            this.gender = clientData.gender || '';
+            this.civil_status = clientData.civil_status || '';
+            this.birthdate = clientData.birthdate || '';
+            this.mobile1 = clientData.mobile1 || '';
+            this.email = clientData.email || '';
+            // if (clientData.image_file) {
+            //     this.fetchClientImage(clientData.display_name, clientData.image_file)
+            //         .then(() => {
+            //             // Image loaded
+            //         });
+            // }
+
+            if (clientData.birthdate) {
+                this.birthdate = new Date(clientData.birthdate);
+            }
+            if (clientData.created_at) {
+                this.created_at = new Date(clientData.created_at);
+            }
+        },
+        formatDateForPicker(dateString) {
+            if (!dateString) return null;
+            const date = new Date(dateString);
+            return date.toISOString().substr(0, 10); // Returns "YYYY-MM-DD"
+        },
+        isValidDate(date) {
+            return date instanceof Date && !isNaN(date.getTime());
+        },
+        formatDateForDisplay(date) {
+            if (!this.isValidDate(date)) return 'N/A';
+            return date.toLocaleDateString('en-PH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        },
+        formatDateTimeForDisplay(date) {
+            if (!this.isValidDate(date)) return 'N/A';
+            return date.toLocaleString('en-PH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        },
+        formattedBirthdate() {
+            if (!this.birthdate) return 'N/A';
+            if (typeof this.birthdate === 'string') {
+                return this.formatDateTime(this.birthdate);
+            }
+            return this.birthdate.toLocaleDateString('en-PH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
         },
     },
 };

@@ -27,34 +27,11 @@
                     <td>{{ item.clientName }}</td>
                     <td>{{ item.created_at }}</td>
                     <td>
-                        <v-btn @click="viewItem(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>
-                            View
-                        </v-btn>
+                        <v-btn @click="viewClient(item)" class="bg-teal-darken-4" prepend-icon="mdi-eye-outline" rounded>View</v-btn>
                     </td>
                 </tr>
             </template>
         </v-data-table>
-
-        <!-- Dialog for viewing client details -->
-        <v-dialog v-model="dialogSingle" transition="dialog-bottom-transition" max-width="1000px" persistent>
-            <v-card>
-                <v-card-title>
-                    <span class="headline">Client Details</span>
-                </v-card-title>
-                <ClientDataMixin :client="selectedClient" :skeletonLoader="skltnLdr" :imageCard="imgCrd"
-                    :imageSource="imgSrc" :typeItems="typeItems" :titleItems="titleItems"
-                    :clientstatusItems="clientstatusItems" :genderItems="genderItems"
-                    :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
-                    :relationshipItems="relationshipItems" />
-                <v-card-actions class="mx-4 my-4">
-                    <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccountList"
-                        rounded>List of Accounts</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline"
-                        @click="dialogSingle = false" rounded>Close</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
         <Snackbar ref="snackbarRef" />
     </v-container>
 </template>
@@ -62,10 +39,8 @@
 <script>
 import { apiClientOnline } from '../axios';
 import Snackbar from '@/components/Snackbar.vue';
-import ClientDataMixin from '@/components/ClientDataMixin.vue';
 export default {
     components: {
-        ClientDataMixin,
         Snackbar
     },
     name: 'OnlineFetching',
@@ -79,7 +54,6 @@ export default {
             civilstatusItems: false,
             addresstypeItems: false,
             relationshipItems: false,
-            dialogSingle: false,
             loading: true,
             image_file: null,
             search_item_CID_LastName: '',
@@ -89,10 +63,7 @@ export default {
                 { title: 'Date Created', value: 'created_at', sortable: true },
                 { title: 'Actions', value: 'action', sortable: false }
             ],
-            selectedClient: null,
             selectedImage: null,
-            skltnLdr: false,
-            imgCrd: false,
             imgSrc: null,
             messages: {
                 internalServerError: "Internal server error.",
@@ -102,11 +73,6 @@ export default {
                 fetchImageError: "Error fetching client image.",
             },
         };
-    },
-    created() {
-        if (this.selectedImage?.display_name && this.selectedImage?.image_file) {
-            this.fetchClientImage(this.selectedImage.display_name, this.selectedImage.image_file);
-        }
     },
     mounted() {
         this.$nextTick(() => {
@@ -136,39 +102,6 @@ export default {
     },
 },
     methods: {
-        toClientAccountList() {
-            if (this.selectedClient) {
-                this.$router.push({
-                    name: 'ClientAccountList',
-                    params: {
-                        CID: this.selectedClient.CID,
-                    },
-                });
-            }
-        },
-        viewItem(item) {
-            this.selectedClient = {
-                ...item,
-                created_at: this.formatDate(item.created_at)
-            };
-            this.dialogSingle = true;
-            this.skltnLdr = true
-            this.imgCrd = false
-            this.fetchClientInfoByCID(item.CID);
-            setTimeout(() => {
-                this.skltnLdr = false
-                this.imgCrd = true
-            }, 1000)
-        },
-        formatDate(date) {
-            if (!date) return 'Invalid date';
-            const parsedDate = new Date(date);
-            if (isNaN(parsedDate.getTime())) {
-                return 'Invalid date';
-            }
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
-        },
         async fetchClientInfo() {
             try {
                 this.loading = true;
@@ -180,7 +113,7 @@ export default {
                 this.all_clients = response.data.map(client => ({
                     ...client,
                     clientName: client.first_name + ', ' + client.middle_name + ' ' + (client.last_name || ''),
-                    created_at: this.formatDate(client.created_at),
+                    created_at: this.formatDateTime(client.created_at),
                 }));
                 this.loading = false;
             } catch (error) {
@@ -190,52 +123,15 @@ export default {
                 this.loading = false;
             }
         },
-        async fetchClientInfoByCID(cid) {
-            try {
-                const response = await apiClientOnline.get(`/client_info`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    params: { search: cid }
-                });
-                const clientData = response.data;
-                if (Array.isArray(clientData) && clientData.length > 0) {
-                    const client = clientData[0];
-                    if (client.last_name && client.first_name && client.middle_name && client.image_file) {
-                        this.selectedImage = {
-                            last_name: client.last_name,
-                            first_name: client.first_name,
-                            middle_name: client.middle_name,
-                            image_file: client.image_file,
-                        };
-                        const fullName = [client.last_name + ',', client.first_name, client.middle_name].filter(Boolean).join(' ');
-                        this.fetchClientImage(fullName, client.image_file);
-                    } else {
-                        this.selectedImage = null;
-                        this.imgSrc = '';
-                        this.$refs.snackbarRef.showSnackbar(this.messages.fetchImageError, "error");
-                    }
-                }
-            } catch (error) {
-                this.$refs.snackbarRef.showSnackbar(this.messages.fetchClientIDError, "error");
-            } finally {
-                this.loading = false;
-            }
-        },
-        async fetchClientImage(folderName, imageFileName) {
-            try {
-                const response = await apiClientOnline.get(`/client_image/${folderName}/${imageFileName}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    responseType: 'blob',
-                });
-                const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                this.imgSrc = URL.createObjectURL(blob);
-            } catch (error) {
-                this.$refs.snackbarRef.showSnackbar(this.messages.fetchImageError, "error");
-                this.imgSrc = '';
-            }
+        viewClient(client) {
+            const clientData = {
+                ...client,
+                birthdate: client.birthdate ? new Date(client.birthdate) : null
+            };
+            this.$router.push({
+                name: 'NewContact',
+                query: { client: encodeURIComponent(JSON.stringify(clientData)) }
+            });
         },
         onRefresh() {
             this.loading = true
@@ -244,31 +140,17 @@ export default {
                 this.fetchClientInfo()
             }, 2000)
         },
-
-        async getBase64Image(url) {
-            try {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-            } catch (error) {
-                this.$refs.snackbarRef.showSnackbar(this.messages.fetchImageError, "error");
-                return '';
-            }
+        formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleString('en-PH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         },
-        formatDateForPrint(date) {
-            if (!date) return 'Invalid date';
-            const parsedDate = new Date(date);
-            if (isNaN(parsedDate.getTime())) {
-                return 'Invalid date';
-            }
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Intl.DateTimeFormat('en-US', options).format(parsedDate);
-        }
     }
 };
 </script>

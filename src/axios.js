@@ -17,12 +17,12 @@ const apiClient = axios.create({
 });
 
 const apiClientOnline = axios.create({
-    baseURL: 'https://rbsi-uat-be.centralcoffeeandtea.com/api',
+    baseURL: 'https://rbsi-uat.centralcoffeeandtea.com/api',
     headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json; charset=utf-8'
     },
-    withCredentials: process.env.VUE_APP_WITH_CREDENTIALS,
+    withCredentials: false,
     transformResponse: [function (data) {
         try {
             return JSON.parse(data);
