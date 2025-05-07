@@ -728,7 +728,7 @@ export default {
             this.first_name = clientData.first_name || '';
             this.middle_name = clientData.middle_name || '';
             this.last_name = clientData.last_name || '';
-            this.suffix = clientData.suffix || '';
+            this.suffix = this.getTitle(clientData.suffix, this.suffixesItems, 'suffix') || '';
             this.initial = clientData.initial || '';
             this.display_name = clientData.display_name || '';
             this.gender = clientData.gender || '';
