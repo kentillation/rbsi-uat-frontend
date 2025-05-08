@@ -22,7 +22,7 @@
           <v-list-item prepend-icon="mdi-information-outline" @click="client_info" class="text-teal-darken-2">Information</v-list-item>
           <v-list-item prepend-icon="mdi-bank-outline" @click="client_account" class="text-teal-darken-2">Account</v-list-item>
           <v-list-item prepend-icon="mdi-printer" @click="reprinting" class="text-teal-darken-2">Reprinting</v-list-item>
-          <v-list-item prepend-icon="mdi-web" @click="fetch_online" class="text-teal-darken-2">Online</v-list-item>
+          <v-list-item prepend-icon="mdi-web" @click="fetch_online" class="text-teal-darken-2">OnlineData</v-list-item>
           <!-- <v-list-item prepend-icon="mdi-ocr" @click="ocr" class="text-teal-darken-2">OCR</v-list-item> -->
         </v-list>
         <v-divider></v-divider>

@@ -70,6 +70,7 @@ export default {
                 fetchClientIDError: "Error fetching client info by CID.",
                 fetchClientInfoError: "Error fetching client info.",
                 clientDataNotFound: "Client data not found.",
+                clientDataEmpty: "Empty client data.",
                 fetchImageError: "Error fetching client image.",
             },
         };
@@ -116,6 +117,9 @@ export default {
                     created_at: this.formatDateTime(client.created_at),
                 }));
                 this.loading = false;
+                if (this.all_clients.length === 0) {
+                    this.$refs.snackbarRef.showSnackbar(this.messages.clientDataEmpty, "warning");
+                }
             } catch (error) {
                 this.loading = false;
                 this.$refs.snackbarRef.showSnackbar(this.messages.fetchClientInfoError, "error");
