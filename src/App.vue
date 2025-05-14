@@ -101,7 +101,7 @@ export default {
     },
     async fetch_online() {
       try {
-        this.$router.push('/fetch_online');
+        this.$router.push('/fetch_online_data');
       } catch (error) {
         console.error('Error in accessing online page:', error);
       }

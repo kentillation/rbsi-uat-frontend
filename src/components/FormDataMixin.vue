@@ -104,14 +104,14 @@ export default {
         displayName(newVal) {
             this.display_name = newVal;
         },
-        address_line3(newCity) {
-            const city = newCity.trim();
-            if (this.cityToPostalCodeMap[city]) {
-                this.postal_code = this.cityToPostalCodeMap[city];
-            } else {
-                this.postal_code = '';
-            }
-        },
+        // address_line3(newCity) {
+        //     const city = newCity.trim();
+        //     if (this.cityToPostalCodeMap[city]) {
+        //         this.postal_code = this.cityToPostalCodeMap[city];
+        //     } else {
+        //         this.postal_code = '';
+        //     }
+        // },
     },
     computed: {
         isIdentityCheckDisabled() {

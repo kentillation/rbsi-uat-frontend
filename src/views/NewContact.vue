@@ -484,6 +484,15 @@ export default {
             }
         }
     },
+    mounted() {
+        this.fetchSuffixesItems();
+        this.fetchTypesItems();
+        this.fetchTitleItems();
+        this.fetchGenderItems();
+        this.fetchCivilStatusItems();
+        this.fetchAddressTypeItems();
+        this.fetchRelationShip();
+    },
     watch: {
         // 'singleRelation.image_file': {
         //     immediate: true,
@@ -721,33 +730,39 @@ export default {
             this.fetchItems('/relationship', 'relationshipItems', 'Failed to relation codes');
         },
         populateForm(clientData) {
-            this.address_type = clientData.address_type || '';
-            this.type = clientData.type || '';
-            this.title = clientData.title || '';
-            this.client_status = clientData.client_status || '';
-            this.first_name = clientData.first_name || '';
-            this.middle_name = clientData.middle_name || '';
-            this.last_name = clientData.last_name || '';
-            this.suffix = this.getTitle(clientData?.suffix, this.suffixesItems, 'suffix') || '';
-            this.initial = clientData.initial || '';
-            this.display_name = clientData.display_name || '';
-            this.gender = clientData.gender || '';
-            this.civil_status = clientData.civil_status || '';
-            this.birthdate = clientData.birthdate || '';
-            this.mobile1 = clientData.mobile1 || '';
-            this.email = clientData.email || '';
-            // if (clientData.image_file) {
-            //     this.fetchClientImage(clientData.display_name, clientData.image_file)
+            this.address_type = clientData.client.address_type || '';
+            this.type = clientData.client.type || '';
+            this.title = clientData.client.title || '';
+            this.client_status = clientData.client.client_status || '';
+            this.first_name = clientData.client.first_name || '';
+            this.middle_name = clientData.client.middle_name || '';
+            this.last_name = clientData.client.last_name || '';
+            this.suffix = clientData.client.suffix || '';
+            this.initial = clientData.client.initial || '';
+            this.display_name = clientData.client.display_name || '';
+            this.gender = clientData.client.gender || '';
+            this.civil_status = clientData.client.civil_status || '';
+            this.birthdate = clientData.client.birthdate || '';
+            this.mobile1 = clientData.client.mobile1 || '';
+            this.email = clientData.client.email || '';
+            this.address_line1 = clientData.address.line1 || '';
+            this.address_line2 = clientData.address.line2 || '';
+            this.address_line3 = clientData.address.line3 || '';
+            this.address_line4 = clientData.address.line4 || '';
+            this.postal_code = clientData.address.postal_code || '';
+            this.telephone = clientData.address.telephone || '';
+            // if (clientData.client.image_file) {
+            //     this.fetchClientImage(clientData.client.display_name, clientData.client.image_file)
             //         .then(() => {
             //             // Image loaded
             //         });
             // }
 
-            if (clientData.birthdate) {
-                this.birthdate = new Date(clientData.birthdate);
+            if (clientData.client.birthdate) {
+                this.birthdate = new Date(clientData.client.birthdate);
             }
-            if (clientData.created_at) {
-                this.created_at = new Date(clientData.created_at);
+            if (clientData.client.created_at) {
+                this.created_at = new Date(clientData.client.created_at);
             }
         },
     },

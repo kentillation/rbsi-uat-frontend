@@ -111,10 +111,10 @@ export default {
                         'Content-Type': 'application/json',
                     }
                 });
-                this.all_clients = response.data.map(client => ({
-                    ...client,
-                    clientName: client.last_name + ', ' + client.first_name + ' ' + (client.middle_name || ''),
-                    created_at: this.formatDateTime(client.created_at),
+                this.all_clients = response.data.map(clientData => ({
+                    ...clientData,
+                    clientName: clientData.client.last_name + ', ' + clientData.client.first_name + ' ' + clientData.client.middle_name || '',
+                    created_at: this.formatDateTime(clientData.client.created_at),
                 }));
                 this.loading = false;
                 if (this.all_clients.length === 0) {
