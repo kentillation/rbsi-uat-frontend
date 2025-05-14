@@ -98,7 +98,7 @@
                                                         <v-text-field variant="underlined" disabled>Birthdate: {{
                                                             formattedBirthdate }}</v-text-field>
                                                         <v-date-picker :min="minDate" :max="maxDate"
-                                                            :model-value="birthdate ? new Date(birthdate) : null"></v-date-picker>
+                                                            v-model="birthdate"></v-date-picker>
                                                     </v-col>
                                                 </v-row>
                                             </v-col>
@@ -728,7 +728,7 @@ export default {
             this.first_name = clientData.first_name || '';
             this.middle_name = clientData.middle_name || '';
             this.last_name = clientData.last_name || '';
-            this.suffix = this.getTitle(clientData.suffix, this.suffixesItems, 'suffix') || '';
+            this.suffix = this.getTitle(clientData?.suffix, this.suffixesItems, 'suffix') || '';
             this.initial = clientData.initial || '';
             this.display_name = clientData.display_name || '';
             this.gender = clientData.gender || '';

@@ -113,7 +113,7 @@ export default {
                 });
                 this.all_clients = response.data.map(client => ({
                     ...client,
-                    clientName: client.first_name + ', ' + client.middle_name + ' ' + (client.last_name || ''),
+                    clientName: client.last_name + ', ' + client.first_name + ' ' + (client.middle_name || ''),
                     created_at: this.formatDateTime(client.created_at),
                 }));
                 this.loading = false;

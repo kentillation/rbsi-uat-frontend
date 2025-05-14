@@ -124,7 +124,7 @@ export default {
             return `${lastName}, ${firstName} ${middleName}`.trim();
         },
         formatDateTime(dateString) {
-            if (!dateString) return 'N/A';
+            if (!dateString) return '[empty]';
             const date = new Date(dateString);
             return date.toLocaleString('en-PH', {
                 year: 'numeric',
@@ -135,7 +135,7 @@ export default {
             });
         },
         formattedBirthdate() {
-            if (!this.birthdate) return 'N/A';
+            if (!this.birthdate) return '[empty]';
             if (typeof this.birthdate === 'string') {
                 return this.formatDateTime(this.birthdate);
             }
@@ -156,13 +156,14 @@ export default {
     },
     methods: {
         formatToDateString(date) {
-            if (!(date instanceof Date)) {
+            if (!date) return '';
+            if (typeof date === 'string') {
                 date = new Date(date);
             }
-            if (isNaN(date.getTime())) {
-                throw new Error("Invalid date provided");
+            if (!(date instanceof Date) || isNaN(date.getTime())) {
+                return '';
             }
-            const year = String(date.getFullYear());
+            const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
