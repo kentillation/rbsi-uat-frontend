@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
     <v-container>
-        <h1>Online Client Fetching</h1>
+        <h1>Online Data</h1>
         <v-data-table :headers="headers" :items="filteredClients" :loading="loading" class="elevation-1">
             <template v-slot:loading>
                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
