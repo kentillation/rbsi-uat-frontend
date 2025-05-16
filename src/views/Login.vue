@@ -39,12 +39,18 @@
 
 <script>
 import apiClient from '../axios';
+import CryptoJS from 'crypto-js';
+import JSEncrypt from 'jsencrypt';
 
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Login',
     data() {
         return {
+            encryptionKey: null, // Will be received from server
+            publicKey: null,    // For RSA key exchange
+            sessionKey: null,    // Generated AES key for the session
+            encryptor: new JSEncrypt(),
             email: '',
             password: '',
             emailRule: (v) => !!v || 'Email is required',
@@ -63,20 +69,81 @@ export default {
             return this.email !== '' && this.password !== '';
         }
     },
+    mounted() {
+        this.initializeEncryption();
+    },
     methods: {
+        showSnackbar(message, color) {
+            this.snackbar.message = message;
+            this.snackbar.color = color;
+            this.snackbar.visible = true;
+        },
+        async initializeEncryption() {
+            try {
+                // Get server's public key
+                const response = await apiClient.get('/encryption/init');
+                this.publicKey = response.data.publicKey;
+                this.encryptor.setPublicKey(this.publicKey);
+
+                // Generate random 32-byte session key (256-bit) as Base64
+                const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
+                this.sessionKey = btoa(String.fromCharCode.apply(null, randomBytes));
+
+                // Encrypt with RSA (using PKCS#1 v1.5 padding which is more compatible)
+                const encryptedKey = this.encryptor.encrypt(this.sessionKey);
+
+                if (!encryptedKey) {
+                    throw new Error('RSA encryption failed');
+                }
+
+                // Send to server and store session ID
+                const establishResponse = await apiClient.post('/encryption/establish', {
+                    encryptedKey: encryptedKey
+                });
+
+                // Store session ID for future requests
+                this.sessionId = establishResponse.data.sessionId;
+
+            } catch (error) {
+                console.error('Encryption initialization failed:', error);
+                this.showSnackbar('Security initialization failed. Please refresh.', 'error');
+                throw error; // Re-throw to handle in calling method
+            }
+        },
+
         async login() {
-            this.validating = true;
             try {
                 if (this.$refs.form.validate()) {
-                    const response = await apiClient.post('/admin-login', {
+                    this.validating = true;
+
+                    // Ensure encryption is ready
+                    if (!this.sessionKey || !this.sessionId) {
+                        await this.initializeEncryption();
+                    }
+
+                    const payload = {
                         email: this.email,
                         password: this.password,
+                        timestamp: Date.now()
+                    };
+
+                    // Encrypt with AES
+                    const encryptedPayload = CryptoJS.AES.encrypt(
+                        JSON.stringify(payload),
+                        CryptoJS.enc.Base64.parse(this.sessionKey),
+                        { mode: CryptoJS.mode.CBC }
+                    ).toString();
+
+                    const response = await apiClient.post('/admin-login', {
+                        data: encryptedPayload,
+                        headers: {
+                            'X-Session-ID': this.sessionId
+                        }
                     });
 
                     if (response.status === 200) {
                         localStorage.setItem('auth_token', response.data.access_token);
                         this.$router.push('/client_info');
-                        this.showSnackbar('Login successful!', 'success');
                     }
                 }
             } catch (error) {
@@ -109,11 +176,6 @@ export default {
             } finally {
                 this.validating = false;
             }
-        },
-        showSnackbar(message, color) {
-            this.snackbar.message = message;
-            this.snackbar.color = color;
-            this.snackbar.visible = true;
         }
     },
 
