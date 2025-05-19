@@ -10,9 +10,9 @@
         </v-btn>
       </div>
       <div class="w-75 mt-5">
-        <v-text-field v-model="search_item_CID" ref="searchItemCID" label="Search CID or last name..." @keyup.enter="searchClients"
-          :loading="validating"></v-text-field>
-        <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large"  variant="tonal"
+        <v-text-field v-model="search_item_CID" ref="searchItemCID" label="Search CID or last name..."
+          @keyup.enter="searchClients" :loading="validating"></v-text-field>
+        <v-btn prepend-icon="mdi-magnify" class="bg-teal-darken-4 ms-2" size="large" variant="tonal"
           :disabled="!searchValid || validating" @click="searchClients" rounded>
           Search
         </v-btn>
@@ -25,13 +25,13 @@
         <v-card-title>
           <span class="headline">Client Details</span>
         </v-card-title>
-        <ClientDataMixin :client="selectedClient" :skeletonLoader="skltnLdr" :imageCard="imgCrd"
-          :imageSource="imgSrc" :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
+        <ClientDataMixin :client="selectedClient" :skeletonLoader="skltnLdr" :imageCard="imgCrd" :imageSource="imgSrc"
+          :typeItems="typeItems" :titleItems="titleItems" :clientstatusItems="clientstatusItems"
           :genderItems="genderItems" :civilstatusItems="civilstatusItems" :addresstypeItems="addresstypeItems"
           :institutionItems="institutionItems" :entityItems="entityItems" :employmentItems="employmentItems" />
         <v-card-actions class="mx-4 my-4">
-          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccountList"
-            rounded>List of Accounts</v-btn>
+          <v-btn class="bg-teal-darken-4 px-3" prepend-icon="mdi-eye-outline" @click="toClientAccountList" rounded>List
+            of Accounts</v-btn>
           <v-spacer></v-spacer>
           <v-btn class="bg-red-darken-4 px-3" prepend-icon="mdi-close-circle-outline" @click="dialogSingle = false"
             rounded>Close</v-btn>
@@ -47,7 +47,8 @@
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-data-table :headers="clientInfoDetailsHeaders" :items="multipleClients" item-key="cid" class="elevation-1">
+            <v-data-table :headers="clientInfoDetailsHeaders" :items="multipleClients" item-key="cid"
+              class="elevation-1">
               <template v-slot:loading>
                 <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
               </template>
@@ -76,6 +77,8 @@
 import apiClient from '../axios';
 import Snackbar from '@/components/Snackbar.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
+import CryptoJS from 'crypto-js';
+import JSEncrypt from 'jsencrypt';
 
 export default {
   name: 'ClientInfo',
@@ -85,6 +88,10 @@ export default {
   },
   data() {
     return {
+      encryptor: new JSEncrypt(),
+      publicKey: null,
+      sessionKey: localStorage.getItem('session_key'),
+      sessionId: localStorage.getItem('session_id'),
       validating: false,
       singleClient: null,
       skltnLdr: false,
@@ -120,6 +127,7 @@ export default {
         noRecordFound: "No record found!",
         searchError: "An error occurred while searching for clients",
         fetchError: "Failed to fetch",
+        encryptionError: "Security initialization failed. Please refresh."
       },
       TIMEOUT_DURATION: 1000,
     };
@@ -128,6 +136,7 @@ export default {
     this.$nextTick(() => {
       this.$refs.searchItemCID.focus();
     });
+    this.initializeEncryption();
   },
   created() {
     if (this.selectedImage?.display_name && this.selectedImage?.image_file) {
@@ -140,30 +149,119 @@ export default {
     },
   },
   methods: {
+    async initializeEncryption() {
+      try {
+        if (this.sessionKey && this.sessionId) return;
+
+        const response = await apiClient.get('/encryption/init');
+        this.publicKey = response.data.publicKey;
+        this.encryptor.setPublicKey(this.publicKey);
+
+        const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
+        this.sessionKey = btoa(String.fromCharCode(...randomBytes));
+        const encryptedKey = this.encryptor.encrypt(this.sessionKey);
+
+        if (!encryptedKey) {
+          throw new Error('RSA encryption failed');
+        }
+
+        const establishResponse = await apiClient.post('/encryption/establish', {
+          encryptedKey: encryptedKey
+        });
+
+        localStorage.setItem('session_key', this.sessionKey);
+        localStorage.setItem('session_id', establishResponse.data.sessionId);
+
+      } catch (error) {
+        console.error('Encryption initialization failed:', error);
+        this.$refs.snackbarRef.showSnackbar(this.messages.encryptionError, 'error');
+        throw error;
+      }
+    },
+
+    async encryptPayload(data) {
+      try {
+        if (!this.sessionKey) {
+          await this.initializeEncryption();
+        }
+
+        const iv = CryptoJS.lib.WordArray.random(16);
+        const encrypted = CryptoJS.AES.encrypt(
+          JSON.stringify(data),
+          CryptoJS.enc.Base64.parse(this.sessionKey),
+          {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+          }
+        );
+
+        const ivBinary = CryptoJS.enc.Hex.parse(iv.toString(CryptoJS.enc.Hex));
+        const ciphertextBinary = CryptoJS.enc.Base64.parse(encrypted.toString());
+
+        const combined = CryptoJS.lib.WordArray.create()
+          .concat(ivBinary)
+          .concat(ciphertextBinary);
+
+        return combined.toString(CryptoJS.enc.Base64);
+      } catch (error) {
+        console.error('Encryption failed:', error);
+        throw error;
+      }
+    },
+
+    async decryptResponse(encryptedData) {
+      try {
+        if (!this.sessionKey) {
+          await this.initializeEncryption();
+        }
+
+        const decoded = CryptoJS.enc.Base64.parse(encryptedData.data);
+        const iv = CryptoJS.lib.WordArray.create(decoded.words.slice(0, 4));
+        const ciphertext = CryptoJS.lib.WordArray.create(decoded.words.slice(4));
+
+        const decrypted = CryptoJS.AES.decrypt(
+          { ciphertext },
+          CryptoJS.enc.Base64.parse(this.sessionKey),
+          { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+        );
+
+        return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+      } catch (error) {
+        console.error('Decryption failed:', error);
+        throw error;
+      }
+    },
+
     toNewContact() {
       this.$router.push({ name: 'NewContact' });
     },
+
     async searchClients() {
       if (!this.searchValid) return;
       this.validating = true;
+
       try {
-        const response = await apiClient.get('/mbwin_client_cid_lastname', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-          },
-          params: { search: this.search_item_CID }
-        });
-        const clients = Array.isArray(response.data) ? response.data.map(client => ({
-            ...client,
-            LastChangeDate: this.formatDate(client.LastChangeDate),
-        })) : [];
+        if (!this.sessionKey || !this.sessionId) {
+          await this.initializeEncryption();
+        }
+
+        const encryptedPayload = await this.encryptPayload({ search: this.search_item_CID });
+
+        const response = await apiClient.post('/mbwin_client_cid_lastname',
+          { data: encryptedPayload },
+          { headers: { 
+            'X-Session-ID': this.sessionId, 
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}` 
+          } }
+        );
+
+        const clients = await this.decryptResponse(response.data) || [];
 
         if (clients.length === 1) {
           this.singleClient = clients[0];
           this.selectedClient = this.singleClient;
           this.dialogSingle = true;
-          this.toggleSkeletonLoader(true);
-          // await this.fetchClientInfoByCID(this.singleClient.CID);
         } else if (clients.length > 1) {
           this.multipleClients = clients;
           this.dialogMultiple = true;
@@ -171,22 +269,34 @@ export default {
           this.$refs.snackbarRef.showSnackbar(this.messages.noRecordFound, "error");
         }
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(this.messages.searchError, "error");
+        console.error('Search Error:', error);
+        this.$refs.snackbarRef.showSnackbar(
+          error.response?.data?.message || this.messages.searchError,
+          "error"
+        );
       } finally {
         this.validating = false;
       }
     },
+
     async fetchClientInfoByCID(cid) {
       try {
-        const response = await apiClient.get(`/client_info`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-          },
-          params: { search: cid }
-        });
-        const clientData = response.data;
+        const encryptedPayload = await this.encryptPayload({ search: cid });
+
+        const response = await apiClient.post('/client_info',
+          { data: encryptedPayload },
+          {
+            headers: {
+              'X-Session-ID': this.sessionId,
+              Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+            }
+          }
+        );
+
+        const clientData = await this.decryptResponse(response.data);
+
         if (Array.isArray(clientData) && clientData.length > 0) {
-          const client = clientData[0]; // Fetch only the first record
+          const client = clientData[0];
           if (client.last_name && client.first_name && client.middle_name && client.image_file) {
             this.selectedImage = {
               last_name: client.last_name,
@@ -201,36 +311,34 @@ export default {
             this.imgSrc = '';
             console.warn('No image data available for the selected client.');
           }
-        } 
-        // else {
-        //     this.selectedImage = null;
-        //     this.imgSrc = '';
-        //     this.$refs.snackbarRef.showSnackbar(this.messages.clientDataNotFound, "error");
-        // }
+        }
       } catch (error) {
         console.error('Error fetching client info by CID:', error);
         this.$refs.snackbarRef.showSnackbar(this.messages.fetchError, "error");
       }
     },
+
     toClientAccountList() {
       if (this.selectedClient) {
-          this.$router.push({
+        this.$router.push({
           name: 'ClientAccountList',
           params: {
-              CID: this.selectedClient.CID,
+            CID: this.selectedClient.CID,
           },
-          });
+        });
       }
     },
+
     viewItem(item) {
       this.selectedClient = {
-          ...item,
-          LastChangeDate: this.formatDate(item.LastChangeDate),
+        ...item,
+        LastChangeDate: this.formatDate(item.LastChangeDate),
       };
       this.dialogSingle = true;
       this.toggleSkeletonLoader(true);
-      // this.fetchClientInfoByCID(item.CID);
+      this.fetchClientInfoByCID(item.CID);
     },
+
     async fetchClientImage(folderName, imageFileName) {
       try {
         const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
@@ -246,18 +354,27 @@ export default {
         this.imgSrc = '';
       }
     },
+
     async fetchItems(endpoint, key) {
       try {
-        const response = await apiClient.get(endpoint, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        const encryptedPayload = await this.encryptPayload({});
+        const response = await apiClient.post(endpoint,
+          { data: encryptedPayload },
+          {
+            headers: {
+              'X-Session-ID': this.sessionId,
+              Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+            }
           }
-        });
-        this[key] = response.data;
+        );
+
+        const decryptedData = await this.decryptResponse(response.data);
+        this[key] = decryptedData;
       } catch (error) {
         this.$refs.snackbarRef.showSnackbar(`${this.messages.fetchError} ${key}`, "error");
       }
     },
+
     toggleSkeletonLoader(state) {
       this.skltnLdr = state;
       this.imgCrd = !state;
@@ -268,11 +385,12 @@ export default {
         }, this.TIMEOUT_DURATION);
       }
     },
+
     formatDate(date) {
       if (!date) return 'Invalid date';
       const parsedDate = new Date(date);
       if (isNaN(parsedDate.getTime())) {
-          return 'Invalid date';
+        return 'Invalid date';
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Intl.DateTimeFormat('en-US', options).format(parsedDate);

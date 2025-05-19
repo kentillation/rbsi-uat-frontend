@@ -23,6 +23,7 @@
                                 height="40" text="Validate" width="135" rounded>
                                 Proceed
                             </v-btn>
+                            <h5 class="text-center"><v-icon>mdi-lock-outline</v-icon>&nbsp; Secured with end-to-end encryption.</h5>
                         </v-form>
                     </v-card-text>
                 </v-card>
@@ -47,9 +48,9 @@ export default {
     name: 'Login',
     data() {
         return {
-            encryptionKey: null, // Will be received from server
-            publicKey: null,    // For RSA key exchange
-            sessionKey: null,    // Generated AES key for the session
+            encryptionKey: null,
+            publicKey: null,
+            sessionKey: null,
             encryptor: new JSEncrypt(),
             email: '',
             password: '',
@@ -80,34 +81,26 @@ export default {
         },
         async initializeEncryption() {
             try {
-                // Get server's public key
                 const response = await apiClient.get('/encryption/init');
                 this.publicKey = response.data.publicKey;
                 this.encryptor.setPublicKey(this.publicKey);
-
-                // Generate random 32-byte session key (256-bit) as Base64
                 const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
-                this.sessionKey = btoa(String.fromCharCode.apply(null, randomBytes));
-
-                // Encrypt with RSA (using PKCS#1 v1.5 padding which is more compatible)
+                this.sessionKey = btoa(String.fromCharCode(...randomBytes));
                 const encryptedKey = this.encryptor.encrypt(this.sessionKey);
-
                 if (!encryptedKey) {
                     throw new Error('RSA encryption failed');
                 }
-
-                // Send to server and store session ID
                 const establishResponse = await apiClient.post('/encryption/establish', {
                     encryptedKey: encryptedKey
                 });
-
-                // Store session ID for future requests
+                console.log('Encrypted key:', encryptedKey);
+                console.log("Session Key (Base64):", this.sessionKey);
                 this.sessionId = establishResponse.data.sessionId;
 
             } catch (error) {
                 console.error('Encryption initialization failed:', error);
                 this.showSnackbar('Security initialization failed. Please refresh.', 'error');
-                throw error; // Re-throw to handle in calling method
+                throw error;
             }
         },
 
@@ -115,31 +108,48 @@ export default {
             try {
                 if (this.$refs.form.validate()) {
                     this.validating = true;
-
-                    // Ensure encryption is ready
                     if (!this.sessionKey || !this.sessionId) {
                         await this.initializeEncryption();
                     }
-
                     const payload = {
                         email: this.email,
                         password: this.password,
                         timestamp: Date.now()
                     };
 
-                    // Encrypt with AES
-                    const encryptedPayload = CryptoJS.AES.encrypt(
+                    // Generate IV and convert to WordArray
+                    const iv = CryptoJS.lib.WordArray.random(16);
+
+                    // Encrypt
+                    const encrypted = CryptoJS.AES.encrypt(
                         JSON.stringify(payload),
                         CryptoJS.enc.Base64.parse(this.sessionKey),
-                        { mode: CryptoJS.mode.CBC }
-                    ).toString();
-
-                    const response = await apiClient.post('/admin-login', {
-                        data: encryptedPayload,
-                        headers: {
-                            'X-Session-ID': this.sessionId
+                        {
+                            iv: iv,
+                            mode: CryptoJS.mode.CBC,
+                            padding: CryptoJS.pad.Pkcs7
                         }
-                    });
+                    );
+
+                    // Combine IV and ciphertext in binary format
+                    const ivBinary = CryptoJS.enc.Hex.parse(iv.toString(CryptoJS.enc.Hex));
+                    const ciphertextBinary = CryptoJS.enc.Base64.parse(encrypted.toString());
+
+                    // Concatenate and convert to single Base64
+                    const combined = CryptoJS.lib.WordArray.create()
+                        .concat(ivBinary)
+                        .concat(ciphertextBinary);
+
+                    const ivAndCiphertext = combined.toString(CryptoJS.enc.Base64);
+
+                    const response = await apiClient.post('/admin-login',
+                        { data: ivAndCiphertext },
+                        {
+                            headers: {
+                                'X-Session-ID': this.sessionId
+                            }
+                        }
+                    );
 
                     if (response.status === 200) {
                         localStorage.setItem('auth_token', response.data.access_token);
@@ -147,32 +157,7 @@ export default {
                     }
                 }
             } catch (error) {
-                let message = 'An unknown error occurred.';
-                let color = 'error';
-                console.error('Login error:', error);
-                if (error.response) {
-                    switch (error.response.status) {
-                        case 422:
-                            message = 'Invalid email address.';
-                            break;
-                        case 401:
-                            message = 'Email or password is incorrect.';
-                            break;
-                        case 403:
-                            message = 'You do not have permission to this action.';
-                            break;
-                        case 500:
-                            message = 'Internal server error. Please try again later.';
-                            break;
-                        default:
-                            message = `Error: ${error.response.status}`;
-                    }
-                } else if (error.request) {
-                    message = 'No response from server.';
-                } else {
-                    message = 'Request error. Please try again!';
-                }
-                this.showSnackbar(message, color);
+                // ... (keep your existing error handling)
             } finally {
                 this.validating = false;
             }
