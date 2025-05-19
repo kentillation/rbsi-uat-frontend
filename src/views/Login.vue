@@ -107,6 +107,9 @@ export default {
 
         async login() {
             try {
+                const isValid = await this.$refs.form.validate();
+                if (!isValid.valid) return;
+
                 if (this.$refs.form.validate()) {
                     this.validating = true;
                     if (!this.sessionKey || !this.sessionId) {
@@ -131,6 +134,11 @@ export default {
                             padding: CryptoJS.pad.Pkcs7
                         }
                     );
+
+                    // Check if encryption was successful
+                    if (!encrypted) {
+                        throw new Error('AES encryption failed');
+                    }
 
                     // Combine IV and ciphertext in binary format
                     const ivBinary = CryptoJS.enc.Hex.parse(iv.toString(CryptoJS.enc.Hex));
