@@ -23,7 +23,8 @@
                                 height="40" text="Validate" width="135" rounded>
                                 Proceed
                             </v-btn>
-                            <h5 class="text-center"><v-icon>mdi-lock-outline</v-icon>&nbsp; Secured with end-to-end encryption.</h5>
+                            <h5 class="text-center"><v-icon>mdi-lock-outline</v-icon>&nbsp; Secured with end-to-end
+                                encryption.</h5>
                         </v-form>
                     </v-card-text>
                 </v-card>
@@ -157,7 +158,9 @@ export default {
                     }
                 }
             } catch (error) {
-                // ... (keep your existing error handling)
+                console.error('Login failed:', error);
+                const message = error.response?.data?.message || 'Login failed. Please try again.';
+                this.showSnackbar(message, 'error');
             } finally {
                 this.validating = false;
             }
