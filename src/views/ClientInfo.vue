@@ -181,60 +181,44 @@ export default {
 
     async encryptPayload(data) {
       try {
-        if (!this.sessionKey) {
-          await this.initializeEncryption();
-        }
-
+        if (!this.sessionKey) await this.initializeEncryption();
         const iv = CryptoJS.lib.WordArray.random(16);
         const encrypted = CryptoJS.AES.encrypt(
           JSON.stringify(data),
           CryptoJS.enc.Base64.parse(this.sessionKey),
-          {
-            iv: iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7
-          }
+          { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
         );
-
-        const ivBinary = CryptoJS.enc.Hex.parse(iv.toString(CryptoJS.enc.Hex));
-        const ciphertextBinary = CryptoJS.enc.Base64.parse(encrypted.toString());
-
-        const combined = CryptoJS.lib.WordArray.create()
-          .concat(ivBinary)
-          .concat(ciphertextBinary);
-
-        return combined.toString(CryptoJS.enc.Base64);
+        return iv.toString() + encrypted.toString();
       } catch (error) {
         console.error('Encryption failed:', error);
-        throw error;
+        throw new Error('Encryption failed');
       }
     },
 
     async decryptResponse(encryptedData) {
       try {
-        if (!this.sessionKey) {
-          await this.initializeEncryption();
-        }
-
-        const decoded = CryptoJS.enc.Base64.parse(encryptedData.data);
-        const iv = CryptoJS.lib.WordArray.create(decoded.words.slice(0, 4));
-        const ciphertext = CryptoJS.lib.WordArray.create(decoded.words.slice(4));
-
+        if (!this.sessionKey) await this.initializeEncryption();
+        const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
+        const ciphertext = encryptedData.substr(32);
         const decrypted = CryptoJS.AES.decrypt(
-          { ciphertext },
+          ciphertext,
           CryptoJS.enc.Base64.parse(this.sessionKey),
           { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
         );
-
         return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
       } catch (error) {
         console.error('Decryption failed:', error);
-        throw error;
+        throw new Error('Decryption failed');
       }
     },
 
-    toNewContact() {
-      this.$router.push({ name: 'NewContact' });
+    clearSensitiveData() {
+      this.sessionKey = null;
+      this.sessionId = null;
+      if (this.imgSrc) {
+        URL.revokeObjectURL(this.imgSrc);
+        this.imgSrc = null;
+      }
     },
 
     async searchClients() {
@@ -250,10 +234,12 @@ export default {
 
         const response = await apiClient.post('/mbwin_client_cid_lastname',
           { data: encryptedPayload },
-          { headers: { 
-            'X-Session-ID': this.sessionId, 
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}` 
-          } }
+          {
+            headers: {
+              'X-Session-ID': this.sessionId,
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+            }
+          }
         );
 
         const clients = await this.decryptResponse(response.data) || [];
@@ -270,10 +256,13 @@ export default {
         }
       } catch (error) {
         console.error('Search Error:', error);
-        this.$refs.snackbarRef.showSnackbar(
-          error.response?.data?.message || this.messages.searchError,
-          "error"
-        );
+        let errorMessage = this.messages.searchError;
+        if (error.response?.status === 401) {
+          errorMessage = "Session expired. Please login again.";
+          this.clearSensitiveData();
+          this.$router.push('/login');
+        }
+        this.$refs.snackbarRef.showSnackbar(errorMessage, "error");
       } finally {
         this.validating = false;
       }
@@ -373,6 +362,10 @@ export default {
       } catch (error) {
         this.$refs.snackbarRef.showSnackbar(`${this.messages.fetchError} ${key}`, "error");
       }
+    },
+
+    toNewContact() {
+      this.$router.push({ name: 'NewContact' });
     },
 
     toggleSkeletonLoader(state) {
