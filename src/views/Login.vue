@@ -86,7 +86,7 @@ export default {
                 this.publicKey = response.data.publicKey;
                 this.encryptor.setPublicKey(this.publicKey);
                 const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
-                this.sessionKey = btoa(String.fromCharCode(...randomBytes));
+                this.sessionKey = CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.create(randomBytes));
                 const encryptedKey = this.encryptor.encrypt(this.sessionKey);
                 if (!encryptedKey) {
                     throw new Error('RSA encryption failed');
