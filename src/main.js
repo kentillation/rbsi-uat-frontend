@@ -13,7 +13,7 @@ const pinia = createPinia()
 
 app.use(router)
 app.use(vuetify)
-app.use(pinia) // Register Pinia
+app.use(pinia)
 app.mount('#app')
 
 // Disable Vue Devtools in production

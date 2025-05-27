@@ -17,9 +17,10 @@
                                 required :type="visible ? 'text' : 'password'"
                                 :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" density="compact"
                                 placeholder="Enter your password" prepend-inner-icon="mdi-lock-outline"
-                                variant="outlined" @v-model:append-inner-icon="visible = !visible" clearable></v-text-field>
+                                variant="outlined" @v-model:append-inner-icon="visible = !visible"
+                                clearable></v-text-field>
                             <v-btn :disabled="!isFormValid || validating" color="white" type="submit" block
-                                class="bg-orange-darken-4 mb-8 mt-5" size="large" variant="tonal" :loading="validating"
+                                class="bg-teal-darken-4 mb-8 mt-5" size="large" variant="tonal" :loading="validating"
                                 height="40" text="Validate" width="135" rounded>
                                 Proceed
                             </v-btn>
@@ -109,24 +110,53 @@ export default {
             try {
                 const isValid = await this.$refs.form.validate();
                 if (!isValid.valid) return;
-
-                if (this.$refs.form.validate()) {
-                    this.validating = true;
-                    if (!this.sessionKey || !this.sessionId) {
-                        await this.initializeEncryption();
+                this.validating = true;
+                // Reinitialize encryption if needed
+                if (!this.sessionKey || !this.sessionId) {
+                    await this.initializeEncryption();
+                }
+                const payload = {
+                    email: this.email,
+                    password: this.password,
+                    timestamp: Date.now()
+                };
+                // Encrypt the payload
+                const iv = CryptoJS.lib.WordArray.random(16);
+                const encrypted = CryptoJS.AES.encrypt(
+                    JSON.stringify(payload),
+                    CryptoJS.enc.Base64.parse(this.sessionKey),
+                    {
+                        iv: iv,
+                        mode: CryptoJS.mode.CBC,
+                        padding: CryptoJS.pad.Pkcs7
                     }
-                    const payload = {
-                        email: this.email,
-                        password: this.password,
-                        timestamp: Date.now()
-                    };
-
-                    // Generate IV and convert to WordArray
-                    const iv = CryptoJS.lib.WordArray.random(16);
-
-                    // Encrypt
-                    const encrypted = CryptoJS.AES.encrypt(
-                        JSON.stringify(payload),
+                );
+                const ivBinary = CryptoJS.enc.Hex.parse(iv.toString(CryptoJS.enc.Hex));
+                const ciphertextBinary = CryptoJS.enc.Base64.parse(encrypted.toString());
+                const combined = CryptoJS.lib.WordArray.create()
+                    .concat(ivBinary)
+                    .concat(ciphertextBinary);
+                const ivAndCiphertext = combined.toString(CryptoJS.enc.Base64);
+                // Send login request
+                const response = await apiClient.post('/admin-login',
+                    { data: ivAndCiphertext },
+                    {
+                        headers: {
+                            'X-Session-ID': this.sessionId
+                        }
+                    }
+                );
+                // Handle the response (which might be encrypted)
+                // Replace the decryption part with:
+                if (response.data && response.data.data) {
+                    // Convert Base64 to WordArray
+                    const encryptedResponse = CryptoJS.enc.Base64.parse(response.data.data);
+                    // Extract IV (first 16 bytes)
+                    const iv = CryptoJS.lib.WordArray.create(encryptedResponse.words.slice(0, 4));
+                    // Extract ciphertext (remaining bytes)
+                    const ciphertext = CryptoJS.lib.WordArray.create(encryptedResponse.words.slice(4));
+                    const decrypted = CryptoJS.AES.decrypt(
+                        { ciphertext: ciphertext },
                         CryptoJS.enc.Base64.parse(this.sessionKey),
                         {
                             iv: iv,
@@ -134,40 +164,24 @@ export default {
                             padding: CryptoJS.pad.Pkcs7
                         }
                     );
-
-                    // Check if encryption was successful
-                    if (!encrypted) {
-                        throw new Error('AES encryption failed');
-                    }
-
-                    // Combine IV and ciphertext in binary format
-                    const ivBinary = CryptoJS.enc.Hex.parse(iv.toString(CryptoJS.enc.Hex));
-                    const ciphertextBinary = CryptoJS.enc.Base64.parse(encrypted.toString());
-
-                    // Concatenate and convert to single Base64
-                    const combined = CryptoJS.lib.WordArray.create()
-                        .concat(ivBinary)
-                        .concat(ciphertextBinary);
-
-                    const ivAndCiphertext = combined.toString(CryptoJS.enc.Base64);
-
-                    const response = await apiClient.post('/admin-login',
-                        { data: ivAndCiphertext },
-                        {
-                            headers: {
-                                'X-Session-ID': this.sessionId
-                            }
-                        }
-                    );
-
-                    if (response.status === 200) {
-                        localStorage.setItem('auth_token', response.data.access_token);
+                    const decryptedData = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+                    if (decryptedData.access_token) {
+                        localStorage.setItem('auth_token', decryptedData.access_token);
                         this.$router.push('/client_info');
+                        return;
                     }
                 }
+                // Fallback for unencrypted response
+                if (response.data.access_token) {
+                    localStorage.setItem('auth_token', response.data.access_token);
+                    this.$router.push('/client_info');
+                } else {
+                    this.showSnackbar('Login failed. Invalid response format.', 'error');
+                }
             } catch (error) {
-                console.error('Login failed:', error);
-                const message = error.response?.data?.message || 'Login failed. Please try again.';
+                console.error('Login error:', error);
+                const message = error.response?.data?.message ||
+                    (error.response?.data?.data?.message || 'Login failed. Please try again.');
                 this.showSnackbar(message, 'error');
             } finally {
                 this.validating = false;
