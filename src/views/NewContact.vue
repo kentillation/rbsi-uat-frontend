@@ -445,9 +445,10 @@ import watchlistData from '@/temp/watchlist.json';
 import Snackbar from '@/components/Snackbar.vue';
 import FormDataMixin from '@/components/FormDataMixin.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
+import encryptionMixin from '@/utils/encryption';
 
 export default {
-    mixins: [FormDataMixin],
+    mixins: [FormDataMixin, encryptionMixin],
     components: {
         ClientDataMixin,
         Snackbar
@@ -708,11 +709,49 @@ export default {
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         },
-        fetchSuffixesItems() {
-            this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
+        async fetchSuffixesItems() {
+            try {
+                if (!this.sessionKey || !this.sessionId) {
+                    await this.initializeEncryption();
+                }
+                const response = await apiClient.get('/suffixes', {
+                    headers: {
+                        'X-Session-ID': this.sessionId
+                    }
+                });
+                if (response.data && response.data.data) {
+                    const decryptedData = await this.decryptResponse(response.data.data);
+                    console.log('Decrypted data:', decryptedData); //
+                    this.suffixesItems = decryptedData;
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                console.error('Failed to fetch suffixes:', error);
+                this.$refs.snackbarRef.showSnackbar('Failed to fetch suffixes', 'error');
+            }
         },
-        fetchTypesItems() {
-            this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
+        async fetchTypesItems() {
+            try {
+                if (!this.sessionKey || !this.sessionId) {
+                    await this.initializeEncryption();
+                }
+                const response = await apiClient.get('/types', {
+                    headers: {
+                        'X-Session-ID': this.sessionId
+                    }
+                });
+                if (response.data && response.data.data) {
+                    const decryptedData = await this.decryptResponse(response.data.data);
+                    console.log('Decrypted data:', decryptedData); //
+                    this.typesItems = decryptedData;
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                console.error('Failed to fetch types:', error);
+                this.$refs.snackbarRef.showSnackbar('Failed to fetch types', 'error');
+            }
         },
         fetchTitleItems() {
             this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');

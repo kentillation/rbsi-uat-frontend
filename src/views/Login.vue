@@ -98,7 +98,6 @@ export default {
                 console.log('Encrypted key:', encryptedKey);
                 console.log("Session Key (Base64):", this.sessionKey);
                 this.sessionId = establishResponse.data.sessionId;
-
             } catch (error) {
                 console.error('Encryption initialization failed:', error);
                 this.showSnackbar('Security initialization failed. Please refresh.', 'error');
@@ -111,8 +110,7 @@ export default {
                 const isValid = await this.$refs.form.validate();
                 if (!isValid.valid) return;
                 this.validating = true;
-                // Reinitialize encryption if needed
-                if (!this.sessionKey || !this.sessionId) {
+                if (!this.sessionKey || !this.sessionId) { // Reinitialize encryption if needed
                     await this.initializeEncryption();
                 }
                 const payload = {
@@ -120,8 +118,7 @@ export default {
                     password: this.password,
                     timestamp: Date.now()
                 };
-                // Encrypt the payload
-                const iv = CryptoJS.lib.WordArray.random(16);
+                const iv = CryptoJS.lib.WordArray.random(16); // Encrypt the payload
                 const encrypted = CryptoJS.AES.encrypt(
                     JSON.stringify(payload),
                     CryptoJS.enc.Base64.parse(this.sessionKey),
@@ -137,8 +134,7 @@ export default {
                     .concat(ivBinary)
                     .concat(ciphertextBinary);
                 const ivAndCiphertext = combined.toString(CryptoJS.enc.Base64);
-                // Send login request
-                const response = await apiClient.post('/admin-login',
+                const response = await apiClient.post('/admin-login', // Send login request
                     { data: ivAndCiphertext },
                     {
                         headers: {
@@ -146,15 +142,11 @@ export default {
                         }
                     }
                 );
-                // Handle the response (which might be encrypted)
-                // Replace the decryption part with:
-                if (response.data && response.data.data) {
-                    // Convert Base64 to WordArray
-                    const encryptedResponse = CryptoJS.enc.Base64.parse(response.data.data);
-                    // Extract IV (first 16 bytes)
-                    const iv = CryptoJS.lib.WordArray.create(encryptedResponse.words.slice(0, 4));
-                    // Extract ciphertext (remaining bytes)
-                    const ciphertext = CryptoJS.lib.WordArray.create(encryptedResponse.words.slice(4));
+               
+                if (response.data && response.data.data) { // Handle the response (which might be encrypted)
+                    const encryptedResponse = CryptoJS.enc.Base64.parse(response.data.data); // Convert Base64 to WordArray
+                    const iv = CryptoJS.lib.WordArray.create(encryptedResponse.words.slice(0, 4)); // Extract IV (first 16 bytes)
+                    const ciphertext = CryptoJS.lib.WordArray.create(encryptedResponse.words.slice(4)); // Extract ciphertext (remaining bytes)
                     const decrypted = CryptoJS.AES.decrypt(
                         { ciphertext: ciphertext },
                         CryptoJS.enc.Base64.parse(this.sessionKey),
@@ -171,8 +163,7 @@ export default {
                         return;
                     }
                 }
-                // Fallback for unencrypted response
-                if (response.data.access_token) {
+                if (response.data.access_token) { // Fallback for unencrypted response
                     localStorage.setItem('auth_token', response.data.access_token);
                     this.$router.push('/client_info');
                 } else {
