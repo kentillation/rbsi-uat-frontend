@@ -90,8 +90,8 @@ export default {
     return {
       encryptor: new JSEncrypt(),
       publicKey: null,
-      sessionKey: localStorage.getItem('session_key'),
-      sessionId: localStorage.getItem('session_id'),
+      sessionKey: localStorage.getItem('session_key') || null,
+      sessionId: localStorage.getItem('session_id') || null,
       validating: false,
       singleClient: null,
       skltnLdr: false,
@@ -149,18 +149,46 @@ export default {
     },
   },
   methods: {
+    async ensureEncryptionReady() {
+      if (this.sessionKey && this.sessionId) {
+        return true;
+      }
+      
+      try {
+        await this.initializeEncryption();
+        return true;
+      } catch (error) {
+        this.$refs.snackbarRef.showSnackbar('Security initialization failed', 'error');
+        return false;
+      }
+    },
+    async ensureEncryptionInitialized() {
+      if (this.sessionKey && this.sessionId) return true;
+      try {
+        await this.initializeEncryption();
+        return true;
+      } catch (error) {
+        console.error('Encryption initialization failed:', error);
+        return false;
+      }
+    },
     async initializeEncryption() {
       try {
-        if (this.sessionKey && this.sessionId) return;
+        // Clear any existing invalid session
+        if (!this.publicKey) {
+          const response = await apiClient.get('/encryption/init');
+          this.publicKey = response.data.publicKey;
+          this.encryptor.setPublicKey(this.publicKey);
+        }
 
-        const response = await apiClient.get('/encryption/init');
-        this.publicKey = response.data.publicKey;
-        this.encryptor.setPublicKey(this.publicKey);
+        // Generate new session key if needed
+        if (!this.sessionKey) {
+          const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
+          this.sessionKey = btoa(String.fromCharCode(...randomBytes));
+        }
 
-        const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
-        this.sessionKey = btoa(String.fromCharCode(...randomBytes));
+        // Encrypt and establish session
         const encryptedKey = this.encryptor.encrypt(this.sessionKey);
-
         if (!encryptedKey) {
           throw new Error('RSA encryption failed');
         }
@@ -169,19 +197,24 @@ export default {
           encryptedKey: encryptedKey
         });
 
+        // Update both component state and localStorage
+        this.sessionId = establishResponse.data.sessionId;
         localStorage.setItem('session_key', this.sessionKey);
-        localStorage.setItem('session_id', establishResponse.data.sessionId);
+        localStorage.setItem('session_id', this.sessionId);
 
+        return true;
       } catch (error) {
         console.error('Encryption initialization failed:', error);
-        this.$refs.snackbarRef.showSnackbar(this.messages.encryptionError, 'error');
+        this.clearSensitiveData();
         throw error;
       }
     },
 
     async encryptPayload(data) {
+      if (!await this.ensureEncryptionReady()) {
+        throw new Error('Session key not available');
+      }
       try {
-        if (!this.sessionKey) await this.initializeEncryption();
         const iv = CryptoJS.lib.WordArray.random(16);
         const encrypted = CryptoJS.AES.encrypt(
           JSON.stringify(data),
@@ -191,6 +224,7 @@ export default {
         return iv.toString() + encrypted.toString();
       } catch (error) {
         console.error('Encryption failed:', error);
+        this.clearSensitiveData();
         throw new Error('Encryption failed');
       }
     },
@@ -224,14 +258,11 @@ export default {
     async searchClients() {
       if (!this.searchValid) return;
       this.validating = true;
-
       try {
-        if (!this.sessionKey || !this.sessionId) {
-          await this.initializeEncryption();
-        }
-
-        const encryptedPayload = await this.encryptPayload({ search: this.search_item_CID });
-
+        // This will ensure encryption is ready before proceeding
+        const encryptedPayload = await this.encryptPayload({ 
+          search: this.search_item_CID.trim() 
+        });
         const response = await apiClient.post('/mbwin_client_cid_lastname',
           { data: encryptedPayload },
           {
@@ -241,9 +272,7 @@ export default {
             }
           }
         );
-
         const clients = await this.decryptResponse(response.data) || [];
-
         if (clients.length === 1) {
           this.singleClient = clients[0];
           this.selectedClient = this.singleClient;
@@ -258,9 +287,11 @@ export default {
         console.error('Search Error:', error);
         let errorMessage = this.messages.searchError;
         if (error.response?.status === 401) {
+          console.log('Session ID:', this.sessionId);
+          console.log('Session Key:', this.sessionKey);
           errorMessage = "Session expired. Please login again.";
           this.clearSensitiveData();
-          this.$router.push('/login');
+          this.$router.push('/');
         }
         this.$refs.snackbarRef.showSnackbar(errorMessage, "error");
       } finally {
@@ -271,7 +302,6 @@ export default {
     async fetchClientInfoByCID(cid) {
       try {
         const encryptedPayload = await this.encryptPayload({ search: cid });
-
         const response = await apiClient.post('/client_info',
           { data: encryptedPayload },
           {
@@ -281,9 +311,7 @@ export default {
             }
           }
         );
-
         const clientData = await this.decryptResponse(response.data);
-
         if (Array.isArray(clientData) && clientData.length > 0) {
           const client = clientData[0];
           if (client.last_name && client.first_name && client.middle_name && client.image_file) {
@@ -356,7 +384,6 @@ export default {
             }
           }
         );
-
         const decryptedData = await this.decryptResponse(response.data);
         this[key] = decryptedData;
       } catch (error) {

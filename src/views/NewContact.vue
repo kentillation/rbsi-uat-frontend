@@ -720,7 +720,7 @@ export default {
                     }
                 });
                 if (response.data && response.data.data) {
-                    const decryptedData = await this.decryptResponse(response.data.data);
+                    const decryptedData = await this.decryptResponseV1(response.data.data);
                     console.log('Decrypted data:', decryptedData); //
                     this.suffixesItems = decryptedData;
                 } else {
@@ -742,9 +742,9 @@ export default {
                     }
                 });
                 if (response.data && response.data.data) {
-                    const decryptedData = await this.decryptResponse(response.data.data);
+                    const decryptedData = await this.decryptResponseV2(response.data.data);
                     console.log('Decrypted data:', decryptedData); //
-                    this.typesItems = decryptedData;
+                    this.typeItems = decryptedData;
                 } else {
                     throw new Error('Invalid response format');
                 }
