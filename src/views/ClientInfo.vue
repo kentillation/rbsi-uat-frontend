@@ -153,7 +153,6 @@ export default {
       if (this.sessionKey && this.sessionId) {
         return true;
       }
-      
       try {
         await this.initializeEncryption();
         return true;
@@ -180,28 +179,23 @@ export default {
           this.publicKey = response.data.publicKey;
           this.encryptor.setPublicKey(this.publicKey);
         }
-
         // Generate new session key if needed
         if (!this.sessionKey) {
           const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
           this.sessionKey = btoa(String.fromCharCode(...randomBytes));
         }
-
         // Encrypt and establish session
         const encryptedKey = this.encryptor.encrypt(this.sessionKey);
         if (!encryptedKey) {
           throw new Error('RSA encryption failed');
         }
-
         const establishResponse = await apiClient.post('/encryption/establish', {
           encryptedKey: encryptedKey
         });
-
         // Update both component state and localStorage
         this.sessionId = establishResponse.data.sessionId;
         localStorage.setItem('session_key', this.sessionKey);
         localStorage.setItem('session_id', this.sessionId);
-
         return true;
       } catch (error) {
         console.error('Encryption initialization failed:', error);
