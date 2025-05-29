@@ -710,48 +710,10 @@ export default {
             return `${year}-${month}-${day}`;
         },
         async fetchSuffixesItems() {
-            try {
-                if (!this.sessionKey || !this.sessionId) {
-                    await this.initializeEncryption();
-                }
-                const response = await apiClient.get('/suffixes', {
-                    headers: {
-                        'X-Session-ID': this.sessionId
-                    }
-                });
-                if (response.data && response.data.data) {
-                    const decryptedData = await this.decryptResponseV1(response.data.data);
-                    console.log('Decrypted data:', decryptedData); //
-                    this.suffixesItems = decryptedData;
-                } else {
-                    throw new Error('Invalid response format');
-                }
-            } catch (error) {
-                console.error('Failed to fetch suffixes:', error);
-                this.$refs.snackbarRef.showSnackbar('Failed to fetch suffixes', 'error');
-            }
+            this.fetchItems('/suffixes', 'suffixesItems', 'Failed to fetch suffixes');
         },
         async fetchTypesItems() {
-            try {
-                if (!this.sessionKey || !this.sessionId) {
-                    await this.initializeEncryption();
-                }
-                const response = await apiClient.get('/types', {
-                    headers: {
-                        'X-Session-ID': this.sessionId
-                    }
-                });
-                if (response.data && response.data.data) {
-                    const decryptedData = await this.decryptResponseV2(response.data.data);
-                    console.log('Decrypted data:', decryptedData); //
-                    this.typeItems = decryptedData;
-                } else {
-                    throw new Error('Invalid response format');
-                }
-            } catch (error) {
-                console.error('Failed to fetch types:', error);
-                this.$refs.snackbarRef.showSnackbar('Failed to fetch types', 'error');
-            }
+            this.fetchItems('/types', 'typeItems', 'Failed to fetch types');
         },
         fetchTitleItems() {
             this.fetchItems('/titles', 'titleItems', 'Failed to fetch titles');
