@@ -212,11 +212,11 @@ export default {
       }
     },
 
-    async decryptResponse(encryptedData) {
+    async decryptResponse(decryptedData) {
       try {
         if (!this.sessionKey) await this.initializeEncryption();
-        const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
-        const ciphertext = encryptedData.substr(32);
+        const iv = CryptoJS.enc.Hex.parse(decryptedData.substr(0, 32));
+        const ciphertext = decryptedData.substr(32);
         const decrypted = CryptoJS.AES.decrypt(
           ciphertext,
           CryptoJS.enc.Base64.parse(this.sessionKey),
