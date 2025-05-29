@@ -285,10 +285,10 @@ export default {
         }
       } catch (error) {
         console.error('Search Error:', error);
+        console.log('Session ID:', this.sessionId);
+        console.log('Session Key:', this.sessionKey);
         let errorMessage = this.messages.searchError;
         if (error.response?.status === 401) {
-          console.log('Session ID:', this.sessionId);
-          console.log('Session Key:', this.sessionKey);
           errorMessage = "Session expired. Please login again.";
           this.clearSensitiveData();
           this.$router.push('/');
