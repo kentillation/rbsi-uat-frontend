@@ -161,6 +161,7 @@ export default {
         return false;
       }
     },
+
     async ensureEncryptionInitialized() {
       if (this.sessionKey && this.sessionId) return true;
       try {
@@ -171,6 +172,7 @@ export default {
         return false;
       }
     },
+    
     async initializeEncryption() {
       try {
         // Clear any existing invalid session
