@@ -150,29 +150,16 @@ export default {
   },
   methods: {
     async ensureEncryptionReady() {
-      if (this.sessionKey && this.sessionId) {
-        return true;
-      }
-      try {
-        await this.initializeEncryption();
-        return true;
-      } catch (error) {
-        this.$refs.snackbarRef.showSnackbar('Security initialization failed', 'error');
-        return false;
-      }
-    },
-
-    async ensureEncryptionInitialized() {
       if (this.sessionKey && this.sessionId) return true;
       try {
         await this.initializeEncryption();
         return true;
       } catch (error) {
-        console.error('Encryption initialization failed:', error);
+        this.$refs.snackbarRef.showSnackbar(this.messages.encryptionError, 'error');
         return false;
       }
     },
-    
+
     async initializeEncryption() {
       try {
         // Clear any existing invalid session
@@ -206,14 +193,14 @@ export default {
       }
     },
 
-    async encryptPayload(data) {
+    async encryptPayload(encryptedData) {
       if (!await this.ensureEncryptionReady()) {
         throw new Error('Session key not available');
       }
       try {
-        const iv = CryptoJS.lib.WordArray.random(16);
+        const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
         const encrypted = CryptoJS.AES.encrypt(
-          JSON.stringify(data),
+          JSON.stringify(encryptedData),
           CryptoJS.enc.Base64.parse(this.sessionKey),
           { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
         );
@@ -239,15 +226,6 @@ export default {
       } catch (error) {
         console.error('Decryption failed:', error);
         throw new Error('Decryption failed');
-      }
-    },
-
-    clearSensitiveData() {
-      this.sessionKey = null;
-      this.sessionId = null;
-      if (this.imgSrc) {
-        URL.revokeObjectURL(this.imgSrc);
-        this.imgSrc = null;
       }
     },
 
@@ -292,6 +270,15 @@ export default {
         this.$refs.snackbarRef.showSnackbar(errorMessage, "error");
       } finally {
         this.validating = false;
+      }
+    },
+
+    clearSensitiveData() {
+      this.sessionKey = null;
+      this.sessionId = null;
+      if (this.imgSrc) {
+        URL.revokeObjectURL(this.imgSrc);
+        this.imgSrc = null;
       }
     },
 
