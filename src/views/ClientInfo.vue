@@ -193,14 +193,14 @@ export default {
       }
     },
 
-    async encryptPayload(encryptedData) {
+    async encryptPayload(encryptData) {
       if (!await this.ensureEncryptionReady()) {
         throw new Error('Session key not available');
       }
       try {
-        const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
+        const iv = CryptoJS.lib.WordArray.random(16);
         const encrypted = CryptoJS.AES.encrypt(
-          JSON.stringify(encryptedData),
+          JSON.stringify(encryptData),
           CryptoJS.enc.Base64.parse(this.sessionKey),
           { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
         );
@@ -212,11 +212,11 @@ export default {
       }
     },
 
-    async decryptResponse(decryptedData) {
+    async decryptResponse(encryptedData) {
       try {
         if (!this.sessionKey) await this.initializeEncryption();
-        const iv = CryptoJS.enc.Hex.parse(decryptedData.substr(0, 32));
-        const ciphertext = decryptedData.substr(32);
+        const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
+        const ciphertext = encryptedData.substr(32);
         const decrypted = CryptoJS.AES.decrypt(
           ciphertext,
           CryptoJS.enc.Base64.parse(this.sessionKey),
@@ -226,6 +226,15 @@ export default {
       } catch (error) {
         console.error('Decryption failed:', error);
         throw new Error('Decryption failed');
+      }
+    },
+
+    clearSensitiveData() {
+      this.sessionKey = null;
+      this.sessionId = null;
+      if (this.imgSrc) {
+        URL.revokeObjectURL(this.imgSrc);
+        this.imgSrc = null;
       }
     },
 
@@ -270,15 +279,6 @@ export default {
         this.$refs.snackbarRef.showSnackbar(errorMessage, "error");
       } finally {
         this.validating = false;
-      }
-    },
-
-    clearSensitiveData() {
-      this.sessionKey = null;
-      this.sessionId = null;
-      if (this.imgSrc) {
-        URL.revokeObjectURL(this.imgSrc);
-        this.imgSrc = null;
       }
     },
 
