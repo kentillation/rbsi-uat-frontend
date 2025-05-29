@@ -264,6 +264,7 @@ export default {
       }, 2000);
     },
     async viewItem(item) {
+      this.loading = true;
       this.acc = item.acc;
       this.appType = item.appType;
       try {
@@ -281,6 +282,7 @@ export default {
             openDate: this.formatDate(response.data.data.openDate)
           };
           this.dialogAccountDetails = true;
+          this.loading = false;
         } else {
           this.$refs.snackbarRef.showSnackbar("Unexpected response format", "error");
         }

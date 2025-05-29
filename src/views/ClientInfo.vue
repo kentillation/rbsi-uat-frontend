@@ -77,8 +77,8 @@
 import apiClient from '../axios';
 import Snackbar from '@/components/Snackbar.vue';
 import ClientDataMixin from '@/components/ClientDataMixin.vue';
-import CryptoJS from 'crypto-js';
-import JSEncrypt from 'jsencrypt';
+// import CryptoJS from 'crypto-js';
+// import JSEncrypt from 'jsencrypt';
 
 export default {
   name: 'ClientInfo',
@@ -88,10 +88,6 @@ export default {
   },
   data() {
     return {
-      encryptor: new JSEncrypt(),
-      publicKey: null,
-      sessionKey: localStorage.getItem('session_key') || null,
-      sessionId: localStorage.getItem('session_id') || null,
       validating: false,
       singleClient: null,
       skltnLdr: false,
@@ -136,12 +132,6 @@ export default {
     this.$nextTick(() => {
       this.$refs.searchItemCID.focus();
     });
-    this.initializeEncryption();
-  },
-  created() {
-    if (this.selectedImage?.display_name && this.selectedImage?.image_file) {
-      this.fetchClientImage(this.selectedImage.display_name, this.selectedImage.image_file);
-    }
   },
   computed: {
     searchValid() {
@@ -149,113 +139,20 @@ export default {
     },
   },
   methods: {
-    async ensureEncryptionReady() {
-      if (this.sessionKey && this.sessionId) return true;
-      try {
-        await this.initializeEncryption();
-        return true;
-      } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(this.messages.encryptionError, 'error');
-        return false;
-      }
-    },
-
-    async initializeEncryption() {
-      try {
-        // Clear any existing invalid session
-        if (!this.publicKey) {
-          const response = await apiClient.get('/encryption/init');
-          this.publicKey = response.data.publicKey;
-          this.encryptor.setPublicKey(this.publicKey);
-        }
-        // Generate new session key if needed
-        if (!this.sessionKey) {
-          const randomBytes = window.crypto.getRandomValues(new Uint8Array(32));
-          this.sessionKey = btoa(String.fromCharCode(...randomBytes));
-        }
-        // Encrypt and establish session
-        const encryptedKey = this.encryptor.encrypt(this.sessionKey);
-        if (!encryptedKey) {
-          throw new Error('RSA encryption failed');
-        }
-        const establishResponse = await apiClient.post('/encryption/establish', {
-          encryptedKey: encryptedKey
-        });
-        // Update both component state and localStorage
-        this.sessionId = establishResponse.data.sessionId;
-        localStorage.setItem('session_key', this.sessionKey);
-        localStorage.setItem('session_id', this.sessionId);
-        return true;
-      } catch (error) {
-        console.error('Encryption initialization failed:', error);
-        this.clearSensitiveData();
-        throw error;
-      }
-    },
-
-    async encryptPayload(encryptData) {
-      if (!await this.ensureEncryptionReady()) {
-        throw new Error('Session key not available');
-      }
-      try {
-        const iv = CryptoJS.lib.WordArray.random(16);
-        const encrypted = CryptoJS.AES.encrypt(
-          JSON.stringify(encryptData),
-          CryptoJS.enc.Base64.parse(this.sessionKey),
-          { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-        );
-        return iv.toString() + encrypted.toString();
-      } catch (error) {
-        console.error('Encryption failed:', error);
-        this.clearSensitiveData();
-        throw new Error('Encryption failed');
-      }
-    },
-
-    async decryptResponse(encryptedData) {
-      try {
-        if (!this.sessionKey) await this.initializeEncryption();
-        const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
-        const ciphertext = encryptedData.substr(32);
-        const decrypted = CryptoJS.AES.decrypt(
-          ciphertext,
-          CryptoJS.enc.Base64.parse(this.sessionKey),
-          { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-        );
-        return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
-      } catch (error) {
-        console.error('Decryption failed:', error);
-        throw new Error('Decryption failed');
-      }
-    },
-
-    clearSensitiveData() {
-      this.sessionKey = null;
-      this.sessionId = null;
-      if (this.imgSrc) {
-        URL.revokeObjectURL(this.imgSrc);
-        this.imgSrc = null;
-      }
-    },
-
+    
     async searchClients() {
       if (!this.searchValid) return;
       this.validating = true;
       try {
-        // This will ensure encryption is ready before proceeding
-        const encryptedPayload = await this.encryptPayload({ 
-          search: this.search_item_CID.trim() 
-        });
-        const response = await apiClient.post('/mbwin_client_cid_lastname',
-          { data: encryptedPayload },
+        const response = await apiClient.get('/mbwin_client_cid_lastname',
+          { search: this.search_item_CID.trim() },
           {
             headers: {
-              'X-Session-ID': this.sessionId,
-              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+              Authorization: `Bearer ${localStorage.getItem('auth_token')}`
             }
           }
         );
-        const clients = await this.decryptResponse(response.data) || [];
+        const clients = response.data || [];
         if (clients.length === 1) {
           this.singleClient = clients[0];
           this.selectedClient = this.singleClient;
@@ -268,12 +165,9 @@ export default {
         }
       } catch (error) {
         console.error('Search Error:', error);
-        console.log('Session ID:', this.sessionId);
-        console.log('Session Key:', this.sessionKey);
         let errorMessage = this.messages.searchError;
         if (error.response?.status === 401) {
           errorMessage = "Session expired. Please login again.";
-          this.clearSensitiveData();
           this.$router.push('/');
         }
         this.$refs.snackbarRef.showSnackbar(errorMessage, "error");
@@ -282,19 +176,25 @@ export default {
       }
     },
 
+    async viewItem(item) {
+      this.toggleSkeletonLoader(true);
+      this.selectedClient = item;
+      this.dialogSingle = true;
+      await this.fetchClientInfoByCID(item.CID);
+      this.toggleSkeletonLoader(false);
+    },
+
     async fetchClientInfoByCID(cid) {
       try {
-        const encryptedPayload = await this.encryptPayload({ search: cid });
-        const response = await apiClient.post('/client_info',
-          { data: encryptedPayload },
+        const response = await apiClient.get('/client_info',
+          { search: cid },
           {
             headers: {
-              'X-Session-ID': this.sessionId,
               Authorization: `Bearer ${localStorage.getItem('auth_token')}`
             }
           }
         );
-        const clientData = await this.decryptResponse(response.data);
+        const clientData = response.data;
         if (Array.isArray(clientData) && clientData.length > 0) {
           const client = clientData[0];
           if (client.last_name && client.first_name && client.middle_name && client.image_file) {
@@ -318,27 +218,6 @@ export default {
       }
     },
 
-    toClientAccountList() {
-      if (this.selectedClient) {
-        this.$router.push({
-          name: 'ClientAccountList',
-          params: {
-            CID: this.selectedClient.CID,
-          },
-        });
-      }
-    },
-
-    viewItem(item) {
-      this.selectedClient = {
-        ...item,
-        LastChangeDate: this.formatDate(item.LastChangeDate),
-      };
-      this.dialogSingle = true;
-      this.toggleSkeletonLoader(true);
-      this.fetchClientInfoByCID(item.CID);
-    },
-
     async fetchClientImage(folderName, imageFileName) {
       try {
         const response = await apiClient.get(`/client_image/${folderName}/${imageFileName}`, {
@@ -355,22 +234,16 @@ export default {
       }
     },
 
-    async fetchItems(endpoint, key) {
+    async toClientAccountList() {
+      if (!this.selectedClient) {
+        this.$refs.snackbarRef.showSnackbar("No client selected", "error");
+        return;
+      }
       try {
-        const encryptedPayload = await this.encryptPayload({});
-        const response = await apiClient.post(endpoint,
-          { data: encryptedPayload },
-          {
-            headers: {
-              'X-Session-ID': this.sessionId,
-              Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-            }
-          }
-        );
-        const decryptedData = await this.decryptResponse(response.data);
-        this[key] = decryptedData;
+        this.$router.push({ name: 'ClientAccountList', params: { CID: this.selectedClient.CID } });
       } catch (error) {
-        this.$refs.snackbarRef.showSnackbar(`${this.messages.fetchError} ${key}`, "error");
+        console.error('Error navigating to client account list:', error);
+        this.$refs.snackbarRef.showSnackbar("Failed to navigate to client account list", "error");
       }
     },
 
